@@ -1,0 +1,8 @@
+[01-Aug-2013 00:31:57 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[01-Aug-2013 00:31:57 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/book/invoice.phtml on line 2
+[01-Aug-2013 17:46:03 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[01-Aug-2013 17:46:03 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/book/confirm.phtml on line 2
+[02-Aug-2013 00:02:57 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 00:02:57 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/book/booking.phtml on line 2
+[30-Aug-2013 16:17:02 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 16:17:02 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/book/confirm.phtml on line 2

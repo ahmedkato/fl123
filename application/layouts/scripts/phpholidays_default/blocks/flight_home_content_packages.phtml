@@ -1,0 +1,79 @@
+<?php
+class flight_packages
+{
+	protected	$_group = 1;
+	protected	$_limit = 9;
+	protected	$_DBconn;
+	protected	$_front_template;
+	protected	$_view;
+	protected 	$currency;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_view =	$view;
+		//DB Connection
+		$this->_DBconn = Zend_Registry::get('msqli_connection');
+		$this->_DBconn->getConnection();
+		
+		$global_conf = Zend_Registry::get('global_conf');
+		$this->currency = new Zend_Currency($global_conf['default_locale']);
+	}
+	
+	public function truncate($phrase,$start_words, $max_words)
+	{
+	   $phrase_array = explode(' ',$phrase);
+	   if(count($phrase_array) > $max_words && $max_words > 0)
+		$phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+	   return $phrase;
+	}
+	
+	public function class_body()
+	{
+		$translator = Zend_Registry::get('translator');	
+		$selectFL = $this->_DBconn->select()
+						->from(array('fl' => Zend_Registry::get('dbPrefix').'flight_flights'), array('flight_id' => 'fl.id', 'flight_route_name' => 'fl.flight_route_name', 'flight_route_title' => 'fl.flight_route_title', 'flight_adult_fair' => 'fl.flight_adult_fair', 'flight_child_fair' => 'fl.flight_child_fair', 'flight_infant_fair' => 'fl.flight_infant_fair', 'airlines_id' => 'fl.airlines_id', 'airlines_name' => 'fa.airlines_name', 'primary_image' => 'fa.primary_image'))						
+						->order("fl.entry_date DESC")
+						->limit($this->_limit)
+						->joinLeft(array('fa' => Zend_Registry::get('dbPrefix').'flight_airlines'), 'fa.id = fl.airlines_id');
+		
+		$flight_info =  $selectFL->query()->fetchAll();
+		if($flight_info)
+		{
+			foreach($flight_info as $entry)
+			{
+?>
+
+<div class="block block-flight-pkg">    
+    <div class="block-content">            
+        <div class="img-wrapper">
+        	<a class="preview" link="data/frontImages/flight/airlines/<?php echo $this->_view->escape($entry['primary_image']); ?>" width="174"><img src="data/frontImages/flight/airlines/<?php echo $this->_view->escape($entry['primary_image']); ?>" width="80" height="26" border="0" class="thumb"/></a>
+        </div>
+        
+     	<span class="block-title"><a ><?php echo $this->_view->escape($entry['flight_route_name']).'. '.$translator->translator('flight_AirlineFlightSchedules_page_table_adult','', '', $this->_front_template['theme_folder']).' - '.$this->currency->getSymbol().$this->_view->escape($entry['flight_adult_fair']).', '.$translator->translator('flight_AirlineFlightSchedules_page_table_child','', '', $this->_front_template['theme_folder']).' - '.$this->currency->getSymbol().$this->_view->escape($entry['flight_child_fair']).', '.$translator->translator('flight_AirlineFlightSchedules_page_table_infant','', '', $this->_front_template['theme_folder']).' - '.$this->currency->getSymbol().$this->_view->escape($entry['flight_infant_fair']); ?></a></span>
+       
+        <div class="link-btn">  
+            <a href="<?php echo $this->_view->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->_view->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>"  class="block-btn"><?php echo $translator->translator('common_see_details','', '', $this->_front_template['theme_folder']); ?></a>
+       </div>
+    </div>
+    <div class="seperator"></div>
+</div>
+
+<?php
+	}
+}
+?>
+       
+<?php
+	}
+}
+try
+{
+	$flight_packages_class = new flight_packages($this);
+	$flight_packages_class->class_body();
+}
+catch(Exception $e)
+{
+	echo $e->getMessage();
+}
+?>

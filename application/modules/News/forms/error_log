@@ -1,0 +1,28 @@
+[26-Jul-2013 06:21:54 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 06:21:54 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/News/forms/CategoryForm.php on line 0
+[26-Jul-2013 10:33:39 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 10:33:39 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/News/forms/FeedbackForm.php on line 0
+[26-Jul-2013 10:35:48 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 10:35:49 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/News/forms/PageForm.php on line 0
+[28-Jul-2013 09:19:26 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[28-Jul-2013 09:19:26 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/News/forms/FeedbackForm.php on line 0
+[29-Jul-2013 07:32:51 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 07:32:51 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/News/forms/UploadForm.php on line 0
+[29-Jul-2013 07:33:59 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 07:33:59 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/News/forms/NewsGroupForm.php on line 0
+[03-Aug-2013 10:22:04 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 10:22:04 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/News/forms/CategoryForm.php on line 0
+[05-Aug-2013 05:03:16 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Aug-2013 05:03:16 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/News/forms/NewsGroupForm.php on line 0
+[05-Aug-2013 05:48:16 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Aug-2013 05:48:16 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/News/forms/UploadForm.php on line 0
+[05-Sep-2013 00:03:42 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Sep-2013 00:03:42 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/News/forms/PageForm.php on line 0
+[05-Sep-2013 10:23:50 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Sep-2013 10:23:50 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/News/forms/UploadForm.php on line 0
+[06-Sep-2013 15:14:04 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[06-Sep-2013 15:14:04 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/News/forms/CategoryForm.php on line 0
+[06-Sep-2013 15:56:21 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[06-Sep-2013 15:56:21 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/News/forms/FeedbackForm.php on line 0
+[06-Sep-2013 19:45:46 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[06-Sep-2013 19:45:46 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/News/forms/NewsGroupForm.php on line 0

@@ -1,0 +1,16 @@
+[17-Jul-2013 02:56:04 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[17-Jul-2013 02:56:04 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/views/scripts/install/step5.phtml on line 2
+[17-Jul-2013 02:56:08 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[17-Jul-2013 02:56:09 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/views/scripts/install/stepinstalled.phtml on line 2
+[05-Sep-2013 13:04:04 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Sep-2013 13:04:04 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/views/scripts/install/step3.phtml on line 2
+[05-Sep-2013 13:14:04 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Sep-2013 13:14:04 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/views/scripts/install/step2.phtml on line 2
+[05-Sep-2013 13:33:58 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Sep-2013 13:33:58 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/views/scripts/install/step4.phtml on line 2
+[05-Sep-2013 15:44:03 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Sep-2013 15:44:03 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/views/scripts/install/step1.phtml on line 2
+[05-Sep-2013 18:36:36 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Sep-2013 18:36:36 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/views/scripts/install/step5.phtml on line 2
+[05-Sep-2013 20:34:08 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Sep-2013 20:34:08 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/views/scripts/install/step6.phtml on line 2

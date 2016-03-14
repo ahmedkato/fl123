@@ -1,0 +1,32 @@
+[31-Jul-2013 23:26:35 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[31-Jul-2013 23:26:35 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/Country.php on line 0
+[08-Aug-2013 21:48:03 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[08-Aug-2013 21:48:03 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/Expedia.php on line 0
+[08-Aug-2013 23:41:45 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[08-Aug-2013 23:41:45 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/Hotels.php on line 0
+[09-Aug-2013 08:00:06 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[09-Aug-2013 08:00:06 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/ApiSetting.php on line 0
+[09-Aug-2013 17:11:35 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[09-Aug-2013 17:11:35 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/RoomType.php on line 0
+[09-Aug-2013 19:11:35 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[09-Aug-2013 19:11:36 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/State.php on line 0
+[10-Aug-2013 02:23:35 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 02:23:35 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/Room.php on line 0
+[10-Aug-2013 02:47:35 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 02:47:35 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/Category.php on line 0
+[10-Aug-2013 10:20:02 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 10:20:02 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/Expedia.php on line 0
+[10-Aug-2013 14:12:46 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 14:12:46 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/Api.php on line 0
+[10-Aug-2013 17:47:38 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 17:47:38 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/SavedHotels.php on line 0
+[10-Aug-2013 18:02:54 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 18:02:54 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/Calendar.php on line 0
+[10-Aug-2013 18:11:38 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 18:11:38 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/Area.php on line 0
+[10-Aug-2013 19:49:12 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 19:49:12 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/HotelsGroup.php on line 0
+[26-Aug-2013 06:28:39 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Aug-2013 06:28:40 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/Search.php on line 0
+[26-Aug-2013 18:56:44 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Aug-2013 18:56:44 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Hotels/models/DbTable/BusinessType.php on line 0

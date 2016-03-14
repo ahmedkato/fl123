@@ -1,0 +1,4 @@
+[30-Jul-2013 19:52:54 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Jul-2013 19:52:54 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/api/update.phtml on line 2
+[03-Aug-2013 18:41:08 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 18:41:08 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/api/update.phtml on line 2

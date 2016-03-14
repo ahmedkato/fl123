@@ -1,0 +1,38 @@
+[26-Jul-2013 06:36:32 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 06:36:32 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/UbaWebPayForm.php on line 0
+[26-Jul-2013 06:38:00 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 06:38:00 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/PaypalForm.php on line 0
+[26-Jul-2013 06:44:18 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 06:44:18 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/BankForm.php on line 0
+[29-Jul-2013 22:33:29 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 22:33:29 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/tocheckoutForm.php on line 0
+[02-Aug-2013 12:40:54 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 12:40:54 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/PayzaForm.php on line 0
+[02-Aug-2013 20:10:46 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 20:10:47 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/GatewayForm.php on line 0
+[02-Aug-2013 23:17:46 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 23:17:46 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/CcAvenueForm.php on line 0
+[03-Aug-2013 02:01:20 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 02:01:20 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/Moneybookers.php on line 0
+[03-Aug-2013 02:11:44 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 02:11:44 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/WorldpayForm.php on line 0
+[03-Aug-2013 02:46:41 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 02:46:41 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/GatewayuploadForm.php on line 0
+[03-Aug-2013 04:10:34 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 04:10:34 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/GoogleCheckoutForm.php on line 0
+[03-Aug-2013 08:30:02 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 08:30:02 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/UbaWebPayForm.php on line 0
+[03-Aug-2013 08:33:31 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 08:33:31 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/PaypalForm.php on line 0
+[03-Aug-2013 09:01:35 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 09:01:36 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/tocheckoutForm.php on line 0
+[03-Aug-2013 11:04:01 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 11:04:01 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/BankForm.php on line 0
+[26-Aug-2013 11:33:10 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Aug-2013 11:33:10 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/UbaWebPayForm.php on line 0
+[26-Aug-2013 11:39:20 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Aug-2013 11:39:20 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/PaypalForm.php on line 0
+[30-Aug-2013 07:21:23 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 07:21:25 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/PaypalForm.php on line 0
+[05-Sep-2013 05:31:34 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Sep-2013 05:31:34 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/forms/UbaWebPayForm.php on line 0

@@ -1,0 +1,8 @@
+[01-Aug-2013 05:03:10 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[01-Aug-2013 05:03:10 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/wego/items.phtml on line 2
+[01-Aug-2013 05:53:15 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[01-Aug-2013 05:53:15 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/wego/items-pagination-flickr.phtml on line 2
+[01-Aug-2013 18:14:51 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[01-Aug-2013 18:14:51 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/wego/details.phtml on line 2
+[30-Aug-2013 11:37:50 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 11:37:50 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/wego/items-pagination-flickr.phtml on line 2

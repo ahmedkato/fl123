@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<permissions>
+	<resource name="backendplan" for="backend" description="Cost Calculator Manager" langKey="permisson_cost">
+		<privilege for="dashboard" name="add" description="Cost Plan Assign to Package" langKey="permisson_cost_plan_assign"  />
+		<privilege name="edit" description="Cost Plan Edit Assign to Package" langKey="permisson_cost_plan_edit_assign"  />
+		<privilege for="dashboard" name="list" description="Package's Plan List" langKey="permisson_cost_plan_list"  />
+	</resource>	
+	<resource name="backendpackage" for="backend" description="Cost Package Manager" langKey="permisson_cost_package">
+		<privilege name="add" description="Add Package" langKey="permisson_cost_add_package"  />
+		<privilege name="edit" description="Edit Package" langKey="permisson_cost_edit_package"  />
+		<privilege for="dashboard" name="list" description="Package List" langKey="permisson_cost_list_package"  />
+		<privilege name="publish" description="Package Publish" langKey="permisson_cost_list_publish"  />
+		<privilege name="delete" description="Package Delete" langKey="permisson_cost_list_delete"  />
+	</resource>	
+	<resource name="backendsettings" for="backend" description="Cost Settings Manager" langKey="permisson_cost_settings">
+		<privilege name="update" description="Update Settings" langKey="permisson_cost_settings_update"  />
+	</resource>	
+	<resource name="frontendcalculator" for="frontend" description="Frontend Calculator Manager" langKey="permisson_cost_calculate">
+		<privilege name="calculate" description="Calculate Cost" langKey="permisson_calculate_cost" img="permisson_calculate_cost.jpg"/>		
+	</resource>	
+</permissions>

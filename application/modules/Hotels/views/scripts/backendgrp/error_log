@@ -1,0 +1,12 @@
+[03-Aug-2013 21:46:22 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 21:46:22 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/backendgrp/editgrp.phtml on line 1
+[13-Aug-2013 15:16:53 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[13-Aug-2013 15:16:53 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/backendgrp/listgrp.phtml on line 2
+[13-Aug-2013 19:07:17 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[13-Aug-2013 19:07:17 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/backendgrp/editgrp.phtml on line 1
+[14-Aug-2013 10:33:59 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[14-Aug-2013 10:33:59 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/backendgrp/addgrp.phtml on line 1
+[14-Aug-2013 13:53:06 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[14-Aug-2013 13:53:07 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/backendgrp/cronsetup.phtml on line 3
+[30-Aug-2013 17:34:55 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 17:34:56 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/backendgrp/addgrp.phtml on line 1

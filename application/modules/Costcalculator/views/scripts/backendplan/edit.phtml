@@ -1,0 +1,646 @@
+<div id="container">
+<?php if (!$this->allow()) : ?>
+	<div class="grid_12 t_a_bottom">
+		<?php echo $this->translator->translator('Member_Access_deny_desc'); ?>
+	</div>
+<?php else : ?>
+
+<?php
+$version = new Eicra_License_Version();
+echo $this->headScript()->setFile($this->baseUrl().'/js/jquery/jquery.scrollTo-min.js');
+$global_conf = Zend_Registry::get('global_conf');
+$currency = new Zend_Currency($global_conf['default_locale']);
+?>
+
+<script type="text/javascript">
+
+$(document).ready(function() {	
+	
+	floatingbar('#floatingbar',"#button_top_bar",null);
+	
+	/**********Scrolling Tools Start****************/
+	$.easing.elasout = function(x, t, b, c, d) {
+		var s=1.70158;var p=0;var a=c;
+		if (t==0) return b;  if ((t/=d)==1) return b+c;  if (!p) p=d*.3;
+		if (a < Math.abs(c)) { a=c; var s=p/4; }
+		else var s = p/(2*Math.PI) * Math.asin (c/a);
+		return a*Math.pow(2,-10*t) * Math.sin( (t*d-s)*(2*Math.PI)/p ) + c + b;
+	};
+	
+	$('#toc a').click(function(){//$.scrollTo works EXACTLY the same way, but scrolls the whole screen
+		$.scrollTo( this.hash, 1500, { easing:'swing' });
+		$(this.hash).find('span.message').text( this.title );
+		return false;
+	});
+	
+	$('span.top-go a').click(function(){//$.scrollTo works EXACTLY the same way, but scrolls the whole screen
+		$.scrollTo( this.hash, 1500, { easing:'swing' });		
+		return false;
+	});
+	
+	/**********Scrolling Tools END****************/
+	
+	function stripslashes(str) 
+	{
+		str=str.replace(/\\'/g,'\'');
+		str=str.replace(/\\"/g,'"');
+		str=str.replace(/\\0/g,'\0');
+		str=str.replace(/\\\\/g,'\\');
+		return str;
+	}
+	
+	
+	function openMsgDialog(msg)
+	{
+		$('#dialog_msg').html(msg).dialog({
+			autoOpen: true,
+			modal: true,
+			show: 'fade',
+			resizable: 'false',				
+			buttons: { "<?php echo html_entity_decode($this->translator->translator('common_ok'), ENT_QUOTES, 'UTF-8'); ?>": function() { $(this).dialog('option', 'hide', 'explode').dialog("close"); } },
+			open: function(event, ui)
+				 {
+					setTimeout(function() 
+					{									
+						if($('#' + event.target.id).dialog('isOpen'))
+						{
+							$('#' + event.target.id).dialog('option', 'hide', 'explode').dialog('close');										
+						}
+					}, 10000);
+				  }
+		});
+	}
+		
+	$('a.close_dialog_btn').click(function() {		 
+		$("#upload-form").dialog('option','hide','explode').dialog('close');			
+	});
+		
+	$('a.reset_btn').click(function() {			
+		 resetFields();	
+		 removeError();	
+	});
+	
+	function resetFields()
+	{
+		$( "form" )[ 0 ].reset();					
+	}
+	
+	function removeError()
+	{
+		$('#actionMessage').html('');
+		
+		var filename = '';
+		var filevalue = '';		
+		$.each($('form').serializeArray(), function(i, field) {	
+				if(field.name.match(/\[\]$/))
+				{
+					var filearr = field.name.split('[]');
+					filename = filearr[0];					
+				}
+				else
+				{
+					filename 	= 	field.name;
+				} 			
+				$('#'+filename).removeClass('ui-state-error');
+				$('#'+filename+'_err').html('');									
+		});				
+	}
+	
+	function addError(key,errMsg)
+	{
+		var err_id = key+'_err';
+		var field_name = key;
+		$('#'+field_name).addClass('ui-state-error');
+		$('#'+err_id).append(errMsg);
+	}
+	
+	function openLoaderDialog()
+	{
+		$('#dialog_container').dialog({
+			autoOpen: true,
+			modal: true,
+			show: 'fade',
+			resizable: 'false',				
+			open: function(event, ui)
+				 {
+					$("#progressbar").progressbar({
+						value:100
+		
+					});							
+				  }
+		});
+	}
+	
+	function closeLoaderDialog()
+	{
+		$('#dialog_container').dialog('option','hide','explode').dialog('close');
+	}
+	
+	function getFormData(formName)
+	{
+		var fieldObj = {};
+		var filename = '';
+		var filevalue = '';
+		var id_arr = new Array();
+		var additional_cost_title = new Array();
+		var additional_cost_per_unit = new Array();
+		var cost_unit_other_title = new Array();
+		var additional_cost_minimum = new Array();
+		var additional_cost_maximum = new Array();
+		$.each($('form#'+formName).serializeArray(), function(i, field) {	
+			var count = 0;
+			if(field.name.match(/\[\]$/) && count == 0)
+			{
+				$("form#"+formName+" input[name='supplimentary_id[]']").each(function(id,field) { 				
+					id_arr[id] 		= field.value;
+				});
+				fieldObj['supplimentary_id'] = id_arr;
+				
+				$("form#"+formName+" input[name='additional_cost_title[]']").each(function(id,field) { 				
+					additional_cost_title[id] 		= field.value;
+				});
+				fieldObj['additional_cost_title'] = additional_cost_title;
+				
+				$("form#"+formName+" input[name='additional_cost_per_unit[]']").each(function(id,field) { 				
+					additional_cost_per_unit[id] 		= field.value;
+				});
+				fieldObj['additional_cost_per_unit'] = additional_cost_per_unit;
+				
+				$("form#"+formName+" select[name='cost_unit_other_title[]']").each(function(id,field) { 				
+					cost_unit_other_title[id] 		= field.value;
+				});
+				fieldObj['cost_unit_other_title'] = cost_unit_other_title;
+				
+				$("form#"+formName+" input[name='additional_cost_minimum[]']").each(function(id,field) { 				
+					additional_cost_minimum[id] 		= field.value;
+				});
+				fieldObj['additional_cost_minimum'] = additional_cost_minimum;
+				
+				$("form#"+formName+" input[name='additional_cost_maximum[]']").each(function(id,field) { 				
+					additional_cost_maximum[id] 		= field.value;
+				});
+				fieldObj['additional_cost_maximum'] = additional_cost_maximum;
+				
+				count++;
+			}
+			else
+			{
+				filename 	= 	field.name;
+				filevalue 	= 	field.value;
+			}			
+			fieldObj[filename] = filevalue;			
+		});		
+		return fieldObj;
+	}
+	
+	$('a.add_supplimentary_btn').click(function() {
+			var self = this;
+			var planTable = $(self).attr('rel');
+			var row;
+			if(planTable == 'distance')
+			{
+				row = '<div class="form-row">'+
+								'<div class="label cost-label">'+
+									'<?php echo $this->distanceForm->additional_cost_title->getLabel();  ?>'+
+								'</div>'+
+								'<div class="field cost-field">'+
+									'&nbsp;<input type="text" name="additional_cost_title[]" id="additional_cost_title[]" size="10" />'+
+									'<?php	echo $this->distanceForm->additional_cost_per_unit->getLabel(); echo "&nbsp;&nbsp;".$currency->getSymbol();?>&nbsp;'+
+								  	'<input type="text" name="additional_cost_per_unit[]" id="additional_cost_per_unit[]" size="10" />&nbsp;'+
+									'<?php echo $this->distanceForm->cost_unit_other_title->getLabel();?>'+																		 
+									'<select name="cost_unit_other_title[]" id="cost_unit_other_title[]" size="1">'+
+									 ' <option value="Fixed">Fixed</option>'+
+									 ' <option value="Mile">Mile</option>'+
+									  '<option value="Kilometer">Kilometer</option>'+
+									  '<option value="Hour">Hour</option>'+
+									  '<option value="Day">Day</option>'+
+									'</select>'+
+									'&nbsp;<?php echo $this->distanceForm->additional_cost_minimum->getLabel(); echo "&nbsp;".$currency->getSymbol();  ?>&nbsp;'+
+									'<input type="text" name="additional_cost_minimum[]" id="additional_cost_minimum[]" size="10" />'+
+									'&nbsp;<?php echo $this->distanceForm->additional_cost_maximum->getLabel(); echo "&nbsp;".$currency->getSymbol();  ?>&nbsp;'+
+									'<input type="text" name="additional_cost_maximum[]" id="additional_cost_maximum[]" size="10" />'+
+									'<div class="input-errors" id="<?php echo $this->distanceForm->additional_cost_per_unit->getName()."_err"; ?>"><div>'+
+								'</div>'+
+					  '</div>';
+			}
+			else
+			{
+				row = '<div class="form-row">'+
+								'<div class="label cost-label">'+
+									'<?php echo $this->proportionForm->additional_cost_title->getLabel();  ?>'+
+								'</div>'+
+								'<div class="field cost-field">'+
+									'&nbsp;<input type="text" name="additional_cost_title[]" id="additional_cost_title[]" size="10" />'+
+									'<?php	echo $this->proportionForm->additional_cost_per_unit->getLabel(); echo "&nbsp;&nbsp;".$currency->getSymbol();?>&nbsp;'+
+								  	'<input type="text" name="additional_cost_per_unit[]" id="additional_cost_per_unit[]" size="10" />&nbsp;'+
+									'<?php echo $this->proportionForm->cost_unit_other_title->getLabel();?>'+																		 
+									'<select name="cost_unit_other_title[]" id="cost_unit_other_title[]" size="1">'+
+									 ' <option value="Fixed">Fixed</option>'+
+									 ' <option value="Mile">Mile</option>'+
+									  '<option value="Kilometer">Kilometer</option>'+
+									  '<option value="Hour">Hour</option>'+
+									  '<option value="Day">Day</option>'+
+									'</select>'+
+									'&nbsp;<?php echo $this->proportionForm->additional_cost_minimum->getLabel(); echo "&nbsp;".$currency->getSymbol();  ?>&nbsp;'+
+									'<input type="text" name="additional_cost_minimum[]" id="additional_cost_minimum[]" size="10" />'+
+									'&nbsp;<?php echo $this->proportionForm->additional_cost_maximum->getLabel(); echo "&nbsp;".$currency->getSymbol();  ?>&nbsp;'+
+									'<input type="text" name="additional_cost_maximum[]" id="additional_cost_maximum[]" size="10" />'+
+									'<div class="input-errors" id="<?php echo $this->proportionForm->additional_cost_per_unit->getName()."_err"; ?>"></div>'+
+								'</div>'+
+					  '</div>';
+			}
+			
+			$(self).parents("div:first").parents("div:first").parents("div:first").parents("div:first").append(row);
+	});
+	
+	$('a.edit_setting_btn').click(function() {			
+		var formName = $('input:radio[name=plan_table_name]:checked').val();
+		var packageName = "<?php echo $this->planAssignObj['package_id']; ?>";
+		if(formName == null || formName == 'undefined' )
+		{
+			openMsgDialog("<?php echo $this->translator->translator('cost_plan_select_error'); ?>");
+			return false;
+		}
+		var formData = getFormData(formName);
+		formData.package_name = packageName;		
+		formData.plan_title = $('input#plan_title_'+formName).val();
+		formData.table_name	= formName;	
+		formData.id	= "<?php echo $this->id; ?>";	
+		formData.old_table_name = "<?php echo strtolower($this->planAssignObj['plan_table_name']); ?>";
+		formData.planAssignId	= "<?php echo $this->planAssignObj['id']; ?>";
+		formData.plan_id	= "<?php echo $this->planAssignObj['plan_id']; ?>";
+		$.ajax({
+			url: "<?php echo $this->url( array('module' => 'Costcalculator','controller' => 'backendplan', 'action'     => 'edit' ), 'adminrout',    true) ?>",
+			  	type: 'POST',
+			  	data: formData,
+				beforeSend: function(){						
+						removeError();
+						openLoaderDialog();				
+					 },
+				success: function(response){
+					//alert(response);					
+					var json_arr = eval("("+response+")");					
+					closeLoaderDialog();					
+					if(json_arr.status == 'ok')
+					{
+						$('#actionMessage').html(succMsgDesign(json_arr.msg));
+						if(formName != formData.old_table_name)
+						{
+							document.location.href = "<?php echo $this->url(array('module' => 'Costcalculator','controller' => 'backendplan', 'action'     => 'list' ), 'adminrout',    true); ?>";									
+						}
+					}
+					else if(json_arr.status == 'errV')
+					{
+						$('#actionMessage').html(errMsgDesign("<?php echo $this->translator->translator('common_err'); ?>"));
+												
+						for(var i= 0; i < json_arr.msg.length; i++)
+						{
+							addError(json_arr.msg[i].key,json_arr.msg[i].value);							
+						}
+					}
+					else
+					{
+						$('#actionMessage').html(errMsgDesign(json_arr.msg));
+					}
+				},
+				error: function (xhr,status,msg)
+				{
+					closeLoaderDialog();
+					var msg = "Error! " + xhr.status + " " + error;					
+					$('#actionMessage').html(errMsgDesign(msg));
+				}
+		});
+	});		
+	
+});
+</script>
+<div id="button_top_bar"></div>
+<div class="title-container">
+	<div class="vehicle-plan-edit"><h1><?php echo $this->translator->translator('cost_plan_assign_name'); ?></h1></div>
+    
+    <div class="button-container">
+        <span class="button  ui-widget-content-1"><a href="<?php echo $this->url( array('module' => 'Costcalculator','controller' => 'backendplan', 'action'     => 'list' ), 'adminrout',    true) ?>" class="back_btn_link"><span class="icon back"><?php echo $this->translator->translator('common_back'); ?></span></a></span>
+        <span class="button  ui-widget-content-1"><a href="javascript:  void(0);" class="reset_btn"><span class="icon reset"><?php echo $this->translator->translator('common_reset'); ?></span></a></span>        
+        <span class="button  ui-widget-content-1"><a href="javascript: void(0);" class="edit_setting_btn"><span class="icon save"><?php echo $this->translator->translator('common_save'); ?></span></a></span>
+    </div>
+</div>
+
+<div class="content-container">
+	<div id="sidebar-inner">
+    	<?php echo $this->partial('nav_menu.phtml');  ?>
+    </div>
+    
+    
+    
+    <div id="content-inner">
+    	<div id="actionMessage"></div>
+        <div id="button_top_bar"></div>
+        <div id="generalInfo">
+        	<div class="cost-container">
+            <span class="label"><?php echo $this->translator->translator('cost_service_name_label'); ?></span><span class="required">*</span> &nbsp;
+            	<span class="label"><?php echo $this->packageInfo['package_name'];?></span>
+                <input type="hidden" name="package_name" id="package_name" value="<?php echo $this->packageInfo['id'];?>">
+            </div>
+            <div>&nbsp;</div>
+            
+            <fieldset class="fieldset">
+                <legend class="legend">
+                    <input type="radio" name="plan_table_name" id="plan_table_name" value="proportion" <?php if(stristr($this->planAssignObj['plan_table_name'],'proportion')) echo 'checked="checked"';?> />
+                    <input type="text" name="plan_title_proportion" id="plan_title_proportion" value="<?php echo $this->translator->translator('cost_service_plan_proportion'); ?>" />
+                </legend>                    
+                
+                <form name="proportion" id="proportion" method="post" >
+            	<div class="form">
+                	<div class="form-row">
+                    	<div class="label cost-label">
+                       		<?php echo $this->proportionForm->cost_unit_title->getLabel();  if($this->distanceForm->cost_unit_title->isRequired()){ ?><span class="required">*</span><?php } ?>
+                        </div>
+                        
+                        <div class="field cost-field">
+                        	<?php	
+								$global_conf = Zend_Registry::get('global_conf');
+								$currency = new Zend_Currency($global_conf['default_locale']);			  
+								echo $this->proportionForm->cost_unit_title; echo '&nbsp;'.$currency->getSymbol().$this->proportionForm->cost_per_unit.'&nbsp;&nbsp;'.$this->proportionForm->cost_minimum->getLabel().'&nbsp;&nbsp;'.$currency->getSymbol().$this->proportionForm->cost_minimum.'&nbsp;'.$this->proportionForm->cost_maximum->getLabel().'&nbsp;&nbsp;'.$currency->getSymbol().$this->proportionForm->cost_maximum; 
+							?>
+                            <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proportionForm->cost_per_unit->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                            <div class="input-errors" id="<?php echo $this->proportionForm->cost_per_unit->getName().'_err'; ?>"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                    	<div class="label cost-label">
+                       		<span class="label"><?php echo $this->translator->translator('cost_additional'); ?></span>
+                        </div>
+                        
+                        <div class="field cost-field">
+                        	&nbsp;
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                    	<div class="label cost-label">
+                       		<?php echo $this->proportionForm->additional_cost_title->getLabel();  if($this->proportionForm->additional_cost_title->isRequired()){ ?><span class="required">*</span><?php } ?>
+                        </div>
+                        
+                        <div class="field cost-field">
+								<?php
+                                if(stristr($this->planAssignObj['plan_table_name'],'proportion'))
+                                 {
+                                    if($this->supplimentaryValues)
+                                    {
+                                        foreach($this->supplimentaryValues as $values)
+                                        {
+                                ?>
+								<input type="hidden" name="supplimentary_id[]" value="<?php echo $values['id']; ?>" />
+								<input type="text" name="additional_cost_title[]" value="<?php echo $values['additional_cost_title']; ?>" size="10" />
+								<?php	
+                                    echo $this->proportionForm->additional_cost_per_unit->getLabel(); echo '&nbsp;'.$currency->getSymbol();?>
+                                    <input type="text" name="additional_cost_per_unit[]" value="<?php echo $values['additional_cost_per_unit']; ?>" size="10" />
+                                <?php	
+                                    echo $this->proportionForm->cost_unit_other_title->getLabel(); 
+                                ?>
+                                <select name="cost_unit_other_title[]" value="<?php echo $values['cost_unit_other_title']; ?>" size="1">
+                                    <option value="Fixed" <?php if($values['cost_unit_other_title'] == 'Fixed') echo 'selected="selected"'; ?>>Fixed</option>
+                                    <option value="Mile" <?php if($values['cost_unit_other_title'] == 'Mile') echo 'selected="selected"'; ?>>Mile</option>
+                                    <option value="Kilometer" <?php if($values['cost_unit_other_title'] == 'Kilometer') echo 'selected="selected"'; ?>>Kilometer</option>
+                                    <option value="Hour" <?php if($values['cost_unit_other_title'] == 'Hour') echo 'selected="selected"'; ?>>Hour</option>
+                                     <option value="Day" <?php if($values['cost_unit_other_title'] == 'Day') echo 'selected="selected"'; ?>>Day</option>
+                                </select> 
+                                <?php
+                                    echo $this->proportionForm->additional_cost_minimum->getLabel(); echo "&nbsp;".$currency->getSymbol();  ?>
+                                    <input type="text" name="additional_cost_minimum[]" value="<?php echo $values['additional_cost_minimum']; ?>" size="10" />
+                                <?php
+                                    echo $this->proportionForm->additional_cost_maximum->getLabel(); echo "&nbsp;".$currency->getSymbol();  ?>&nbsp;<input type="text" name="additional_cost_maximum[]" value="<?php echo $values['additional_cost_maximum']; ?>" size="10" />
+                                    
+                                <?php	
+                                                echo '<br /><br />';
+                                            }																
+                                        }
+                                     }
+                                     if(stristr($this->planAssignObj['plan_table_name'],'distance') || !$this->supplimentaryValues)
+                                     {
+                                ?>																
+                                <?php echo $this->proportionForm->additional_cost_title->getLabel();  if($this->proportionForm->additional_cost_title->isRequired()){ ?><span class="required">*</span>
+                                <?php } ?><input type="text" name="additional_cost_title[]" size="10" />
+                                <?php	
+                                    echo $this->proportionForm->additional_cost_per_unit->getLabel(); echo '&nbsp;'.$currency->getSymbol();?>
+                                    <input type="text" name="additional_cost_per_unit[]" size="10" />
+                                <?php	
+                                    echo $this->proportionForm->cost_unit_other_title->getLabel(); 
+                                    ?>
+                                    <select name="cost_unit_other_title[]" size="1">
+                                        <option value="Fixed" >Fixed</option>
+                                        <option value="Mile" >Mile</option>
+                                        <option value="Kilometer" >Kilometer</option>
+                                        <option value="Hour" >Hour</option>
+                                        <option value="Day">Day</option>
+                                    </select> 
+                                <?php
+                                    echo $this->proportionForm->additional_cost_minimum->getLabel(); echo "&nbsp;".$currency->getSymbol(); ?>
+                                   	<input type="text" name="additional_cost_minimum[]" size="10" />
+                                <?php
+                                    echo $this->proportionForm->additional_cost_maximum->getLabel(); echo "&nbsp;".$currency->getSymbol();  ?><input type="text" name="additional_cost_maximum[]" size="10" />
+                                    
+                                    <?php
+                                            echo '<br />';								 
+                                 }
+                                 ?>
+                                 <br />insert the above new cost field into row (need to setup design)
+                        </div>
+                  	</div>
+                    
+                    <div class="form-row">
+                    	<div class="label cost-label">
+                       		<div class="select-btn ui-widget-content-1"><a href="javascript: void(0);" rel="proportion" class="add_supplimentary_btn"><span class="icon add"><?php echo $this->translator->translator('cost_supplimentary_add_more'); ?></span></a></div>
+                        </div>
+                        
+                        <div class="field cost-field">
+                        	&nbsp;
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                    	<div class="label cost-label">
+                       		<?php echo $this->proportionForm->additional_discount_unit->getLabel();  if($this->proportionForm->additional_discount_unit->isRequired()){ ?><span class="required">*</span><?php } ?>
+                        </div>
+                        
+                        <div class="field cost-field">
+                        	<?php	
+								echo $this->proportionForm->additional_discount;  
+								$this->proportionForm->additional_discount_unit->addMultiOption('Fixed',$currency->getSymbol().'&nbsp;'.$this->translator->translator('cost_discount_fixed_title'));
+								echo $this->proportionForm->additional_discount_unit;
+							?>
+                           	<div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proportionForm->additional_discount_unit->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                            <div class="input-errors" id="<?php echo $this->proportionForm->additional_discount_unit->getName().'_err'; ?>"></div>
+                        </div>
+                    </div>
+              	</div>
+                </form>
+         	</fieldset>
+            
+            <fieldset class="fieldset last">
+                <legend class="legend">
+                    <input type="radio" name="plan_table_name" id="plan_table_name" value="distance" <?php if(stristr($this->planAssignObj['plan_table_name'],'distance')) echo 'checked="checked"';?>/>
+                  	<input type="text" name="plan_title_distance" id="plan_title_distance" value="<?php echo $this->translator->translator('cost_service_plan_distance'); ?>" />
+				</legend>
+                
+                <form name="distance" id="distance" method="post">
+            	<div class="form">
+                	<div class="form-row">
+                    	<div class="label cost-label">
+                       		<?php echo $this->distanceForm->cost_name->getLabel();  if($this->distanceForm->cost_name->isRequired()){ ?><span class="required">*</span><?php } ?>
+                        </div>
+                        
+                        <div class="field cost-field">
+                        	<?php echo $this->distanceForm->cost_name; ?>
+                            <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->distanceForm->cost_name->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                            <div class="input-errors" id="<?php echo $this->distanceForm->cost_name->getName().'_err'; ?>"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                    	<div class="label cost-label">
+                       		<?php echo $this->distanceForm->cost_unit_title->getLabel();  if($this->distanceForm->cost_unit_title->isRequired()){ ?><span class="required">*</span><?php } ?>
+                        </div>
+                        
+                        <div class="field cost-field">
+                        	<?php echo $currency->getSymbol().$this->distanceForm->cost_per_unit; echo '&nbsp;'.$this->translator->translator('cost_distance_per').$this->distanceForm->cost_unit.'&nbsp;'.$this->distanceForm->cost_unit_title.'&nbsp;&nbsp;'.$this->distanceForm->cost_minimum->getLabel().'&nbsp;&nbsp;'.$currency->getSymbol().$this->distanceForm->cost_minimum.'&nbsp;'.$this->distanceForm->cost_maximum->getLabel().'&nbsp;&nbsp;'.$currency->getSymbol().$this->distanceForm->cost_maximum; ?>
+                           	<div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->distanceForm->cost_per_unit->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                            <div class="input-errors" id="<?php echo $this->distanceForm->cost_per_unit->getName().'_err'; ?>"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                    	<div class="label cost-label">
+                       		<span class="label"><?php echo $this->translator->translator('cost_additional'); ?></span>
+                        </div>
+                        
+                        <div class="field cost-field">
+                        	&nbsp;
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                    	<div class="label cost-label">
+                       		<?php echo $this->distanceForm->additional_cost_title->getLabel();  if($this->distanceForm->additional_cost_title->isRequired()){ ?><span class="required">*</span><?php } ?>
+                        </div>
+                        
+                        <div class="field cost-field">
+                        	<?php
+										 if(stristr($this->planAssignObj['plan_table_name'],'distance'))
+										 {
+											if($this->supplimentaryValues)
+											{
+												foreach($this->supplimentaryValues as $values)
+												{
+													?>
+													<input type="hidden" name="supplimentary_id[]" value="<?php echo $values['id']; ?>" />
+											 <input type="text" name="additional_cost_title[]" value="<?php echo $values['additional_cost_title']; ?>" size="10" />
+							<?php	
+											echo $this->distanceForm->additional_cost_per_unit->getLabel(); echo '&nbsp;'.$currency->getSymbol();?>
+											<input type="text" name="additional_cost_per_unit[]" value="<?php echo $values['additional_cost_per_unit']; ?>" size="10" />
+										<?php	
+											echo $this->distanceForm->cost_unit_other_title->getLabel(); 
+											?>
+											<select name="cost_unit_other_title[]" value="<?php echo $values['cost_unit_other_title']; ?>" size="1">
+												<option value="Fixed" <?php if($values['cost_unit_other_title'] == 'Fixed') echo 'selected="selected"'; ?>>Fixed</option>
+												<option value="Mile" <?php if($values['cost_unit_other_title'] == 'Mile') echo 'selected="selected"'; ?>>Mile</option>
+												<option value="Kilometer" <?php if($values['cost_unit_other_title'] == 'Kilometer') echo 'selected="selected"'; ?>>Kilometer</option>
+												<option value="Hour" <?php if($values['cost_unit_other_title'] == 'Hour') echo 'selected="selected"'; ?>>Hour</option>
+												<option value="Day" <?php if($values['cost_unit_other_title'] == 'Day') echo 'selected="selected"'; ?>>Day</option>
+											</select> 
+										<?php
+											echo $this->distanceForm->additional_cost_minimum->getLabel(); echo "&nbsp;".$currency->getSymbol();  ?>
+											<input type="text" name="additional_cost_minimum[]" value="<?php echo $values['additional_cost_minimum']; ?>" size="10" />
+										<?php
+											echo $this->distanceForm->additional_cost_maximum->getLabel(); echo "&nbsp;".$currency->getSymbol();  ?><input type="text" name="additional_cost_maximum[]" value="<?php echo $values['additional_cost_maximum']; ?>" size="10" />
+											
+										<?php	
+													echo '<br /><br />';
+												}
+											}
+										 } 
+										 if(stristr($this->planAssignObj['plan_table_name'],'proportion') || !$this->supplimentaryValues)
+										 {
+											 ?>																
+											<input type="text" name="additional_cost_title[]" size="10" />
+							<?php	
+											echo $this->distanceForm->additional_cost_per_unit->getLabel(); echo '&nbsp;'.$currency->getSymbol();?>
+											<input type="text" name="additional_cost_per_unit[]" size="10" />
+										<?php	
+											echo $this->distanceForm->cost_unit_other_title->getLabel(); 
+											?>
+											<select name="cost_unit_other_title[]" size="1">
+												<option value="Fixed" >Fixed</option>
+												<option value="Mile" >Mile</option>
+												<option value="Kilometer" >Kilometer</option>
+												<option value="Hour" >Hour</option>
+											</select> 
+										<?php
+											echo $this->distanceForm->additional_cost_minimum->getLabel(); echo "&nbsp;".$currency->getSymbol();  ?>
+											<input type="text" name="additional_cost_minimum[]" size="10" />
+										<?php
+											echo $this->distanceForm->additional_cost_maximum->getLabel(); echo "&nbsp;".$currency->getSymbol();  ?>&nbsp;<input type="text" name="additional_cost_maximum[]" size="10" />
+											
+											<?php
+													echo '<br />';								 
+										 }
+										 ?>
+                                         <br />insert the above new cost field into row (need to setup design)
+                        </div>
+                  	</div>
+                    
+                    <div class="form-row">
+                    	<div class="label cost-label">
+                       		<div class="select-btn ui-widget-content-1"><a href="javascript: void(0);" rel="distance" class="add_supplimentary_btn"><span class="icon add"><?php echo $this->translator->translator('cost_supplimentary_add_more'); ?></span></a></div>
+                        </div>
+                        
+                        <div class="field cost-field">
+                        	&nbsp;
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                    	<div class="label cost-label">
+                       		<?php echo $this->distanceForm->additional_discount_unit->getLabel();  if($this->distanceForm->additional_discount_unit->isRequired()){ ?><span class="required">*</span><?php } ?>
+                        </div>
+                        
+                        <div class="field cost-field">
+                        	<?php	
+								echo $this->distanceForm->additional_discount;  
+								$this->distanceForm->additional_discount_unit->addMultiOption('Fixed',$currency->getSymbol().'&nbsp;'.$this->translator->translator('cost_discount_fixed_title'));
+								echo $this->distanceForm->additional_discount_unit;
+							?>
+                           	<div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->distanceForm->additional_discount_unit->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                            <div class="input-errors" id="<?php echo $this->distanceForm->additional_discount_unit->getName().'_err'; ?>"></div>
+                        </div>
+                    </div>
+             	</div>
+                </form>
+      		</fieldset>                    
+        </div>
+	</div>
+    
+    <div class="button-container">
+        <span class="button  ui-widget-content-1"><a href="<?php echo $this->url( array('module' => 'Costcalculator','controller' => 'backendplan', 'action'     => 'list' ), 'adminrout',    true) ?>" class="back_btn_link"><span class="icon back"><?php echo $this->translator->translator('common_back'); ?></span></a></span>
+        <span class="button  ui-widget-content-1"><a href="javascript:  void(0);" class="reset_btn"><span class="icon reset"><?php echo $this->translator->translator('common_reset'); ?></span></a></span>        
+        <span class="button  ui-widget-content-1"><a href="javascript: void(0);" class="edit_setting_btn"><span class="icon save"><?php echo $this->translator->translator('common_save'); ?></span></a></span>
+    </div>
+</div>
+
+<div id="dialog_msg" title="<?php echo $this->translator->translator('common_dialog_msg',$this->translator->translator('cost_plan_assign_name')); ?>"></div>
+<div id="dialog_container" style="display:none" title="<?php echo $this->translator->translator('common_processing_language'); ?>">
+	<div id="progressbar" ></div>	
+</div>
+
+<div id="floatingbar">
+	<h1><?php echo $this->translator->translator('cost_plan_assign_name'); ?></h1>
+    
+    <div class="button-container">
+        <span class="button  ui-widget-content-1"><a href="<?php echo $this->url( array('module' => 'Costcalculator','controller' => 'backendplan', 'action'     => 'list' ), 'adminrout',    true) ?>" class="back_btn_link"><span class="icon back"><?php echo $this->translator->translator('common_back'); ?></span></a></span>
+        <span class="button  ui-widget-content-1"><a href="javascript:  void(0);" class="reset_btn"><span class="icon reset"><?php echo $this->translator->translator('common_reset'); ?></span></a></span>        
+        <span class="button  ui-widget-content-1"><a href="javascript: void(0);" class="edit_setting_btn"><span class="icon save"><?php echo $this->translator->translator('common_save'); ?></span></a></span>
+    </div>
+</div>
+<?php endif; ?>	
+</div>

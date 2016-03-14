@@ -1,0 +1,16 @@
+[29-Jul-2013 09:59:51 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 09:59:51 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Members/views/scripts/members/list.phtml on line 2
+[29-Jul-2013 10:00:53 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 10:00:53 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Members/views/scripts/members/add.phtml on line 2
+[29-Jul-2013 10:01:43 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 10:01:43 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Members/views/scripts/members/profile.phtml on line 2
+[29-Jul-2013 10:03:02 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 10:03:02 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Members/views/scripts/members/change.phtml on line 2
+[29-Jul-2013 10:03:57 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 10:03:57 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Members/views/scripts/members/edit.phtml on line 2
+[30-Aug-2013 19:33:30 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 19:33:30 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Members/views/scripts/members/dashboard.phtml on line 2
+[02-Sep-2013 04:40:58 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Sep-2013 04:40:58 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Members/views/scripts/members/dashboard.phtml on line 2
+[04-Sep-2013 19:36:28 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[04-Sep-2013 19:36:28 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Members/views/scripts/members/dashboard.phtml on line 2

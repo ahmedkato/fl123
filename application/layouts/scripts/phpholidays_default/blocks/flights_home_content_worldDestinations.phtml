@@ -1,0 +1,83 @@
+<?php
+class flights_home_content_worldDestinations
+{
+	protected	$_group = 1;
+	protected	$_limit = 24;
+	protected	$_DBconn;
+	protected	$_front_template;
+	protected	$_view;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_view =	$view;
+		//DB Connection
+		$this->_DBconn = Zend_Registry::get('msqli_connection');
+		$this->_DBconn->getConnection();
+	}
+	
+	public function truncate($phrase,$start_words, $max_words)
+	{
+	   $phrase_array = explode(' ',$phrase);
+	   if(count($phrase_array) > $max_words && $max_words > 0)
+		  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+	   return $phrase;
+	}
+	
+	public function class_body()
+	{
+		$global_conf = Zend_Registry::get('global_conf');
+		$currency = new Zend_Currency($global_conf['default_locale']);
+		$translator = Zend_Registry::get('translator');	
+		
+		$selectWorldDestination = $this->_DBconn->select()
+								   ->from(array('ff' => Zend_Registry::get('dbPrefix').'flight_flights'), array('total_price' => '((ff.flight_adult_fair + flight_child_fair + flight_infant_fair) + ((ff.flight_adult_fair + flight_child_fair + flight_infant_fair) * (flight_tax / 100)))', 'flight_route_name' => 'ff.flight_route_name', 'flight_route_title' => 'ff.flight_route_title'))
+								   ->order('ff.id DESC')
+								   ->limit($this->_limit);
+		
+		$world_destination = $selectWorldDestination->query()->fetchAll();	
+	
+?>
+<div class="block block-listing">
+	<div class="block-body">
+    	<!--<h2><?php //echo $translator->translator('flight_front_page_home_world_wide_flight_title','', '', $this->_front_template['theme_folder']); ?></h2>-->
+        
+			<?php					
+				if($world_destination)
+				{
+			?>
+					<div class="col">
+                    	<ul>
+                            <?php						
+                            foreach($world_destination as $world_destination_key => $entry)
+                            {
+                            ?>
+                            <li><a href="<?php echo $this->_view->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->_view->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>" class="preview" link="" title="<?php echo $this->_view->escape($entry['flight_route_name']).' - '.$currency->getSymbol().$this->_view->escape($entry['total_price']); ?>"><?php echo $this->truncate($this->_view->escape($entry['flight_route_name']),0 ,4); ?></a></li>                       
+                            <?php
+                                if(($world_destination_key + 1) % 5 == 0)
+                                {
+                                    echo '</ul></div><div class="col"><ul>';
+                                }							
+                            }
+                            ?>
+                       	</ul>	
+                    </div>
+             <?php
+				}
+            ?>            
+    </div>
+</div>
+
+<?php
+	}
+}
+try
+{
+	$flights_home_content_worldDestinations_class = new flights_home_content_worldDestinations($this);
+	$flights_home_content_worldDestinations_class->class_body();
+}
+catch(Exception $e)
+{
+	echo $e->getMessage();
+}
+?>

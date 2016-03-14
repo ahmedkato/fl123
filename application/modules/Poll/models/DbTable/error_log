@@ -1,0 +1,20 @@
+[08-Jul-2013 09:07:05 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[08-Jul-2013 09:07:05 Europe/Berlin] PHP Fatal error:  The file /home/wwwhotei/public_html/application/modules/Poll/models/DbTable/PollVoter.php cannot be decoded
+by this version of the ionCube Loader.
+ If you are the administrator of this site
+then please install the latest version of the ionCube Loader.
+ in Unknown on line 0
+[10-Jul-2013 04:23:48 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Jul-2013 04:23:48 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Poll/models/DbTable/PollVoter.php on line 0
+[29-Jul-2013 14:14:24 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 14:14:24 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Poll/models/DbTable/PollGroup.php on line 0
+[02-Aug-2013 02:55:42 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 02:55:42 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Poll/models/DbTable/PollQuestion.php on line 0
+[02-Aug-2013 11:23:47 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 11:23:47 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Poll/models/DbTable/PollAnswer.php on line 0
+[10-Aug-2013 12:46:32 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 12:46:32 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Poll/models/DbTable/PollCategory.php on line 0
+[10-Aug-2013 21:40:29 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 21:40:29 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Poll/models/DbTable/PollGroup.php on line 0
+[17-Aug-2013 01:08:24 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[17-Aug-2013 01:08:24 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Poll/models/DbTable/PollVoter.php on line 0

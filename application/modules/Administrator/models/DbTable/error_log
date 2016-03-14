@@ -1,0 +1,12 @@
+[26-Jul-2013 05:14:04 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 05:14:04 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/DbTable/Users.php on line 0
+[27-Jul-2013 11:32:00 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[27-Jul-2013 11:32:00 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/DbTable/Users.php on line 0
+[29-Jul-2013 06:35:38 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 06:35:38 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/DbTable/Roles.php on line 0
+[05-Aug-2013 05:18:16 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Aug-2013 05:18:16 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/DbTable/Roles.php on line 0
+[07-Aug-2013 12:08:17 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[07-Aug-2013 12:08:17 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/DbTable/Users.php on line 0
+[08-Aug-2013 19:21:10 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[08-Aug-2013 19:21:10 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/DbTable/Users.php on line 0

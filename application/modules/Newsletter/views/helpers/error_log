@@ -1,0 +1,2 @@
+[27-Aug-2013 03:04:08 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[27-Aug-2013 03:04:08 Europe/Berlin] PHP Fatal error:  Class 'Zend_View_Helper_Abstract' not found in /home/wwwhotei/public_html/application/modules/Newsletter/views/helpers/Allow.php on line 0

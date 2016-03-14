@@ -1,0 +1,161 @@
+/* ___________________________________________________________________________________
+   
+   CSS Framework for Eicra Tour Script [Templates, Blocks & Product Modules] 
+   ___________________________________________________________________________________ */
+   
+
+@charset "utf-8";
+
+
+/* LAYOUT STYLES ******************************************************************** */
+
+#sidebar{
+	float:right;
+}
+
+#content{
+	float:left; 
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* ********************************************************************************** */
+
+
+/* BLOCKS STYLE ********************************************************************* */
+
+
+/* Block Box Model ------------------------------------------------------------------ */
+
+.block .img-wrapper .type{
+	left: 8px !important;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Banner Search -------------------------------------------------------------------- */
+
+.block-search{
+	right:40px;
+	left:auto;
+}
+
+.block-search .col{
+	padding: 0 0 3px 12px;
+	float:right;
+}
+
+.block-search p{
+	padding: 4px 0 4px 8px;
+}
+
+.block-search a{
+	color:#FFF;
+	font-size:12px;
+	font-weight:bold;
+	background:url(../images/arrow-white-rtl.png) no-repeat right center;
+	padding:0 15px 0 0;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Sidebar Search ------------------------------------------------------------------- */
+
+.block-sidebar-search p{
+	clear:right;
+}
+
+.block-sidebar-search .block-content-2 select.left{
+	float:right;
+}
+
+.block-sidebar-search .block-content-2 select.right{
+	float:left;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Featured Tours ------------------------------------------------------------------- */
+
+.block-featured .col{
+	margin: 5px 12px 20px 0;
+	float:right;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Top Destination & Tour Type ------------------------------------------------------ */
+
+.block-list-vmenu ul li {
+	background-position: right 6px;
+	background-repeat:no-repeat;
+	padding:0 25px 0 0;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* ********************************************************************************** */
+
+
+/* PRODUCT MODULES ****************************************************************** */
+
+/* Product Advance Search ----------------------------------------------------------- */
+
+.mod-advance-search .ui-widget .ui-autocomplete-input{
+	float:right;
+}
+
+.mod-advance-search .ui-widget .ui-button{ 
+	margin-left: 0px;
+	margin-right: -1px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Product List --------------------------------------------------------------------- */
+
+.products-options li{
+	background-position: 99% 4px;
+	background-repeat:no-repeat;
+	padding:7px 27px 2px 0;
+}
+
+.products-featured{
+	background-position:25% 48px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Product Details ------------------------------------------------------------------ */
+
+.mod-details .products-type{
+	float:right;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Wego API ------------------------------------------------------------------------- */
+
+.mod-wego .mod-advance-search p span{
+	text-align:right;
+}
+
+.mod-wego .mod-advance-search input[type="text"].location{
+	margin:0 0 0 5px;
+}
+
+.mod-wego .products-chart .value{
+	padding: 0 5px 0 2px;
+}
+
+.mod-wego .itinerary_main_body_block_clild_body_box1{
+	text-align:right;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* ___________________________________________________________________________________
+   
+   New CSS used by Developer
+   ___________________________________________________________________________________ */
+

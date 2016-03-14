@@ -1,0 +1,4 @@
+[27-Jul-2013 12:50:42 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[27-Jul-2013 12:50:42 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Theme/forms/TemplateForm.php on line 0
+[11-Aug-2013 02:49:05 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[11-Aug-2013 02:49:05 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Theme/forms/TemplateForm.php on line 0

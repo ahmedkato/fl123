@@ -1,0 +1,132 @@
+<?php
+class recent_hotels_list
+{
+	protected	$_group = 1;
+	protected	$_limit = 1;
+	protected	$_DBconn;
+	protected	$_front_template;
+	protected	$_view;
+	protected	$_d_num  = 5;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_view =	$view;
+		//DB Connection
+		$this->_DBconn = Zend_Registry::get('msqli_connection');
+		$this->_DBconn->getConnection();
+		
+		$this->translator = Zend_Registry::get('translator');
+	}
+	
+	public function truncate($phrase,$start_words, $max_words)
+	{
+	   $phrase_array = explode(' ',$phrase);
+	   if(count($phrase_array) > $max_words && $max_words > 0)
+		  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+	   return $phrase;
+	}
+	
+	public function class_body()
+	{
+		$translator = Zend_Registry::get('translator');	
+		$group_db =  new Hotels_Model_DbTable_HotelsGroup();
+		$group_info = $group_db->getGroupName($this->_group);
+		
+		$select_latest = $this->_DBconn->select()
+									->from(array('pp' => Zend_Registry::get('dbPrefix').'hotels_page'), array('*'))
+									->where('pp.group_id = ?', $this->_group)
+									->where('pp.active = ?', '1')
+									->order($group_info['latest_file_sort']." ".$group_info['latest_file_order'])
+									->limit($group_info['latest_file_num_per_page']);
+										
+		$view_latest_datas =  $select_latest->query()->fetchAll();	
+?>
+
+<div class="block block-listing">
+	<div class="block-body">
+		<h2><?php echo $this->translator->translator('hotels_block_latest_list_title','', '', $this->_front_template['theme_folder']); ?></h2>
+        
+		<?php	
+            if($view_latest_datas)
+            {
+        ?>
+		<div class="col">
+			<ul>
+                <?php
+						$l =1;
+						$box = 1;
+						foreach($view_latest_datas as $entry)						
+						{
+						
+							if($this->_view->escape($entry['hotels_primary_image']))
+							{ 
+								$thumb_image = 'data/frontImages/hotels/hotels_image/'.$this->_view->escape($entry['hotels_primary_image']); 
+							}
+							else
+							{ 
+								if($this->_view->escape($entry['hotels_image']))
+								{
+									$hotels_image_val_arr = explode(',',$entry['hotels_image']);
+									$thumb_image = 'data/frontImages/hotels/hotels_image/'.$this->_view->escape($hotels_image_val_arr[0]); 
+								}
+								else
+								{
+									$thumb_image = 'application/layouts/scripts/'.$this->_front_template['theme_folder'].'/images/mod_hotel_img/no_image.png'; 
+								}		
+							}
+							if($group_info['file_thumb_width'] && $group_info['file_thumb_resize_func'] != 'resizeToHeight')
+							{ 
+								$width = 'width="'.$this->_view->escape($group_info['file_thumb_width']).'"'; 
+							}
+							else
+							{
+								$width = '';
+							} 
+							if($group_info['file_thumb_height'] && $group_info['file_thumb_resize_func'] != 'resizeToWidth')
+							{ 
+								$height = 'height="'.$this->_view->escape($group_info['file_thumb_height']).'"'; 
+							} 
+							else
+							{
+								$height = '';
+							}
+				?>						
+						<li><a href="<?php echo $this->_view->url(array('module' => 'Hotels','controller' =>'frontend', 'action' => 'details','hotels_title' => $this->_view->escape($entry['hotels_title']) ),'Hotels-details/:hotels_title',true); ?>" class="preview" link="<?php echo $thumb_image; ?>" title="<?php echo $this->_view->escape($entry['hotels_name']); ?>" width="300"><?php echo $this->truncate($this->_view->escape($entry['hotels_name']), 0, 7); ?></a></li>
+																
+				<?php
+					$total_box = ceil(count($view_latest_datas) / $this->_d_num);
+					if($total_box > $box)
+					{
+						if($l % $this->_d_num == 0)
+						{
+							
+							$devider =  '</ul></div><div class="col"><ul>';
+							echo $devider;
+							$box++;
+						}
+					}
+						$l++;
+					}
+				?>
+			</ul>	
+		</div>
+        <?php
+			}
+		?>
+	</div>
+</div>
+
+<?php
+	}
+}
+try
+{
+	$recent_hotels_list_class = new recent_hotels_list($this);
+	$recent_hotels_list_class->class_body();
+}
+catch(Exception $e)
+{
+	echo $e->getMessage();
+}
+?>

@@ -1,0 +1,6 @@
+[14-Aug-2013 00:23:49 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[14-Aug-2013 00:23:49 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/api/list.phtml on line 2
+[14-Aug-2013 15:23:22 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[14-Aug-2013 15:23:22 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Global_Variable' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/api/update.phtml on line 2
+[30-Aug-2013 19:25:06 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 19:25:07 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Global_Variable' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/api/update.phtml on line 2

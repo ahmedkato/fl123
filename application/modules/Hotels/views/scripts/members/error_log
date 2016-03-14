@@ -1,0 +1,40 @@
+[26-Jul-2013 07:50:47 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:50:48 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/favorite.phtml on line 2
+[26-Jul-2013 07:51:47 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:51:48 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/add.phtml on line 2
+[26-Jul-2013 07:52:20 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:52:20 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/addroom.phtml on line 2
+[26-Jul-2013 07:53:01 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:53:01 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/list.phtml on line 1
+[26-Jul-2013 07:53:34 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:53:34 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/listroomtype.phtml on line 1
+[26-Jul-2013 07:54:14 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:54:15 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/edit.phtml on line 2
+[26-Jul-2013 07:54:47 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:54:47 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/listroom.phtml on line 1
+[26-Jul-2013 07:55:30 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:55:30 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/editroom.phtml on line 3
+[26-Jul-2013 07:56:04 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:56:04 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/addroomtype.phtml on line 2
+[26-Jul-2013 07:56:41 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:56:41 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/editroomtype.phtml on line 3
+[13-Aug-2013 14:19:17 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[13-Aug-2013 14:19:17 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/add.phtml on line 2
+[13-Aug-2013 16:43:27 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[13-Aug-2013 16:43:28 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/favorite.phtml on line 2
+[13-Aug-2013 17:43:59 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[13-Aug-2013 17:43:59 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/addroom.phtml on line 2
+[14-Aug-2013 03:44:08 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[14-Aug-2013 03:44:08 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/list.phtml on line 1
+[14-Aug-2013 07:25:17 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[14-Aug-2013 07:25:18 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/listroomtype.phtml on line 1
+[14-Aug-2013 07:54:05 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[14-Aug-2013 07:54:05 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/edit.phtml on line 2
+[14-Aug-2013 09:13:17 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[14-Aug-2013 09:13:17 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/listroom.phtml on line 1
+[14-Aug-2013 13:24:18 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[14-Aug-2013 13:24:18 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/editroom.phtml on line 3
+[14-Aug-2013 16:45:54 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[14-Aug-2013 16:45:54 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/addroomtype.phtml on line 2
+[14-Aug-2013 19:13:27 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[14-Aug-2013 19:13:27 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/members/editroomtype.phtml on line 3

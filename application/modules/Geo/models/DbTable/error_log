@@ -1,0 +1,6 @@
+[09-Aug-2013 18:23:35 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[09-Aug-2013 18:23:36 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Geo/models/DbTable/City.php on line 0
+[10-Aug-2013 15:48:41 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 15:48:41 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Geo/models/DbTable/Country.php on line 0
+[10-Aug-2013 16:03:57 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 16:03:57 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Abstract_DbTable' not found in /home/wwwhotei/public_html/application/modules/Geo/models/DbTable/State.php on line 0

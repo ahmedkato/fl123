@@ -1,0 +1,16 @@
+[29-Jul-2013 14:09:12 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 14:09:12 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/top_pagination.phtml on line 2
+[30-Jul-2013 21:43:04 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Jul-2013 21:43:04 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/top_pagination.phtml on line 2
+[02-Aug-2013 22:06:29 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 22:06:29 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/nav_menu.phtml on line 2
+[10-Aug-2013 16:35:36 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 16:35:36 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/pagination.phtml on line 2
+[10-Aug-2013 23:20:51 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 23:20:51 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/top_pagination.phtml on line 2
+[12-Aug-2013 08:28:30 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[12-Aug-2013 08:28:30 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/top_pagination.phtml on line 2
+[13-Aug-2013 05:13:26 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[13-Aug-2013 05:13:26 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/nav_menu.phtml on line 2
+[13-Aug-2013 10:57:41 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[13-Aug-2013 10:57:41 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/pagination.phtml on line 2

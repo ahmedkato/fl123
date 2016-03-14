@@ -1,0 +1,10 @@
+[31-Jul-2013 15:18:42 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[31-Jul-2013 15:18:42 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/News/views/scripts/advertise/list.phtml on line 2
+[01-Aug-2013 07:48:27 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[01-Aug-2013 07:48:27 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/News/views/scripts/advertise/pagination-category-flickr.phtml on line 2
+[01-Aug-2013 11:33:15 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[01-Aug-2013 11:33:16 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/News/views/scripts/advertise/details.phtml on line 2
+[01-Aug-2013 14:24:27 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[01-Aug-2013 14:24:27 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/News/views/scripts/advertise/categories.phtml on line 3
+[01-Aug-2013 19:13:05 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[01-Aug-2013 19:13:05 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/News/views/scripts/advertise/pagination-flickr.phtml on line 3

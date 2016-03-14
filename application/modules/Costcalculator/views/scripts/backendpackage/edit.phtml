@@ -1,0 +1,314 @@
+<div id="container">
+<?php if (!$this->allow()) : ?>
+	<div class="grid_12 t_a_bottom">
+		<?php echo $this->translator->translator('Member_Access_deny_desc'); ?>
+	</div>
+<?php else : ?>
+
+<?php
+$version = new Eicra_License_Version();
+echo $this->headScript()->setFile($this->baseUrl().'/js/jquery/jquery-ui.multidatespicker.js');
+
+$this->packageForm->setEditor(Zend_Registry::get('config')->eicra->params->domain.$this->baseUrl());
+$this->packageForm->getEditor();
+?>
+
+<script type="text/javascript">
+
+$(document).ready(function() {	
+	
+	floatingbar('#floatingbar',"#button_top_bar",null);
+	
+	var dateArr = new Array();
+	var i;
+	var date_string = "<?php echo $this->date_arr; ?>";
+	if(date_string.length > 0)
+	{
+		var date_arr = date_string.split(',');
+		for(i= 0; i<date_arr.length; i++)
+		{
+			dateArr[i] = date_arr[i]; 
+		}
+		$("#not_available_date").multiDatesPicker({
+			addDates: dateArr,
+			numberOfMonths: 2
+		});
+	}
+	else
+	{
+		$("#not_available_date").multiDatesPicker({
+			numberOfMonths: 2
+		});
+	}
+	$("#not_available_date").val(dateArr);	
+		
+	function stripslashes(str) 
+	{
+		str=str.replace(/\\'/g,'\'');
+		str=str.replace(/\\"/g,'"');
+		str=str.replace(/\\0/g,'\0');
+		str=str.replace(/\\\\/g,'\\');
+		return str;
+	}
+	
+	
+	function openMsgDialog(msg)
+	{
+		$('#dialog_msg').html(msg).dialog({
+			autoOpen: true,
+			modal: true,
+			show: 'fade',
+			resizable: 'false',				
+			buttons: { "<?php echo html_entity_decode($this->translator->translator('common_ok'), ENT_QUOTES, 'UTF-8'); ?>": function() { $(this).dialog('option', 'hide', 'explode').dialog("close"); } },
+			open: function(event, ui)
+				 {
+					setTimeout(function() 
+					{									
+						if($('#' + event.target.id).dialog('isOpen'))
+						{
+							$('#' + event.target.id).dialog('option', 'hide', 'explode').dialog('close');										
+						}
+					}, 10000);
+				  }
+		});
+	}
+		
+	$('a.close_dialog_btn').click(function() {		 
+		$("#upload-form").dialog('option','hide','explode').dialog('close');			
+	});
+		
+	$('a.reset_btn').click(function() {			
+		 resetFields();	
+		 removeError();	
+	});
+	
+	function resetFields()
+	{
+		$( "form" )[ 0 ].reset();					
+	}
+	
+	function removeError()
+	{
+		$('#actionMessage').html('');
+		
+		var filename = '';
+		var filevalue = '';		
+		$.each($('form').serializeArray(), function(i, field) {	
+				if(field.name.match(/\[\]$/))
+				{
+					var filearr = field.name.split('[]');
+					filename = filearr[0];					
+				}
+				else
+				{
+					filename 	= 	field.name;
+				} 			
+				$('#'+filename).removeClass('ui-state-error');
+				$('#'+filename+'_err').html('');									
+		});				
+	}
+	
+	function addError(key,errMsg)
+	{
+		var err_id = key+'_err';
+		var field_name = key;
+		$('#'+field_name).addClass('ui-state-error');
+		$('#'+err_id).append(errMsg);
+	}
+	
+	function openLoaderDialog()
+	{
+		$('#dialog_container').dialog({
+			autoOpen: true,
+			modal: true,
+			show: 'fade',
+			resizable: 'false',				
+			open: function(event, ui)
+				 {
+					$("#progressbar").progressbar({
+						value:100
+		
+					});							
+				  }
+		});
+	}
+	
+	function closeLoaderDialog()
+	{
+		$('#dialog_container').dialog('option','hide','explode').dialog('close');
+	}
+	
+	function getFormData()
+	{
+		var fieldObj = {};
+		var filename = '';
+		var filevalue = '';
+		$.each($('form').serializeArray(), function(i, field) {	
+			if(field.name.match(/\[\]$/))
+			{
+				var filearr = field.name.split('[]');
+				filename = filearr[0];
+				filevalue = $('#'+filename).val();
+			}
+			else
+			{
+				filename 	= 	field.name;
+				filevalue 	= 	field.value;
+			}			
+			fieldObj[filename] = (tinyMCE.get(filename)) ? tinyMCE.get(filename).getContent() : filevalue;				
+		});		
+		return fieldObj;
+	}
+	
+	$('a.make_date').click(function(){
+		$('#not_available_date').trigger('focus');
+	});
+	
+	$('a.edit_package_btn').click(function() {			
+			
+		var formData = getFormData();
+		formData.id = '<?php echo $this->id; ?>';
+		
+		$.ajax({
+			url: "<?php echo $this->url( array('module' => 'Costcalculator','controller' => 'backendpackage', 'action'     => 'edit' ), 'adminrout',    true) ?>",
+			  	type: 'POST',
+			  	data: formData,
+				beforeSend: function(){						
+						removeError();
+						openLoaderDialog();				
+					 },
+				success: function(response){
+					//alert(response);					
+					var json_arr = eval("("+response+")");					
+					closeLoaderDialog();					
+					if(json_arr.status == 'ok')
+					{
+						$('#actionMessage').html(succMsgDesign(json_arr.msg));									
+					}
+					else if(json_arr.status == 'errV')
+					{
+						$('#actionMessage').html(errMsgDesign("<?php echo $this->translator->translator('common_err'); ?>"));
+												
+						for(var i= 0; i < json_arr.msg.length; i++)
+						{
+							addError(json_arr.msg[i].key,json_arr.msg[i].value);							
+						}
+					}
+					else
+					{
+						$('#actionMessage').html(errMsgDesign(json_arr.msg));
+					}
+				},
+				error: function (xhr,status,msg)
+				{
+					closeLoaderDialog();
+					var msg = "Error! " + xhr.status + " " + error;					
+					$('#actionMessage').html(errMsgDesign(msg));
+				}
+		});
+	});		
+	
+});
+</script>
+<div id="button_top_bar"></div>
+<div class="title-container">
+	<div class="vehicle-edit"><h1><?php echo $this->translator->translator('cost_package_edit_title'); ?></h1></div>
+    
+    <div class="button-container">
+        <span class="button ui-widget-content-1"><a href="<?php echo $this->url( array('module' => 'Costcalculator','controller' => 'backendpackage', 'action'     => 'list' ), 'adminrout',    true) ?>" class="back_btn_link"><span class="icon back"><?php echo $this->translator->translator('common_back'); ?></span></a></span>
+        <span class="button ui-widget-content-1"><a href="javascript:  void(0);" class="reset_btn"><span class="icon reset"><?php echo $this->translator->translator('common_reset'); ?></span></a></span>
+        <span class="button ui-widget-content-1"><a href="javascript: void(0);" class="edit_package_btn"><span class="icon save"><?php echo $this->translator->translator('common_save'); ?></span></a></span>
+    </div>
+</div>
+
+<div class="content-container">
+	<div id="sidebar-inner">
+    	<?php echo $this->partial('nav_menu.phtml');  ?>
+    </div>
+    
+    
+    
+    <div id="content-inner">
+    	<form name="formCategory" id="formCategory" method="post">
+        	<div id="actionMessage"></div>
+        	<div id="generalInfo">
+            	<fieldset class="fieldset last">
+                	<legend class="legend"><?php echo $this->translator->translator('cost_package_page_info'); ?></legend>
+                    <div class="form">
+                    	<div class="form-row">
+                            <div class="label label-small">
+                                <?php echo $this->packageForm->package_name->getLabel();  if($this->packageForm->package_name->isRequired()){ ?><span class="required">*</span><?php } ?>
+                            </div>
+                            
+                            <div class="field field-big">
+                                <?php echo $this->packageForm->package_name; ?>
+                                <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->packageForm->package_name->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                <div class="input-errors" id="<?php echo $this->packageForm->package_name->getName().'_err'; ?>"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="label label-small">
+                                <?php echo $this->packageForm->availability->getLabel();  if($this->packageForm->availability->isRequired()){ ?><span class="required">*</span><?php } ?>
+                            </div>
+                            
+                            <div class="field field-big">
+                                <?php echo $this->packageForm->availability; ?>
+                                <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->packageForm->availability->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                <div class="input-errors" id="<?php echo $this->packageForm->availability->getName().'_err'; ?>"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="label label-small">
+                                <?php echo $this->packageForm->not_available_date->getLabel();  if($this->packageForm->not_available_date->isRequired()){ ?><span class="required">*</span><?php } ?>
+                            </div>
+                            
+                            <div class="field field-big">
+                           		<?php echo $this->packageForm->not_available_date; ?><a href="javascript: void(0)" class="make_date"><img src="application/modules/Administrator/layouts/scripts/images/common/calendar.png" alt="<?php echo $this->translator->translator('cost_calender_title'); ?>" border="0" title="<?php echo $this->translator->translator('cost_calender_title'); ?>" /></a>
+                           	  	<div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->packageForm->not_available_date->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                              	<div class="input-errors" id="<?php echo $this->packageForm->not_available_date->getName().'_err'; ?>"></div>
+                       	  </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="label label-small">
+                                <?php echo $this->packageForm->description->getLabel();  if($this->packageForm->description->isRequired()){ ?><span class="required">*</span><?php } ?>
+                            </div>
+                
+                            <div class="field field-big">
+                                <div class="left-float"><?php echo $this->packageForm->description; ?></div>
+                                <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->packageForm->description->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                <span id="<?php echo 'loaderLink'; ?>"><a href="javascript:void(0);" onClick="loadTinyMCE('<?php echo $this->packageForm->description->getName(); ?>');"><img src="application/modules/Administrator/layouts/scripts/images/common/editors.gif" border="0" title="<?php $this->translator->translator('common_editor_open'); ?>" alt="<?php $this->translator->translator('common_editor_open'); ?>" ></a></span>
+                                <div class="input-errors" id="<?php echo $this->packageForm->description->getName().'_err'; ?>"></div>
+                            </div>	
+                        </div>
+                  	</div>
+              	</fieldset>
+         	</div>
+        </form>
+  	</div>
+
+    <div class="button-container">
+        <span class="button ui-widget-content-1"><a href="<?php echo $this->url( array('module' => 'Costcalculator','controller' => 'backendpackage', 'action'     => 'list' ), 'adminrout',    true) ?>" class="back_btn_link"><span class="icon back"><?php echo $this->translator->translator('common_back'); ?></span></a></span>
+        <span class="button ui-widget-content-1"><a href="javascript:  void(0);" class="reset_btn"><span class="icon reset"><?php echo $this->translator->translator('common_reset'); ?></span></a></span>
+        <span class="button ui-widget-content-1"><a href="javascript: void(0);" class="edit_package_btn"><span class="icon save"><?php echo $this->translator->translator('common_save'); ?></span></a></span>
+    </div>
+</div>
+
+<div id="dialog_msg" title="<?php echo $this->translator->translator('common_dialog_msg',$this->translator->translator('cost_package_edit_title')); ?>"></div>
+<div id="dialog_container" style="display:none" title="<?php echo $this->translator->translator('common_processing_language'); ?>">
+	<div id="progressbar" ></div>	
+</div>
+
+<div id="floatingbar">
+	<h1><?php echo $this->translator->translator('cost_package_edit_title'); ?></h1>
+    
+    <div class="button-container">
+        <span class="button ui-widget-content-1"><a href="<?php echo $this->url( array('module' => 'Costcalculator','controller' => 'backendpackage', 'action'     => 'list' ), 'adminrout',    true) ?>" class="back_btn_link"><span class="icon back"><?php echo $this->translator->translator('common_back'); ?></span></a></span>
+        <span class="button ui-widget-content-1"><a href="javascript:  void(0);" class="reset_btn"><span class="icon reset"><?php echo $this->translator->translator('common_reset'); ?></span></a></span>
+        <span class="button ui-widget-content-1"><a href="javascript: void(0);" class="edit_package_btn"><span class="icon save"><?php echo $this->translator->translator('common_save'); ?></span></a></span>
+    </div>
+</div>
+<?php endif; ?>	
+</div>

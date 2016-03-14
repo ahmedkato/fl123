@@ -1,0 +1,940 @@
+/* ___________________________________________________________________________________
+   
+   CSS Framework for Eicra PHP Holidays Script [Templates, Blocks & Product Modules] 
+   ___________________________________________________________________________________ */
+   
+
+/*	GLOBAL STYLES ******************************************************************** */
+
+@charset "utf-8";
+
+html{
+	direction:rtl; 
+}
+
+body{
+	background-color:#F1F1F1;
+	font-family:Arial, Helvetica, sans-serif;
+	color: #272727;
+	font-size: 12px;
+	margin:0px;
+	padding:0px;
+}
+
+input[type="text"],
+input[type="password"], select, textarea,
+select.ui-widget-content, textarea.ui-widget-content{
+	margin:0 0 0 10px
+}
+
+input[type="checkbox"],
+input[type="radio"]{
+	margin:0px 0 5px 8px;
+}
+
+select option{
+	padding:0 4px 0 0;
+}
+
+/* ********************************************************************************** */
+
+/* LAYOUT STYLES ******************************************************************** */
+
+#content{
+	float:right;
+}
+
+/* Header --------------------------------------------------------------------------- */
+
+#header .logo{
+	float:right;
+}
+
+#header .quick-access{
+	text-align:left;
+	float:left;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Top Bar -------------------------------------------------------------------------- */
+
+.top-links ul{
+	margin: 0 0 0 5px;
+}
+
+.top-links ul li{ 
+	margin-right:0; 
+	padding: 0 5px 0 1px; 
+	border-left:0;
+	border-right:1px solid #C4C4C4;
+}
+			
+.top-links ul li.first{ 
+	margin-right:0; 
+	border-right: none; 
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Side Bar ------------------------------------------------------------------------- */
+
+#sidebar{
+	float:left;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Block Box Model ------------------------------------------------------------------ */
+
+.block .block-heading .symbol{
+	background:url(../images/round-arrow-rtl.png);
+	background-position: 99% center;
+	background-repeat:no-repeat;
+	padding:10px 35px 10px 0;
+}
+
+.block .thumb{
+	margin: 2px 0 2px 8px;
+	float:right;
+}
+
+.block .duration .day{
+	border-radius:100px 0 0 100px;
+	padding: 4px 8px 4px 12px;
+}
+
+.block .duration .night{
+	border-radius: 0 100px 100px 0;
+	padding: 4px 12px 4px 8px;
+}
+
+.block .img-wrapper,
+	   .img-wrapper{
+	float:right;
+}
+
+.block .img-wrapper .type{
+/*	left:auto;*/
+}
+
+.block .img-wrapper .photo-count-container{
+	left:22px;
+}
+
+.block .link-btn a{
+	float:left;
+}
+
+.block .more a {
+	background: url(../images/arrow-2-rtl.gif);
+	background-position:98% 2px;
+	background-repeat:no-repeat;
+	padding: 0 15px 0 0;
+	float:right;
+	clear:right;
+}
+
+.block .list{
+	margin:5px 10px 5px 0;
+	float:right;
+}
+
+.block .list ul li{
+	background-image:url(../images/list-arrow-rtl.gif);
+	background-position:96% 7px;
+	padding:0 20px 0 0;
+}
+
+.left-float {
+	float:right;
+	margin: 0 0 5px 10px;
+}
+
+.right-float {
+	float:left;
+	margin: 0 10px 5px 0;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Footer --------------------------------------------------------------------------- */
+
+#footer .social{
+	float:left;
+}
+
+#footer .links ul li {
+	padding: 0 5px 0 1px; 
+	border-left: 0;
+	border-right: 1px solid #FFF;
+}
+			
+#footer .links ul li.first{ 
+	border-right:0;
+	padding-right:0;
+}
+
+.go-top a{
+	right:0;
+	left:30px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Inner Page Layout ---------------------------------------------------------------- */
+
+#sidebar-inner{
+	float:right;
+}
+
+#content-inner{
+	float:left;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* ********************************************************************************** */
+
+
+/* BLOCKS STYLE ********************************************************************* */
+
+/* Language Flag -------------------------------------------------------------------- */
+
+.flags{
+	float:left;
+	margin:4px 5px 0 0;
+}
+
+.flags .dropdown dl{ 
+	float:left;
+}
+
+.dropdown dt a{
+	background-repeat:no-repeat;
+	background-position:left center;
+	padding-right:0;
+	padding-left:20px;
+}
+
+.dropdown span.flag{
+	margin-left:0px;
+	margin-right:10px;
+	float:left;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Top Navigation ------------------------------------------------------------------- */
+
+.dm-menu {
+	float: right !important;
+}
+
+.dm-menu li {
+	float:right !important;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Tab Panel ------------------------------------------------------------------------ */
+
+.usual ul li{ 
+	float:right;
+}
+
+.usual ul li a{
+	margin:0px -1px 0 4px;
+}
+
+.usual-content{
+  clear:right;
+}			
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Easy Tab ------------------------------------------------------------------------- */
+
+.tabs a .icon{
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Accordion Panel ------------------------------------------------------------------ */
+
+.accordion p,
+.accordion p.active{
+	background-position:662px center;
+	padding:0 30px 0 0;
+}
+
+.accordion span{
+	border-left:0;
+	border-right: 1px solid #CCCCCC;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Banner Search -------------------------------------------------------------------- */
+
+.block-home-search{
+	float:right;
+}
+
+.block-home-search h1{
+	padding:8px 3px 6px 0;
+}
+
+.block-home-search .col{
+	float:right;
+	padding: 0 0 0px 8px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* List View ------------------------------------------------------------------------ */
+
+.block-list .block-content .details{
+	float:right;
+}
+
+.block-list .block-content .right-col{
+	float:left;
+	text-align:left;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Grid View ------------------------------------------------------------------------ */
+
+.block-grid .block-body{
+	text-align:right;
+}
+
+.block-grid .col{
+	margin:5px 13px 5px 0;
+	float:right;
+}
+
+.block-grid .img-wrapper .photo-count-container{
+	left:-8px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Listing Link View ---------------------------------------------------------------- */
+
+.block-listing .col{
+	margin:5px 10px 5px 0;
+	float:right;
+}
+
+.block-listing ul li{
+	background-image:url(../images/list-arrow-rtl.gif);
+	background-position:99% 7px;
+	padding:0 20px 0 0;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Flight Fare ---------------------------------------------------------------------- */
+
+.block-flight-fare ul li .fare{
+	float:left;
+	text-align:left;
+	padding:0 0 0 4px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Travle Home Packages ------------------------------------------------------------- */
+
+.block-travel-pkgs .pkgs{
+	margin: 0 0 0 14px;
+	float:right;
+}
+
+.block-travel-pkgs .pkgs.last{
+	float:left;
+	margin-left:0;
+}
+
+.block-travel-pkgs .pkgs p{
+	text-align:right;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Add Listing ---------------------------------------------------------------------- */
+
+.add-btn span.icon{
+	background-position:right center;
+	background-repeat:no-repeat;
+	margin:13px 8px 0px 12px;
+	float:right;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Featured Special ----------------------------------------------------------------- */
+
+.block-featured .col{
+	margin: 5px 6px 15px 0;
+	float:right;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Featured Gallery ----------------------------------------------------------------- */
+
+.futurico-theme.slider-wrapper{
+	   margin-right:16px !important;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Flight Packages ------------------------------------------------------------------ */
+
+.block-flight-pkg .block-title{
+	float:right;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Email Newsletter ----------------------------------------------------------------- */
+
+.block-subscribe .block-body{
+	background-image: url(../images/newsletter-tmpl-rtl.png);
+	background-position:2px bottom;
+}
+
+.block-subscribe label{
+	float:right;
+	margin:1px 0 0 5px;
+}
+
+.block-subscribe input[type="button"]{
+	clear:left;
+}
+
+.block-subscribe img.loader {
+	padding:5px 48% 5px 0;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Member Login --------------------------------------------------------------------- */
+
+.block-login{
+	float:right;
+}
+
+.block-login label{	
+	float:right;
+	clear:right;
+}
+
+.block-login input[type="text"],
+.block-login input[type="password"]{
+	float:left;
+}
+
+.block-login #signin_frm img{
+	float:right;
+}
+
+.block-login input[type="button"]{
+	float:left;
+}
+
+.block-login a.reg{
+	padding: 2px 25px 0 0;
+	margin: 18px 0 0 2px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Article by ID -------------------------------------------------------------------- */
+
+.block-article .more a {
+	background: url(../images/arrow-white-rtl.png);
+	background-position:right center;
+	background-repeat:no-repeat;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Social --------------------------------------------------------------------------- */
+
+.block-social .block-body h1{
+	text-align:right;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Header AD ------------------------------------------------------------------------ */
+
+.block-ad-header .tel-icon{
+	background-position:right center;
+	padding:0 30px 0 0;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Footer AD ------------------------------------------------------------------------ */
+
+.block-ad-footer{
+	float:right;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* ********************************************************************************** */
+
+
+/* PRODUCT MODULES ****************************************************************** */
+
+/* Global Module Style -------------------------------------------------------------- */
+
+.mod .col{
+	padding: 0 0 3px 12px;
+	float:right;
+}
+
+.mod .img-wrapper .photo-count-container{
+	left:0;
+	right:5px;
+}
+
+.mod .social{
+	float:left;
+	text-align:left;
+}
+
+.mod .list{
+	margin:5px 10px 5px 0;
+	float:left;
+}
+
+.mod .list ul li{
+	background-image:url(../images/list-arrow-rtl.gif);
+	background-position:98% 7px;
+	background-repeat:no-repeat;
+	padding:0 20px 0 0;
+}
+
+.mod .mod-title{
+	unicode-bidi:embed;
+}
+
+.mod .thumb{
+	margin: 0 0 0 10px;
+	float:right;
+}
+
+.mod .more a {
+	background: url(../images/arrow-2-rtl.gif);
+	background-repeat:no-repeat;
+	background-position:right center;
+	float:right;
+	padding: 0 15px 0 0;
+	clear:right;
+}
+
+.mod .chart .label{
+	float:right;
+	clear:left;
+}
+
+.mod .chart .value{
+	float:left;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Product List --------------------------------------------------------------------- */
+
+.products-list .list-header .header-row .header-left{
+	padding:2px 5px 2px 0;
+}
+
+.products-list .list-header .header-row .header-right{
+	padding:2px 0 2px 5px;
+	text-align:left;
+	margin: 0 0 0 5px;
+}
+
+.products-list .left-content{
+	float:right;
+}
+
+.products-list .right-content{
+	float:left;
+}
+
+.products-list .list-footer .footer-left{
+	margin: 12px 5px 10px 0;
+	float:right;
+}
+
+.products-list .list-footer .footer-right{
+	float:left;
+	text-align:left;
+	padding: 0 10px 0 5px;
+}
+
+.products-options li{
+	padding:7px 27px 2px 0;
+	background-position: 99% 4px;
+	background-repeat:no-repeat;
+	padding:7px 27px 2px 0;
+}
+
+.products-vote span{
+	margin-right:5px;
+}
+
+.products-vote span input[type="button"]{
+	margin: 0 0 -5px 4px;
+	border:0;
+	float:right;
+}
+
+.products-write-review a{
+	background-repeat:no-repeat;
+	background-position:right 0;
+	padding:0 20px 2px 0;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Product Details ------------------------------------------------------------------ */
+
+.mod-details .nav-bar .nav-row .nav-col.first{
+	text-align:right;
+}
+
+.mod-details .nav-bar .nav-row .nav-col.last{
+	text-align:left;
+}
+
+.mod-details .nav-bar .no-link{
+	background-repeat:no-repeat;
+	background-position:right center;
+	padding-left:0;
+	padding-right:20px;
+}
+
+.mod-details .nav-bar .prev a{
+	background-repeat:no-repeat;
+	background-position:right 0;
+	padding-left:0;
+	padding-right:20px;
+}
+
+.mod-details .nav-bar .next a{
+	background-repeat:no-repeat;
+	background-position:right 0;
+	padding-left:0;
+	padding-right:20px;		
+}
+
+.mod-details .nav-bar .search a{
+	background-repeat:no-repeat;
+	background-position:right 0;
+	padding-left:0;
+	padding-right:20px;		
+}
+
+.mod-details .nav-bar .save a{
+	background-repeat:no-repeat;
+	background-position:right 0;
+	padding-left:0;
+	padding-right:20px;			
+}
+
+.mod-details h1{
+	float:right;
+	margin: 10px 0 10px 20px;
+}
+
+.mod-details .products-type{
+	float:right;
+}
+
+.mod-details .products-info{
+	float:right;
+}
+
+.mod-details .products-info.right{
+	float:left;
+	text-align:left;
+}
+
+.mod-details .products-info .products-status{
+	padding: 5px 10px 5px 3px;
+	float:left;
+}
+
+.mod-details .products-info.right .products-vote span{
+	padding-right:0;
+	padding-left:18px;
+}
+
+.mod-details .products-feature{
+	float:right;
+}
+
+.mod-details .products-feature.summary{
+	float:left;
+}
+
+.mod-details .products-details .content .details-info li,
+.mod-details .products-details .content .details-info ul li {
+	margin-left:0 !important;
+	margin-right:10px !important;
+	padding-left:0px !important;
+	padding-right:10px !important;
+}
+
+.mod-details .products-details-header h4.icon{
+	background-repeat:no-repeat;
+	background-position: 99% center;
+	padding: 8px 30px 8px 0;
+}
+
+.mod-details .products-feature .label{
+	float:right;
+	margin-right:0;
+	margin-left:2px;
+}
+
+.mod-details .products-feature .value{
+	float:right;
+}
+
+.mod-details .products-feature .summary-value{
+	padding-left:0;
+	padding-right:12px;
+	margin-left:0px;
+}
+
+.mod-details .additional-thumb{
+	margin: 0 18px 18px 0;
+}
+
+.mod-details .products-legend{
+	float:left;
+}
+
+.mod-details .products-legend .legend-icon{
+	float:right;
+	padding:0 10px 0 0;
+}
+
+.mod-details .products-features{
+	float:right;
+	margin-right:0;
+	margin-left:10px;
+	text-align:right;
+}
+
+.mod-details .tab-element,
+.mod-details .tab-value{
+	float:right;
+}
+
+.mod-details .tab-value{
+	margin-left:0;
+	margin-right:10px;
+}
+
+/* Box Chart Start -- */
+
+.products-chart .chart-desc .label{
+	float:right;
+}
+
+.products-chart .chart-desc .value{
+	float:left;
+}
+
+/* Box Chart End -- */
+
+/* Box Chart Settings for Other Chart -- */
+
+.products-chart.summary-chart{
+	float:left;
+}
+
+.products-chart.products-availability{
+	float:right;
+}
+
+/* Agent Box Start -- */
+
+.products-agent{
+	float:left;
+	clear:left;
+}
+
+.products-agent .avatar{
+	margin-right:0;
+	margin-left:15px;
+	float:right;
+}
+
+.products-agent .pkg-img{
+	float:left;
+}
+
+.products-agent .company-logo{
+	float:right;
+	margin:6px 0 0 15px;
+}
+
+.products-agent .company-info{
+	float:right;
+}
+
+.products-agent a.agent-email{
+	background-repeat:no-repeat;
+	background-position: right 4px;
+	padding-left:0;
+	padding-right:25px;
+}
+
+/* Agent Box End -- */
+
+/* ----------------------------------------------------------------------------------- */
+
+/* Product Details Middle Tab -------------------------------------------------------- */
+
+.products-middle-tab li { 
+	float:right;
+}
+
+.products-middle-tab ul a {
+	margin:0 -1px 0 4px;
+}
+
+.products-middle-tab-area{
+	border-radius: 5px 0 5px 5px;
+	-moz-border-radius: 5px 0 5px 5px;
+	-webkit-border-radius: 5px 0 5px 5px;
+}
+
+.products-middle-tab-area .products-slideshow{
+	float:right;
+}
+
+.products-middle-tab-area .match-container{
+	float:left;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Product Match -------------------------------------------------------------------- */
+
+.products-match .products-review{
+	float:left;
+	text-align:left;
+}
+
+.products-match .products-review .products-write-review{
+	text-align:left;
+	margin: 4px 0 0 2px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Details Page Slideshow ----------------------------------------------------------- */
+
+.products-slideshow .switch {
+    padding: 16px 5px 5px 0;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Itinerary List ------------------------------------------------------------------- */
+
+div.itinerary_main_body_block_clild_body_box2_child1{
+	padding-left: 0;
+	padding-right: 10px;
+}
+			
+.itinerary-header{
+	margin-left:0;
+	margin-right:5px;
+}
+				
+.itinerary-price{
+	text-align:left;
+	padding-right:0;
+	padding-left:10px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Review Tab ----------------------------------------------------------------------- */
+
+div.review-box-img{
+	float:right;
+	margin:5px 5px 5px 12px;
+}
+
+div.review-box-title{
+	float:right;
+}
+
+div.review-box-desc{
+	float:left;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Invoice Module ------------------------------------------------------------------- */
+
+.invoice .invoice-chart .div-hr .div-vr-2{
+	border-left:0;
+	border-right:1px solid #D6D6D6;
+}
+
+.invoice .item-title{
+	padding:10px 5px 10px 0;
+}
+
+.invoice .due-balance{
+	padding:10px 0 10px 5px;
+	text-align:left;
+}
+
+.invoice a.remove-btn{
+	float:left;
+	padding:1px 18px 0 5px;
+	background-repeat:no-repeat;
+	background-position: right center;
+}
+
+.invoice-login-area{
+	margin: 20px 20px 0 0;
+}
+
+.invoice-btn-container{
+	padding:10px 15px 5px 0;
+}
+
+h1.status-paid,
+h1.status-unpaid,
+h1.status-calcel{
+	text-align:right;
+	float:right;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* ___________________________________________________________________________________
+   
+   New CSS used by Developer
+   ___________________________________________________________________________________ */
+

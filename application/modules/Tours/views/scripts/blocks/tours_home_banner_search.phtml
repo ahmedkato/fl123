@@ -1,0 +1,265 @@
+<?php
+class tours_home_search_mod
+{
+	protected	$_group = 1;
+	protected	$_group_name = 'Domestic Tours';
+	protected	$_active =	1;
+	protected	$_front_template;
+	protected	$_translator;
+	protected	$_view;
+	protected	$postValue;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_view =	$view;	
+		$this->_translator = Zend_Registry::get('translator');	
+		$frontController = Zend_Controller_Front::getInstance();
+		$this->postValue = $frontController->getRequest()->getPost();
+	}
+	
+	public function class_body()
+	{
+		$version = new Eicra_License_Version();  
+		$front_template = Zend_Registry::get('front_template');
+		$tours_Country_DB = new Tours_Model_DbTable_Country();
+		$tours_State_DB = new Tours_Model_DbTable_State();
+		$tours_Area_DB = new Tours_Model_DbTable_Area();
+		$tours_DB = new Tours_Model_DbTable_Tours();
+		$businessType_BD = new Tours_Model_DbTable_BusinessType();
+		$group_db = new Tours_Model_DbTable_ToursGroup();
+
+
+		$global_conf = Zend_Registry::get('global_conf');
+		$currency = new Zend_Currency($global_conf['default_locale']);
+		
+		
+		$price_info_min = $tours_DB->getPrice('ASC');
+		$price_info_max = $tours_DB->getPrice('DESC');
+		
+		$number_of_day_min = $tours_DB->getDays('ASC');
+		$number_of_day_max = $tours_DB->getDays('DESC');
+		
+		$number_of_nights_min = $tours_DB->getNights('ASC');
+		$number_of_nights_max = $tours_DB->getNights('DESC');
+
+		
+		$tours_type_ID = $tours_DB->getToursType();
+		$rating = $tours_DB->getRating();
+		$duration = $tours_DB->getDuration();
+		$startCity = $tours_DB->getStartCity();
+		$endCity = $tours_DB->getEndCity();		
+		$minimumStay = $tours_DB->getMinimumStay();
+		$countries = $tours_Country_DB->getCountryInfo ();
+		
+?>
+
+<script type="text/javascript">
+$(function() {
+	
+	autoSuggestion('post_code_advance_box', "<?php echo $this->_view->url( array('module'=> 'Tours', 'controller' => 'backendpro', 'action'     => 'searchname' ), 'adminrout',    true) ?>", {'post_code': ''}, ['tours_primary_image', 'tours_image', 'tours_name', 'post_code', 'owner_name', 'num_of_days','tours_postcode' ,'ending_city', 'tours_location'], 'data/frontImages/tours/tours_image', 2);	
+	
+	$('a.clear_search').click(function() {		
+		$.each($('#formBlockAdvanceSearch').serializeArray(), function(i, field) {					
+			$('input[name="'+field.name+'"]').val('');		
+			$('select[name="'+field.name+'"]').val('');		
+		});	
+	});	
+	
+	
+	$('select.country_id').change(function() {	
+		if($('select.country_id option:selected').val() == 'any' || $('select.country_id option:selected').val() =='')
+		{
+			$('select.area_id').html('<option value="any"><?php echo $this->_translator->translator("tours_select_area",'','',$this->_front_template['theme_folder']); ?></option>');	
+			$('select.state_id').html('<option value="any"><?php echo $this->_translator->translator("tours_select_state",'','',$this->_front_template['theme_folder']); ?></option>');
+		}
+		else
+		{	
+			$.ajax({
+				  url: "<?php echo $this->_view->url( array('module' =>'Tours','controller' => 'frontend', 'action'     => 'states' ), 'adminrout',    true) ?>",
+				  type: 'POST',
+				  data: { id: $('select.country_id option:selected').val() },
+				  beforeSend: function(){						
+							$('select.state_id').html('<option value="any"><?php echo $this->_translator->translator("common_loading_language",'','',$this->_front_template['theme_folder']); ?></option>');
+							$('select.area_id').html('<option value="any"><?php echo $this->_translator->translator("tours_select_area",'','',$this->_front_template['theme_folder']); ?></option>');			
+							$('#state_id_err').html('<img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/loader/mod-loader.gif" width="15" border="0" />');	
+						 },
+				  success: function(response){
+					
+					var json_arr = eval("("+response+")");
+					var option = '<option value="any"><?php echo $this->_translator->translator("tours_select_state",'','',$this->_front_template['theme_folder']); ?></option>';				
+					if(json_arr.status == 'ok')
+					{
+						
+						for(var i = 0; i < json_arr.states.length; i++)
+						{
+							option += '<option value="'+json_arr.states[i].state_id+'" >'+stripslashes(json_arr.states[i].state_name)+'</option>';
+						}
+						$('select.state_id').html(option);
+						
+					}
+					else
+					{
+						$('select.state_id').html('<option value="any">'+json_arr.msg+'</option>');
+					}
+					$('#state_id_err').html('');
+				  }
+			});
+		}
+	});
+	
+	$('select.state_id').change(function() {		
+				
+		if($('select.state_id option:selected').val() == 'any' || $('select.state_id option:selected').val() == '')
+		{
+			$('select.area_id').html('<option value="any"><?php echo $this->_translator->translator("tours_select_area",'','',$this->_front_template['theme_folder']); ?></option>');
+		}
+		else
+		{
+			$.ajax({
+				  url: "<?php echo $this->_view->url( array('module' => 'Tours', 'controller' => 'frontend', 'action'     => 'areas' ), 'adminrout',    true) ?>",
+				  type: 'POST',
+				  data: { id: $('select.state_id option:selected').val() },
+				  beforeSend: function(){						
+						$('select.area_id').html('<option value="any"><?php echo $this->_translator->translator("common_loading_language",'','',$this->_front_template['theme_folder']); ?></option>');
+						$('#area_id_err').html('<img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/loader/mod-loader.gif" width="15" border="0" />');	
+						},
+				  success: function(response){
+					//alert(response);
+					var json_arr = eval("("+response+")");
+					var option = '<option value="any"><?php echo $this->_translator->translator("tours_select_area",'','',$this->_front_template['theme_folder']); ?></option>';				
+					if(json_arr.status == 'ok')
+					{
+						for(var i = 0;i<json_arr.cities.length;i++)
+						{
+							option += '<option value="'+json_arr.cities[i].city_id+'" >'+stripslashes(json_arr.cities[i].city)+'</option>';
+						}
+						$('select.area_id').html(option);
+					}
+					else
+					{
+						$('select.area_id').html('<option value="any">'+json_arr.msg+'</option>');
+					}
+					$('#area_id_err').html('');
+				  }
+			});
+		}
+	});	
+		
+		
+});
+function stripslashes(str) 
+{
+	str=str.replace(/\\'/g,'\'');
+	str=str.replace(/\\"/g,'"');
+	str=str.replace(/\\0/g,'\0');
+	str=str.replace(/\\\\/g,'\\');
+	return str;
+}
+</script>
+
+<form name="formBlockAdvanceSearch" id="formBlockAdvanceSearch" method="post" action="<?php echo $this->_view->url( array('module' => 'Tours', 'controller' => 'search', 'action'     => 'items' ), 'Tours-Search',    true); ?>">
+	<div class="block-search">
+		<div class="block-content">
+        	<h1><?php echo $this->_translator->translator('tours_front_page_Title_search','','',$this->_front_template['theme_folder']); ?></h1>
+            <div class="col">
+                <p><?php echo $this->_translator->translator('tours_list_page_search_postcode','','',$this->_front_template['theme_folder']); ?></p>
+                <input name="post_code_=" type="text" id="post_code_advance_box" size="15" />
+                <input type="hidden" name="active_=" id="active" value="1" /><input type="hidden" name="group_id_=" id="group_id" value="<?php echo $this->group_datas['id']; ?>" />
+            </div>
+            
+            <div class="col">
+                <p><?php echo $this->_translator->translator('tours_list_page_search_country','','',$this->_front_template['theme_folder']); ?></p>
+                <select name="country_id_="  id="country_id" class="country_id country">
+                    <option value="any"><?php echo $this->_translator->translator('tours_select_country','','',$this->_front_template['theme_folder']); ?></option>
+                    <?php
+                        $selected_country_id = (empty($this->postValue['country_id_='])) ? $global_conf['default_country'] : $this->postValue['country_id_='];
+                        foreach($countries as $key=>$value)
+                        {
+                            $selected = ($selected_country_id == $key) ? ' selected="selected" ' : '';
+                    ?>
+                           <option value="<?php echo $key; ?>"<?php echo $selected; ?>><?php echo $value; ?></option>					
+                    <?php
+                        }
+                    ?>
+                </select>
+            </div>
+            
+            <div class="col clear">
+				<p><?php echo $this->_translator->translator('tours_list_page_search_state','','',$this->_front_template['theme_folder']); ?></p>
+               	<select name="state_id_=" id="state_id" class="state_id">
+                     <option value="any"><?php echo $this->_translator->translator('tours_select_state','','',$this->_front_template['theme_folder']); ?></option>	
+                     <?php
+                        $state_info = $tours_State_DB->getAllStateInfo($selected_country_id); 
+                        foreach($state_info as $key=>$value)
+                        {
+                            $selected = ($value['state_id'] == $this->postValue['state_id_=']) ? ' selected="selected" ' : '';
+                            echo '<option value="'.$this->_view->escape($value['state_id']).'"'.$selected.'>'.$this->_view->escape($value['state_name']).'</option>';
+                        }
+                      ?>																		
+				</select><span id="state_id_err"></span>
+            </div>
+            
+            <div class="col">
+				<p><?php echo $this->_translator->translator('tours_list_page_search_area','','',$this->_front_template['theme_folder']); ?></p>
+               	<select name="area_id_=" id="area_id" class="area_id">
+                    <option value="any"><?php echo $this->_translator->translator('tours_select_area','','',$this->_front_template['theme_folder']); ?></option>	
+                    <?php
+						$selected_state_id = (empty($this->postValue['state_id_=']) || strtolower($this->postValue['state_id_=']) == 'any') ? '' : $this->postValue['state_id_='];
+						if(!empty($selected_state_id ))
+						{
+							$area_info = $tours_Area_DB->getAllAreaInfo($selected_state_id); 
+							foreach($area_info as $key=>$value)
+							{
+								$selected = ($value['city_id'] == $this->postValue['area_id_=']) ? ' selected="selected" ' : '';
+								echo '<option value="'.$this->_view->escape($value['city_id']).'"'.$selected.'>'.$this->_view->escape($value['city']).'</option>';
+							}
+						}
+					 ?>																		
+             	</select><span id="area_id_err"></span>
+            </div>
+            
+            <div class="col clear">
+				<p><?php echo $this->_translator->translator('tours_block_advanced_search_label_group_name','','',$this->_front_template['theme_folder']); ?></p>
+               <select name="group_id_=" id="group_id">
+					<?php
+                    $group_list = $group_db->getGroupInfo();
+                    foreach($group_list as $key => $value)
+                    {
+                            $selected = ($this->postValue['group_id_='] == $key) ? 'selected=""selected' : '';
+                            $this->_group	= ($this->postValue['group_id_='] == $key) ? $this->postValue['group_id_='] : $this->_group;
+                            $this->_group_name = ($this->postValue['group_id_='] == $key) ? $value : $this->_group_name;
+                    ?>
+                        <option value="<?php echo $key; ?>" <?php echo $selected; ?>><?php echo $this->_view->escape($value); ?></option>
+                    <?php	
+                    }
+                    ?>
+            	</select>
+            </div>
+            
+            <div class="clear">
+            	<input type="submit" name="button" id="button" value="<?php echo $this->_translator->translator('tours_front_page_search_button','','',$this->_front_template['theme_folder']); ?>" >   
+        	</div>
+            
+            <div class="clear">
+            	<a href="Tours-Search"><?php echo $this->_translator->translator('tours_block_simple_search_link_advance_search','','',$this->_front_template['theme_folder']); ?></a> &nbsp;&nbsp;&nbsp;
+            	<a href="All-Tours/<?php echo $this->_group; ?>"><?php echo $this->_translator->translator('tours_block_simple_search_link_view_all','','',$this->_front_template['theme_folder']); ?></a>
+        	</div>  
+        </div>
+	</div>
+</form>
+
+<?php
+	}
+}
+	
+	try
+	{
+		$tours_home_search_mod_class = new tours_home_search_mod($this);
+		$tours_home_search_mod_class->class_body();
+	}
+	catch(Exception $e)
+	{
+		echo $e->getMessage();
+	}	
+?>

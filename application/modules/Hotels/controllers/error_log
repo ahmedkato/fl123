@@ -1,0 +1,52 @@
+[26-Jul-2013 06:42:11 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 06:42:11 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/ApiController.php on line 0
+[26-Jul-2013 06:46:24 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 06:46:24 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/CronController.php on line 0
+[26-Jul-2013 06:52:46 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 06:52:47 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BackendController.php on line 0
+[26-Jul-2013 07:46:36 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:46:36 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BackendstateController.php on line 0
+[26-Jul-2013 07:49:57 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:49:57 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BackendgrpController.php on line 0
+[26-Jul-2013 08:01:11 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 08:01:11 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BackendroomController.php on line 0
+[26-Jul-2013 12:49:14 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 12:49:14 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/FrontendController.php on line 0
+[02-Aug-2013 00:20:02 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 00:20:02 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/MembersController.php on line 0
+[02-Aug-2013 13:58:03 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 13:58:03 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/ExpediaController.php on line 0
+[02-Aug-2013 21:27:55 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 21:27:55 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/WegoController.php on line 0
+[02-Aug-2013 22:57:55 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 22:57:55 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BookController.php on line 0
+[02-Aug-2013 23:46:29 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 23:46:29 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/SearchController.php on line 0
+[02-Aug-2013 23:49:59 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 23:49:59 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/EmailsController.php on line 0
+[03-Aug-2013 02:57:10 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 02:57:10 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BackendroomsController.php on line 0
+[03-Aug-2013 03:04:10 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 03:04:10 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BackendexpediaController.php on line 0
+[03-Aug-2013 03:07:40 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 03:07:40 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BackendtypeController.php on line 0
+[03-Aug-2013 03:11:09 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 03:11:09 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BackendareaController.php on line 0
+[03-Aug-2013 05:48:26 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 05:48:26 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/ApiController.php on line 0
+[03-Aug-2013 05:51:56 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 05:51:56 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/CronController.php on line 0
+[03-Aug-2013 05:58:55 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 05:58:55 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BackendController.php on line 0
+[03-Aug-2013 06:02:25 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 06:02:25 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BackendgrpController.php on line 0
+[04-Aug-2013 01:44:08 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[04-Aug-2013 01:44:08 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/WegoController.php on line 0
+[05-Aug-2013 22:51:27 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Aug-2013 22:51:27 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BackendstateController.php on line 0
+[05-Aug-2013 23:12:38 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Aug-2013 23:12:38 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BackendroomController.php on line 0
+[07-Aug-2013 01:46:28 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[07-Aug-2013 01:46:28 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BackendproController.php on line 0
+[31-Aug-2013 18:46:56 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[31-Aug-2013 18:46:56 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Hotels/controllers/BackendgrpController.php on line 0

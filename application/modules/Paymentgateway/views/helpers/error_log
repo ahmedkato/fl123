@@ -1,0 +1,4 @@
+[29-Jul-2013 10:35:05 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 10:35:05 Europe/Berlin] PHP Fatal error:  Class 'Zend_View_Helper_Abstract' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/views/helpers/Allow.php on line 0
+[10-Aug-2013 21:01:12 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 21:01:12 Europe/Berlin] PHP Fatal error:  Class 'Zend_View_Helper_Abstract' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/views/helpers/Allow.php on line 0

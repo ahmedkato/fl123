@@ -1,0 +1,8 @@
+[14-Aug-2013 02:15:41 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[14-Aug-2013 02:15:41 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/search/items-pagination-flickr.phtml on line 2
+[14-Aug-2013 12:55:30 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[14-Aug-2013 12:55:30 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/search/items-bk.phtml on line 2
+[14-Aug-2013 18:42:54 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[14-Aug-2013 18:42:54 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/search/items.phtml on line 2
+[30-Aug-2013 12:59:30 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 12:59:30 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Hotels/views/scripts/search/items-pagination-flickr.phtml on line 2

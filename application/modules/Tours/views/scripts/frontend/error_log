@@ -1,0 +1,12 @@
+[03-Aug-2013 22:35:18 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 22:35:18 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Tours/views/scripts/frontend/category-pagination-flickr.phtml on line 2
+[03-Aug-2013 23:59:11 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 23:59:11 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Tours/views/scripts/frontend/group-pagination-flickr.phtml on line 2
+[04-Aug-2013 00:51:37 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[04-Aug-2013 00:51:37 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Tours/views/scripts/frontend/view-pagination-flickr.phtml on line 2
+[30-Aug-2013 08:02:47 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 08:02:47 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Tours/views/scripts/frontend/category-pagination-flickr.phtml on line 2
+[30-Aug-2013 12:36:19 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 12:36:19 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Tours/views/scripts/frontend/details.phtml on line 2
+[30-Aug-2013 16:48:33 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 16:48:33 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Tours/views/scripts/frontend/home.phtml on line 2

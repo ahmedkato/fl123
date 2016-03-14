@@ -1,0 +1,18 @@
+[28-Jul-2013 16:24:18 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[28-Jul-2013 16:24:18 Europe/Berlin] PHP Fatal error:  Class 'Zend_View_Helper_Abstract' not found in /home/wwwhotei/public_html/application/modules/Comment/views/helpers/RepliedComment.php on line 0
+[29-Jul-2013 10:24:22 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 10:24:22 Europe/Berlin] PHP Fatal error:  Class 'Zend_View_Helper_Abstract' not found in /home/wwwhotei/public_html/application/modules/Comment/views/helpers/Price.php on line 0
+[29-Jul-2013 16:15:56 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 16:15:57 Europe/Berlin] PHP Fatal error:  Class 'Zend_View_Helper_Abstract' not found in /home/wwwhotei/public_html/application/modules/Comment/views/helpers/PageTitle.php on line 0
+[29-Jul-2013 21:31:17 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 21:31:17 Europe/Berlin] PHP Fatal error:  Class 'Zend_View_Helper_Abstract' not found in /home/wwwhotei/public_html/application/modules/Comment/views/helpers/Ad.php on line 0
+[30-Jul-2013 16:49:16 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Jul-2013 16:49:16 Europe/Berlin] PHP Fatal error:  Class 'Zend_View_Helper_Abstract' not found in /home/wwwhotei/public_html/application/modules/Comment/views/helpers/Price.php on line 0
+[10-Aug-2013 16:17:03 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 16:17:03 Europe/Berlin] PHP Fatal error:  Class 'Zend_View_Helper_Abstract' not found in /home/wwwhotei/public_html/application/modules/Comment/views/helpers/Allow.php on line 0
+[10-Aug-2013 19:25:12 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 19:25:13 Europe/Berlin] PHP Fatal error:  Class 'Zend_View_Helper_Abstract' not found in /home/wwwhotei/public_html/application/modules/Comment/views/helpers/MemberInfo.php on line 0
+[10-Aug-2013 20:50:18 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 20:50:18 Europe/Berlin] PHP Fatal error:  Class 'Zend_View_Helper_Abstract' not found in /home/wwwhotei/public_html/application/modules/Comment/views/helpers/Price.php on line 0
+[10-Aug-2013 22:00:07 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[10-Aug-2013 22:00:07 Europe/Berlin] PHP Fatal error:  Class 'Zend_View_Helper_Abstract' not found in /home/wwwhotei/public_html/application/modules/Comment/views/helpers/PageTitle.php on line 0

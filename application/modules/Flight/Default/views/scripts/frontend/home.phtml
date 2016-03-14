@@ -1,0 +1,933 @@
+<?php
+$this->headMeta()->setName('keywords',$this->translator->translator('flight_AirlineFlightSchedules_page_meta_keywords'));
+$this->headMeta()->setName('description',$this->translator->translator('flight_AirlineFlightSchedules_page_meta_desc'));
+$this->headTitle()->headTitle($this->translator->translator('flight_AirlineFlightSchedules_page_meta_title'),'SET');
+$front_template = Zend_Registry::get('front_template');
+$version = Zend_Registry::get('version'); 
+
+$global_conf = Zend_Registry::get('global_conf');
+$currency = new Zend_Currency($global_conf['default_locale']);
+$auth = Zend_Auth::getInstance ();
+Eicra_Global_Variable::getSession()->returnLink = ($auth->hasIdentity ()) ? '' : $this->url(array('module'=> 'Flight','controller'=>'route', 'action'=>'add'),'adminrout',true);
+$url = ($auth->hasIdentity ()) ? $this->url(array('module'=> 'Flight','controller'=>'route', 'action'=>'add'),'adminrout',true)  : $this->serverUrl().$this->baseUrl().'/Frontend-Login';
+
+$route_db = new Flight_View_Helper_Route();
+
+function flight_truncate($phrase,$start_words, $max_words)
+{
+   $phrase_array = explode(' ',$phrase);
+   if(count($phrase_array) > $max_words && $max_words > 0)
+	  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+   return $phrase;
+}
+
+?>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	
+		var route_field = $('#route_field').val();	
+		
+		for(var i = 0; i <= route_field; i++)
+		{	
+			checkSameData('flight_route_departure', 'flight_route_arrival', i);
+		}
+		autoFill('flight_route_departure', 'flight_route_arrival');
+		<?php if($this->post_data['trip_type'] == 'Multi City'){ ?>
+			addMoreField(route_field);			
+		<?php } ?>
+		
+		$("input[name='trip_type']").click(function() {
+			var val = $(this).val();
+			
+			switch(val)
+			{
+				case 'One way':
+					$('span.flight_route_arrival_date_box').css('display','none');
+					$('a.flight_route_add_more_btn').css('display','none');
+					removeBox();
+				 break;
+				 case 'Round':
+					$('span.flight_route_arrival_date_box').css('display','inline');
+					$('a.flight_route_add_more_btn').css('display','none');
+					removeBox();
+				 break;
+				 case 'Multi City':
+				 	$('span.flight_route_arrival_date_box').css('display','none');
+					$('a.flight_route_add_more_btn').css('display','inline');
+					addMoreField(route_field);
+				 break;
+			}
+		});
+		
+		/****************************Qtip Details Start*********************/
+		
+		$('a.show_details').each(function(){			
+			 // We make use of the .each() loop to gain access to each element via the "this" keyword...
+			  $(this).qtip(
+			  {
+				 content: {
+					// Set the text to an image HTML string with the correct src URL to the loading image you want to use
+					text: $('#table_column_box_6_details'+$(this).attr('rel')).html(),					
+					title: {
+					   text: "<?php echo $this->translator->translator('flight_front_page_search_details_dialog_title'); ?>", // Give the tooltip a title using each elements text
+					   button: true
+					}
+				 },
+				 position: {			 	
+					at: 'center', // Position the tooltip above the link
+					my: 'center',
+					target: $(window),
+					viewport: $(window) // Keep the tooltip on-screen at all times
+				 },
+				 show: {
+					event: 'click',
+					effect: function() { $(this).show(500); } ,
+					modal: false,
+					solo: true // Only show one tooltip at a time
+				 },
+				 hide: {
+					event: 'unfocus',
+					effect: function() { $(this).hide(500); }
+				 },
+				 style: {
+					classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-shadow',
+					tip: false
+				 }
+			  })
+		});
+		
+		/****************************Qtip Details End*********************/
+		
+		/****************************Sorting Table Start*********************/
+		<?php if($this->flight_schediles['status'] == 'ok'){ ?>
+		var oTable = $("#sortTable").dataTable({
+						"bPaginate": true,
+						"aLengthMenu" : [ 2, 10, 25, 50, 100 ],
+						"bDestroy":true,
+						"bLengthChange": true,
+						"bSearchable": true,
+						"bFilter": true,
+						"bSort": true,
+						"bInfo": true,
+						"sPaginationType": "full_numbers",
+						"bAutoWidth": true,
+						"bProcessing": false,
+						"bSortClasses": true,
+						"bStateSave": false,
+						"bServerSide": false,
+						"aaSorting": [[ 0, "asc" ]],
+						"oLanguage" : { "sSearch": "<?php echo $this->translator->translator('jquery_filter'); ?>" }
+					});	
+				imageThumbnil();
+		<?php }else{ ?>
+			/*var oTable = $("#sortTable").dataTable({
+						"bPaginate": false,
+						"bDestroy":true,
+						"bLengthChange": true,
+						"bSearchable": false,
+						"bFilter": false,
+						"bSort": false,
+						"bInfo": false,
+						"bAutoWidth": true,
+						"bProcessing": false,
+						"bSortClasses": true,
+						"bStateSave": false,
+						"bServerSide": false,
+						"aaSorting": [[ 0, "asc" ]],
+						"oLanguage" : { "sSearch": "<?php echo $this->translator->translator('jquery_filter'); ?>" }
+					});	*/		
+		<?php } ?>
+		/****************************Sorting Table End*********************/
+	
+});
+
+
+
+function openMsgDialog(msg)
+{
+$('#dialog_container').html(msg).dialog({
+			autoOpen: true,
+			modal: false,
+			show: 'fade',
+			resizable: 'false',				
+			buttons: { "<?php echo html_entity_decode($this->translator->translator('common_ok'), ENT_QUOTES, 'UTF-8'); ?>": function() { $(this).dialog('option', 'hide', 'explode').dialog("close"); } },
+			open: function(event, ui)
+				 {
+					setTimeout(function() 
+					{									
+						if($('#' + event.target.id).dialog('isOpen'))
+						{
+							$('#' + event.target.id).dialog('option', 'hide', 'explode').dialog('close');										
+						}
+					}, 9000);
+				  }
+		});
+}
+
+
+function isCheckBoxValue(id,filename)
+{
+	var val_arr = [];
+	var filevalue = false;
+	$('input[name="'+filename+id+'[]"]:checkbox:checked').each(function(i){
+	 val_arr[i] = $(this).val();
+	});
+	filevalue = (val_arr[0] != null) ? true : false;
+	return filevalue;
+}
+
+function removeError()
+{		
+	var filename = '';
+	var filevalue = '';		
+	$.each($('form').serializeArray(), function(i, field) {	
+			if(field.name.match(/\[\]$/))
+			{
+				var filearr = field.name.split('[]');
+				filename = filearr[0];					
+			}
+			else
+			{
+				filename 	= 	field.name;
+			} 			
+			$('input[name="'+filename+'[]"]').removeClass('ui-state-error');												
+	});				
+}
+
+function checkRouteFieldValue()
+{
+	var check = true;
+	var attr_id = '';
+	var id_no_arr = [];
+	removeError();
+	for(var i=0; i < $('input.flight_route_departure').length; i++)
+	{	
+		attr_id  =	$('input.flight_route_departure:eq('+i+')').attr('id');
+		id_no_arr = attr_id.split('flight_route_departure');		
+		if(jQuery.trim($('input.flight_route_departure:eq('+i+')').val()) == '' || jQuery.trim($('input.flight_route_arrival:eq('+i+')').val()) == '' || jQuery.trim($('input.flight_route_departure_date:eq('+i+')').val()) == '' || ( $('input[name="trip_type"]:checked').val() == 'Round' && jQuery.trim($('input.flight_route_arrival_date:eq('+i+')').val()) == '' ) )
+		{	
+			if(jQuery.trim($('input.flight_route_departure:eq('+i+')').val()) == '')
+			{	
+				$('input.flight_route_departure:eq('+i+')').addClass('ui-state-error');
+			}
+			
+			if(jQuery.trim($('input.flight_route_arrival:eq('+i+')').val()) == '')
+			{	
+				$('input.flight_route_arrival:eq('+i+')').addClass('ui-state-error');
+			}
+			
+			if(jQuery.trim($('input.flight_route_departure_date:eq('+i+')').val()) == '')
+			{	
+				$('input.flight_route_departure_date:eq('+i+')').addClass('ui-state-error');
+			}
+			
+			if($('input[name="trip_type"]:checked').val() == 'Round' && jQuery.trim($('input.flight_route_arrival_date:eq('+i+')').val()) == '')
+			{	
+				$('input.flight_route_arrival_date:eq('+i+')').addClass('ui-state-error');
+			}
+				
+			check = false;
+		}
+	}
+	if(check == false)
+	{
+		msg = '<?php echo $this->translator->translator("flight_front_page_fields_empty"); ?>';
+		openMsgDialog(msg);
+	}
+	return 	check;	
+}
+
+function checkSameData(from_id, to_id, id_no)
+{
+	$('#'+from_id+id_no).blur(function() {		
+		if( ($('#'+from_id+id_no).val() != '') && ($('#'+from_id+id_no).val() == $('#'+to_id+id_no).val()) )
+		{
+			var msg = "<?php echo $this->translator->translator('flight_route_same_err'); ?>";
+			openMsgDialog(msg);
+			$('#'+from_id+id_no).val('');
+			$('#'+from_id+id_no).focus();
+		}
+	});
+	
+	$('#'+to_id+id_no).blur(function() {		
+		if( ($('#'+to_id+id_no).val() != '') && ($('#'+from_id+id_no).val() == $('#'+to_id+id_no).val()) )
+		{
+			var msg = "<?php echo $this->translator->translator('flight_route_same_err'); ?>";
+			openMsgDialog(msg);
+			$('#'+to_id+id_no).val('');
+			$('#'+to_id+id_no).focus();
+		}
+	});	
+	
+	calendar(from_id+'_date'+id_no, to_id+'_date'+id_no);
+	calendar(to_id+'_date'+id_no, from_id+'_date'+id_no);
+	
+	autoList(from_id+id_no);
+	autoList(to_id+id_no);
+	deleteRouteFields();
+	autoFill(from_id, to_id);
+}
+
+function deleteRouteFields()
+{
+	$('a.delete_route_fields_btn').click(function() {
+		var self = this;
+		$(self).parents('div:first').parents('div:first').remove();
+	});
+}
+
+function autoList(id)
+{
+	autoSuggestion(id, "<?php echo $this->url( array('module'=> 'Flight', 'controller' => 'frontend', 'action'     => 'iata' ), 'adminrout',    true) ?>", {'datas': ''}, ['iata_code', 'iata_code', 'flight_label', 'flight_value', 'flight_location'], '', 3);
+}
+
+function addMoreField(route_field)
+{	
+	$('a.flight_route_add_more_btn').unbind('click');
+	$('a.flight_route_add_more_btn').click(function() {
+		route_field++;
+		var hr = '';
+		var mn = '';
+		var field_html = '<div class="route_box">'+
+							'<div class="route_box_first_row">'+
+							  '<span class="flight_route_departure_box"><?php echo $this->translator->translator("flight_frontend_route_departure_label"); ?><br />'+
+								'<input type="text" name="flight_route_departure[]" id="flight_route_departure'+route_field+'" class="flight_route_departure" value="" />'+							
+									'</span><span class="flight_route_arrival_box">'+	
+								'<?php echo $this->translator->translator("flight_frontend_route_arrival_label"); ?><br />'+
+							  	'<input type="text" name="flight_route_arrival[]" id="flight_route_arrival'+route_field+'" class="flight_route_arrival" value="" /></span>'+								
+							'</div>'+
+							'<div class="route_box_delete_row">'+
+							 	'<a href="javascript:void(0)" class="delete_route_fields_btn route-delete">Delete</a>'+
+							 '</div>'+
+							'<div class="route_box_second_row">'+
+							  '<span class="flight_route_departure_date_box"><?php echo $this->translator->translator("flight_frontend_route_departure_date_label"); ?><br />'+	
+							  		'<input type="text" name="flight_route_departure_date[]" id="flight_route_departure_date'+route_field+'" class="flight_route_departure_date" />'+	
+									'</span><span class="flight_route_arrival_date_box" style="display:none;">'+
+							  '<?php echo $this->translator->translator("flight_frontend_route_arrival_date_label"); ?><br />'+
+							  '<input type="text" name="flight_route_arrival_date[]" id="flight_route_arrival_date'+route_field+'" class="flight_route_arrival_date" />';							
+				field_html += '</span></div>'+							  										  
+							 '</div>'+							 
+						  '</div>';
+			$('#route_fields').append(field_html);
+			checkSameData('flight_route_departure', 'flight_route_arrival', route_field);
+	});
+}
+
+function removeBox()
+{
+	for(var i = ($('div.route_fields').children('div').length -1 ); i >= 0 ; i--)
+	{
+		if(i != 0)
+		{
+			$('div.route_fields').children('div').eq(i).remove();
+		}
+	}
+}
+
+function toTimestamp(strDate){
+	 var datum = Date.parse(strDate);
+	 return datum/1000;
+}
+
+function calendar(id, second_id)
+{
+	$("#"+id).datepicker({
+		showOn: 'button',
+		buttonImage: 'application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/calendar.png',
+		buttonImageOnly: true,
+		monthNamesShort:<?php echo $this->translator->translator("common_calender_monthNamesShort"); ?>,
+		monthNames:<?php echo $this->translator->translator("common_calender_monthNames"); ?>,
+		dayNamesMin:<?php echo $this->translator->translator("common_calender_dayNamesMin"); ?>,
+		showAnim: 'slide',
+		buttonText: 'Calender',
+		dateFormat:'yy-mm-dd',
+		onSelect: function(dateText, inst) {
+			var id_type_arr = id.split('_');			
+			var currentTime = new Date()
+			var currentDay = (currentTime.getDate() < 10) ? '0' + currentTime.getDate() : currentTime.getDate();
+			var currentMonth = ((currentTime.getMonth() + 1) < 10) ? '0' + (currentTime.getMonth() + 1) : (currentTime.getMonth() + 1);
+			var today = currentTime.getFullYear() + '-' + currentMonth + '-' + currentDay;				
+			if(id_type_arr[2] == 'departure')
+			{				
+				if( (dateText != '') && ( (toTimestamp(dateText) >= toTimestamp($('#'+second_id).val())) || (toTimestamp(dateText) < toTimestamp(today)) )  )
+				{
+					var msg = "<?php echo $this->translator->translator('flight_route_departure_date_err'); ?>";
+					openMsgDialog(msg);
+					$('#'+id).val('');
+				}
+			}
+			else if(id_type_arr[2] == 'arrival')
+			{
+				if( (dateText != '') && ( (toTimestamp(dateText) <= toTimestamp($('#'+second_id).val())) || (toTimestamp(dateText) < toTimestamp(today)) )  )
+				{
+					var msg = "<?php echo $this->translator->translator('flight_route_arrival_date_err'); ?>";
+					openMsgDialog(msg);
+					$('#'+id).val('');
+				}
+			}
+		},
+		autoSize:false,
+		showButtonPanel:false,
+		changeMonth: true,
+		changeYear: true
+	});
+	
+	$("img[class='ui-datepicker-trigger']").each(function()
+	 { 
+	  	$(this).attr('style', '');
+	 });
+}
+
+function autoFill(field1, field2)
+{
+	$('input.'+field1).unbind('click');
+	$('input.'+field1).click(function(){
+		var self = this;
+		var id = $(self).attr('id');
+		var id_no_arr = id.split(field1);
+		
+		if(id_no_arr[1] != '0')
+		{
+			for(var i = (id_no_arr[1] - 1); i >= 0; i--)
+			{				
+				if($('#'+field2+i).length > 0)
+				{
+					if($('#'+field2+i).val())
+					{
+						$(self).val($('#'+field2+i).val());
+					}
+					break;
+				}
+			}
+		}
+	});
+}
+
+/************************************************IMAGE THUMBNIL************************************************/
+function imageThumbnil()
+{	
+	$("span.thumb").hover(function() {
+		$(this).css({'z-index' : '10'}); /*Add a higher z-index value so this image stays on top*/ 
+		$(this).find('img').addClass("hover").stop() /* Add class of "hover", then stop animation queue buildup*/
+			.animate({
+				marginTop: '-110px', /* The next 4 lines will vertically align this image */ 
+				marginLeft: '-40px',
+				top: '50%',
+				left: '50%',
+				width: '174px', /* Set new width */
+				height: '174px', /* Set new height */
+				padding: '20px'
+			}, 200); /* this value of "200" is the speed of how fast/slow this hover animates */
+	
+		} , function() {
+		$(this).css({'z-index' : '0'}); /* Set z-index back to 0 */
+		$(this).find('img').removeClass("hover").stop()  /* Remove the "hover" class , then stop animation queue buildup*/
+			.animate({
+				marginTop: '0', /* Set alignment back to default */
+				marginLeft: '0',
+				top: '0',
+				left: '0',
+				width: '70px', /* Set width back to default */
+				height: '60px', /* Set height back to default */
+				padding: '2px'
+			}, 400);
+	});
+}
+</script>
+
+<style type="text/css">	
+span.flight_route_arrival_date_box{
+	<?php if($this->post_data['trip_type'] == 'Round'){ ?>
+	display:inline;
+	<?php }else{ ?>
+	display:none;
+	<?php } ?>
+}
+
+a.flight_route_add_more_btn{
+	<?php if($this->post_data['trip_type'] == 'Multi City'){ ?>
+	display:inline;
+	<?php }else{ ?>
+	display:none;
+	<?php } ?>
+}
+</style>
+
+<div class="mod">
+	<!-- Left Sidebar Start-->
+    <div id="sidebar" class="flight">
+        <!-- Flight Search Start -->
+        <div class="block-sidebar-search">
+        	<span class="icon"><?php echo $this->translator->translator('flight_front_page_home_search_label','', '', $front_template['theme_folder']); ?></span>
+            <div class="block-body">
+                <form action="<?php echo $this->url( array('module' => 'Flight', 'controller' => 'frontend', 'action'     => 'airlineflightschedules' ), 'AirlineFlightSchedules',    true); ?>" method="post" onsubmit="return checkRouteFieldValue();">
+                    <div class="dynamic_fields">
+                        <div class="radio_fields">
+                            <div class="radio_button">
+                                <input type="radio" name="trip_type" id="trip_type" value="Round" <?php if(!empty($this->post_data['trip_type']) && ($this->post_data['trip_type'] == 'Round')){ ?>checked="checked"<?php } ?> />&nbsp;<?php echo $this->translator->translator('flight_front_page_AirlineFlightSchedules_trip_type_round');?>
+                            </div>
+                            <div class="radio_button">
+                                <input type="radio" name="trip_type" id="trip_type" value="One way" <?php if(empty($this->post_data['trip_type']) || ($this->post_data['trip_type'] == 'One way')){ ?>checked="checked"<?php } ?> />&nbsp;<?php echo $this->translator->translator('flight_front_page_AirlineFlightSchedules_trip_type_one'); ?>
+                            </div>
+                            <div class="radio_button">
+                                <input type="radio" name="trip_type" id="trip_type" value="Multi City" <?php if(!empty($this->post_data['trip_type']) && ($this->post_data['trip_type'] == 'Multi City')){ ?>checked="checked"<?php } ?> />&nbsp;<?php echo $this->translator->translator('flight_front_page_AirlineFlightSchedules_trip_type_multy'); ?>
+                            </div>
+                        </div>
+                        <div class="route_fields_out">
+                            <div id="route_fields" class="route_fields">
+                                <?php
+                                if(empty($this->post_data['flight_route_departure']))
+                                {
+                                    $common_key = 0;
+                                ?>
+                                    <div class="route_box">
+                                        <div class="route_box_first_row">
+                                            <span class="flight_route_departure_box">
+                                              <?php echo $this->translator->translator('flight_frontend_route_departure_label'); ?><br />
+                                              <input type="text" name="flight_route_departure[]" id="flight_route_departure0" class="flight_route_departure" value="<?php if(!empty($this->post_data['flight_route_departure'][0])){ echo $this->post_data['flight_route_departure'][0]; } ?>" />	
+                                            </span>						
+                                            <span class="flight_route_arrival_box clear">
+                                                <?php echo $this->translator->translator('flight_frontend_route_arrival_label'); ?><br />
+                                                <input type="text" name="flight_route_arrival[]" id="flight_route_arrival0" class="flight_route_arrival" value="<?php if(!empty($this->post_data['flight_route_arrival'][0])){ echo $this->post_data['flight_route_arrival'][0]; } ?>" />
+                                            </span>		 
+                                        </div>
+                                        <div class="route_box_delete_row">
+                                            <a href="javascript: void(0);" class="flight_route_add_more_btn route-add"><?php echo $this->translator->translator('flight_route_add_more'); ?></a>
+                                        </div>
+                                        <div class="route_box_second_row">	
+                                            <span class="flight_route_departure_date_box">				  					  	
+                                                <?php echo $this->translator->translator('flight_frontend_route_departure_date_label'); ?><br />
+                                                <input type="text" name="flight_route_departure_date[]" id="flight_route_departure_date0" class="flight_route_departure_date" value="<?php if(!empty($this->post_data['flight_route_departure_date'][0])){ echo $this->post_data['flight_route_departure_date'][0]; } ?>" />					 
+                                            </span>
+                                            <span class="flight_route_arrival_date_box">
+                                                <?php echo $this->translator->translator('flight_frontend_route_arrival_date_label'); ?><br />
+                                                <input type="text" name="flight_route_arrival_date[]" id="flight_route_arrival_date0" class="flight_route_arrival_date" value="<?php if(!empty($this->post_data['flight_route_arrival_date'][0])){ echo $this->post_data['flight_route_arrival_date'][0]; } ?>" />
+                                            </span>				  																  
+                                        </div>																	 
+                                    </div>
+                                <?php
+                                }
+                                else
+                                {
+                                    foreach($this->post_data['flight_route_departure'] as $common_key=>$common_value)
+                                    {
+                                ?>
+                                        <div class="route_box">
+                                            <div class="route_box_first_row">
+                                                <span class="flight_route_departure_box">
+                                                  <?php echo $this->translator->translator('flight_frontend_route_departure_label'); ?><br />
+                                                  <input name="flight_route_departure[]" id="flight_route_departure<?php echo $common_key; ?>" class="flight_route_departure" value="<?php if(!empty($this->post_data['flight_route_departure'][$common_key])){ echo $this->post_data['flight_route_departure'][$common_key]; } ?>" />	
+                                                </span>						
+                                                <span class="flight_route_arrival_box">
+                                                    <?php echo $this->translator->translator('flight_frontend_route_arrival_label'); ?><br />
+                                                    <input name="flight_route_arrival[]" id="flight_route_arrival<?php echo $common_key; ?>" class="flight_route_arrival" value="<?php if(!empty($this->post_data['flight_route_arrival'][$common_key])){ echo $this->post_data['flight_route_arrival'][$common_key]; } ?>" />
+                                                </span>		 
+                                            </div>
+                                            <div class="route_box_delete_row">
+                                                <?php if($common_key == '0'){ ?><a href="javascript: void(0);" class="flight_route_add_more_btn"><?php echo $this->translator->translator('flight_route_add_more'); ?></a><?php }else{ ?><a href="javascript:void(0)" class="delete_route_fields_btn"><img src="data/adminImages/flightImages/delete_route.gif" title="<?php echo $this->translator->translator('common_delete'); ?>" alt="<?php echo $this->translator->translator('common_delete'); ?>" border="0" /></a><?php } ?>
+                                             </div>
+                                            <div class="route_box_second_row">	
+                                                <span class="flight_route_departure_date_box">				  					  	
+                                                    <?php echo $this->translator->translator('flight_frontend_route_departure_date_label'); ?><br />
+                                                    <input type="text" name="flight_route_departure_date[]" id="flight_route_departure_date<?php echo $common_key; ?>" class="flight_route_departure_date" value="<?php if(!empty($this->post_data['flight_route_departure_date'][$common_key])){ echo $this->post_data['flight_route_departure_date'][$common_key]; } ?>" />					 
+                                                </span>
+                                                <span class="flight_route_arrival_date_box">
+                                                    <?php echo $this->translator->translator('flight_frontend_route_arrival_date_label'); ?><br />
+                                                    <input type="text" name="flight_route_arrival_date[]" id="flight_route_arrival_date<?php echo $common_key; ?>" class="flight_route_arrival_date" value="<?php if(!empty($this->post_data['flight_route_arrival_date'][$common_key])){ echo $this->post_data['flight_route_arrival_date'][$common_key]; } ?>" />
+                                                </span>				  																  
+                                            </div>																	 
+                                        </div>
+                                <?php	
+                                    }
+                                }
+                                ?>	
+                                <input type="hidden" name="route_field" id="route_field" value="<?php echo $common_key; ?>"/>				
+                            </div>
+                        </div>
+                    </div>
+                    <div class="static_fields">
+                        <div class="static_fields_first_row">
+                            <span class="adult_box">				
+                                <?php echo $this->translator->translator('flight_front_page_AirlineFlightSchedules_adult_no'); ?><br  />
+                                <select name="adult_no" id="adult_no" class="flight-list-1">
+                                    <?php for($i = 1; $i <= 12; $i++){ 
+                                    $selected = (!empty($this->post_data['adult_no']) && ($this->post_data['adult_no'] == $i)) ? 'selected="selected"' : '';
+                                    ?>
+                                    <option value="<?php echo $i; ?>" <?php echo $selected; ?>><?php echo $i; ?></option>
+                                    <?php } ?>										
+                                </select>
+                            </span>
+                            <span class="child_box">				
+                                <?php echo $this->translator->translator('flight_front_page_AirlineFlightSchedules_child_no'); ?><br  />
+                                <select name="child_no" id="child_no" class="flight-list-1">
+                                    <?php for($i = 0; $i <= 12; $i++){ 
+                                    $selected = (!empty($this->post_data['child_no']) && ($this->post_data['child_no'] == $i)) ? 'selected="selected"' : '';
+                                    ?>
+                                    <option value="<?php echo $i; ?>" <?php echo $selected; ?>><?php echo $i; ?></option>
+                                    <?php } ?>										
+                                </select>
+                            </span>
+                            <span class="infant_box">				
+                                <?php echo $this->translator->translator('flight_front_page_AirlineFlightSchedules_infant_no'); ?><br  />
+                                <select name="infant_no" id="infant_no" class="flight-list-1">
+                                    <?php for($i = 0; $i <= 12; $i++){ 
+                                    $selected = (!empty($this->post_data['infant_no']) && ($this->post_data['infant_no'] == $i)) ? 'selected="selected"' : '';
+                                    ?>
+                                    <option value="<?php echo $i; ?>" <?php echo $selected; ?>><?php echo $i; ?></option>
+                                    <?php } ?>										
+                                </select>
+                            </span>
+                        </div>
+                        <div class="static_fields_second_row">
+                            <span class="class_type_box">
+                                <?php echo $this->translator->translator('flight_front_page_AirlineFlightSchedules_class_type'); ?><br  />
+                                <select name="class_type" id="class_type" class="flight-list-2">
+                                    <option value="Economy" <?php if(!empty($this->post_data['class_type']) && ($this->post_data['class_type'] == 'Economy')){ ?>selected="selected"<?php } ?>><?php echo $this->translator->translator('flight_front_page_AirlineFlightSchedules_class_1'); ?></option>
+                                    <option value="Premium Economy" <?php if(!empty($this->post_data['class_type']) && ($this->post_data['class_type'] == 'Premium Economy')){ ?>selected="selected"<?php } ?>><?php echo $this->translator->translator('flight_front_page_AirlineFlightSchedules_class_4'); ?></option>
+                                    <option value="Business" <?php if(!empty($this->post_data['class_type']) && ($this->post_data['class_type'] == 'Business')){ ?>selected="selected"<?php } ?>><?php echo $this->translator->translator('flight_front_page_AirlineFlightSchedules_class_2'); ?></option>
+                                    <option value="First" <?php if(!empty($this->post_data['class_type']) && ($this->post_data['class_type'] == 'First')){ ?>selected="selected"<?php } ?>><?php echo $this->translator->translator('flight_front_page_AirlineFlightSchedules_class_3'); ?></option>											
+                                </select>
+                            </span>
+                        </div>
+                        <div class="static_fields_third_row btn-containe0r">
+                            <span class="search_button_box frm-">
+                                <input type="submit" name="submit" value="<?php echo $this->translator->translator('flight_front_page_search_btn','', '', $front_template['theme_folder']); ?>" />
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Flight Search End -->   
+        
+    	<div class="clear"></div>
+        <!--Left Partner Start-->
+        <div class="block block-partner">
+            <div class="block-heading">
+                <div class="symbol"><?php echo $this->translator->translator('flight_front_page_home_add_btn_label','', '', $front_template['theme_folder']); ?></div>
+            </div>
+            
+            <div class="block-body flight-body">
+                <h4><?php echo $this->translator->translator('flight_front_page_home_add_btn_head','', '', $front_template['theme_folder']); ?></h4>
+              	<?php echo $this->translator->translator('flight_front_page_home_add_btn_desc','', '', $front_template['theme_folder']); ?><br />
+                <div class="listing flight-add">
+                    <span class="btn"><a href="<?php echo $url; ?>"><span class="icon"></span><?php echo $this->translator->translator('flight_front_page_home_add_btn_link'); ?></a></span>
+                </div>
+            </div>                            
+        </div>
+        <!--Left Partner End-->
+    
+        <!--Left News & Events Start-->
+        <div class="block block-flight-news">
+            <div class="block-heading">
+                <div class="symbol"><?php echo $this->translator->translator('flight_block_home_news_label','', '', $front_template['theme_folder']); ?></div>
+            </div>
+            
+            <div class="block-body flight-body">
+                <?php echo $this->partial('blocks/news_flight_sidebar.phtml'); ?>
+            </div>                            
+        </div> 
+        <!--Left News & Events End -->
+    
+        <!--Left AD Start-->
+        	<?php echo $this->partial('blocks/ad_leftSidebar.phtml'); ?>
+        <!--Left AD End-->
+    </div>
+	<!-- Left Sidebar End -->
+    
+	<!-- Content Start -->
+    <div id="content">
+        <div class="block-banner-ad">
+            <?php echo $this->partial('blocks/ad_flight_banner.phtml'); ?>
+        </div>
+        
+        <!--  Featured Flights Offers Start -->
+        <div class="block block-featured">
+            <div class="block-heading">
+                <div class="symbol"><?php echo $this->translator->translator('flight_front_page_home_featured_flight_title','', '', $front_template['theme_folder']); ?></div>
+            </div>
+            
+            <div class="block-body flight-body">
+                <?php
+                if($this->featured_datas)
+                {
+                    foreach($this->featured_datas as $entry)
+                    {
+                        $primary_image_path = $this->escape($entry['image_path']).$this->escape($entry['primary_image']);
+                        $other_image_arr = explode(',', $this->escape($entry['other_images']));
+                        $flight_image_no = ($other_image_arr[0]) ? count($other_image_arr) : '0';
+                        $total_price = ($entry['flight_journey_type'] != 'Round') ? ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) + ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) * ($entry['flight_tax'] / 100 ) ) ) 
+                                                                                  : ( ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) + ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) * ($entry['flight_tax'] / 100 ) ) )            +                 ( ($entry['flight_adult_fair_round'] + $entry['flight_child_fair_round'] + $entry['flight_infant_fair_round']) + ( ($entry['flight_adult_fair_round'] + $entry['flight_child_fair_round'] + $entry['flight_infant_fair_round']) * ($entry['flight_tax_round'] / 100 ) ) ) );
+                        $route_info = $route_db->getRoute($entry['id']);
+                        $routes = $route_db->getAbsoluteRoute($route_info, array('trip_type' => $entry['flight_journey_type']));
+                ?>
+                <div class="col">
+                    <div class="block-title"><a href="<?php echo $this->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>" class="preview" link="" title="<?php echo $this->escape($entry['flight_route_name']); ?>"><?php echo $this->escape($entry['flight_route_name']); ?></a></div>
+                                        
+                    <div class="img-wrapper"><a class="preview" link="<?php echo $primary_image_path;  ?>" title="<?php echo $this->escape($entry['flight_route_name']); ?>" href="<?php echo $this->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>" width="250"><img src="<?php echo $primary_image_path;  ?>" width="150" height="113" border="0" class="thumb"/></a>
+                    <div class="photo-count-container">
+                            <div class="photo-count"><a href="<?php echo $this->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>"><?php echo $this->translator->translator('flight_front_page_home_photo_no',$flight_image_no); ?></a></div>
+                        </div>
+                    </div>
+                   
+                    <div class="details">
+                    	<?php echo $this->translator->translator('flight_front_page_home_price_label'); ?> <span class="price"><?php echo $total_price.$currency->getSymbol(); ?></span>&nbsp; <span class="trip"><?php echo $this->translator->translator('flight_front_page_home_trip_type',$entry['flight_journey_type']); ?></span><br />
+                    	<?php echo $this->translator->translator('flight_front_page_home_localion_label'); ?> <a class="preview" link="" title="<?php echo $routes['route_show']; ?>"><?php echo flight_truncate($routes['route_show'], 0, 5); ?></a>
+                    </div>
+                </div>
+			  	<?php
+					}
+				}
+              	?>           
+            </div>	
+        </div>
+        <!-- Featured Flight Offer End -->
+    
+        <!-- TAB Panel Start -->
+       	<div id="usual1" class="usual">
+			<ul>
+           		<li><a class="selected" href="#tab1"><?php echo $this->translator->translator('flight_front_page_home_tab1_label','', '', $front_template['theme_folder']); ?></a></li>
+              	<li><a class="" href="#tab2"><?php echo $this->translator->translator('flight_front_page_home_tab2_label','', '', $front_template['theme_folder']); ?></a></li>
+               	<li><a class="" href="#tab3"><?php echo $this->translator->translator('flight_front_page_home_tab3_label','', '', $front_template['theme_folder']); ?></a></li>
+               	<li><a class="" href="#tab4"><?php echo $this->translator->translator('flight_front_page_home_tab4_label','', '', $front_template['theme_folder']); ?></a></li>                 
+			</ul>
+		</div>
+		<div class="usual-content">
+                <div style="display: block;" id="tab1">                	
+                    <div class="flight-chart">
+                        <div class="flight-chart-row">
+                            <div class="flight-chart-header-col-1"><?php echo $this->translator->translator('flight_front_page_home_tab_title1'); ?></div>
+                            <div class="flight-chart-header-col-1 col-2"><?php echo $this->translator->translator('flight_front_page_home_tab_title2'); ?></div>
+                            <div class="flight-chart-header-col-1 col-3"><?php echo $this->translator->translator('flight_front_page_home_tab_title3'); ?></div>
+                            <div class="flight-chart-header-col-1 col-4"><?php echo $this->translator->translator('flight_front_page_home_tab_title4'); ?></div>
+                            <div class="flight-chart-header-col-1 col-5"><?php echo $this->translator->translator('flight_front_page_home_tab_title5'); ?></div>
+                        </div>
+                        <?php
+                          if($this->top_destination)
+                          {
+                            foreach($this->top_destination as $top_destination_key => $entry)
+                            {
+                                if($entry['id'])
+                                {
+                                    $route_info = $route_db->getRoute($entry['id']);	
+                                    $only_flight_price = ($entry['flight_journey_type'] != 'Round') ?  ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) 
+                                                                                      : ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair'])           +                 ($entry['flight_adult_fair_round'] + $entry['flight_child_fair_round'] + $entry['flight_infant_fair_round']) );
+                                    $total_price = ($entry['flight_journey_type'] != 'Round') ? ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) + ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) * ($entry['flight_tax'] / 100 ) ) ) 
+                                                                                      : ( ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) + ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) * ($entry['flight_tax'] / 100 ) ) )            +                 ( ($entry['flight_adult_fair_round'] + $entry['flight_child_fair_round'] + $entry['flight_infant_fair_round']) + ( ($entry['flight_adult_fair_round'] + $entry['flight_child_fair_round'] + $entry['flight_infant_fair_round']) * ($entry['flight_tax_round'] / 100 ) ) ) );
+                                    
+                                    $hotel_text = (empty($entry['hotels_id'])) ? '' : ' + '.$this->translator->translator('flight_front_page_home_tab_hotel');
+                                    $tour_text = (empty($entry['tours_id'])) ? '' : ' + '.$this->translator->translator('flight_front_page_home_tab_tour');
+                                    $vacation_text = (empty($entry['vacationrentals_id'])) ? '' : ' + '.$this->translator->translator('flight_front_page_home_tab_vacationrental');
+                                    $include_with_flight = (!empty($entry['hotels_id']) || !empty($entry['tours_id']) || !empty($entry['vacationrentals_id'])) ? $this->translator->translator('flight_front_page_home_tab_flight').$hotel_text.$tour_text.$vacation_text  : $this->translator->translator('flight_front_page_home_tab_title4');
+                                    
+                                    foreach($route_info as $route_info_arr)
+                                    {
+                                        if($route_info_arr['journey_type'] == '0' && $route_info_arr['route_way_type'] != 'Round')
+                                        {
+                                            $start_route_info = $route_info_arr;
+                                        }
+                                        if($route_info_arr['journey_type'] == '1' && $route_info_arr['route_way_type'] != 'Round')
+                                        {
+                                            $end_route_info = $route_info_arr;
+                                        }
+                                    }
+                                    $end_route_info = (empty($$end_route_info)) ? $start_route_info : $end_route_info;							
+                                    $departure_date_arr = explode(',', $start_route_info['departure_date']);
+                                    $arrival_date_arr = explode(',', $end_route_info['arrival_date']);
+                                    $next_start_date = $route_db->getJustNextDate(date("Y-m-d"), $departure_date_arr[0]);
+                                    $next_end_date =   $route_db->getJustNextDate($next_start_date, $arrival_date_arr[0]);
+                                    $this->top_destination[$top_destination_key]['next_start_date'] = strtotime($next_start_date);
+                                    $this->top_destination[$top_destination_key]['next_end_date'] = strtotime($next_end_date);
+                                    $this->top_destination[$top_destination_key]['departure_iata'] = $start_route_info['departure_iata'];
+                                    $this->top_destination[$top_destination_key]['arrival_city'] = $end_route_info['arrival_city'];
+                                    $this->top_destination[$top_destination_key]['only_flight_price'] = $only_flight_price;
+                                    $this->top_destination[$top_destination_key]['total_price'] = $total_price;
+                                    $this->top_destination[$top_destination_key]['include_with_flight'] = $include_with_flight;
+                                    if($start_route_info['departure_iata'])
+                                    {
+                        ?>
+                        <div class="flight-chart-row2">
+                            <div class="row2-col"><?php echo $this->escape($start_route_info['departure_iata']); ?></div>
+                            <div class="row2-col"><a href="<?php echo $this->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>" class="preview" link="" title="<?php echo $this->escape($entry['flight_route_name']); ?>"><?php echo $this->escape($end_route_info['arrival_city']); ?></a></div>
+                            <div class="row2-col"><?php echo strftime("%d %b",strtotime($next_start_date)); ?> - <?php echo strftime("%d %b",strtotime($next_end_date)); ?></div>
+                            <div class="row2-col flight-price"><?php echo $currency->getSymbol().$only_flight_price; ?></div>
+                            <div class="row2-col"><span class="flight-price"><?php echo $currency->getSymbol().$total_price; ?></span>&nbsp;&nbsp;<span class="flight-value"><?php echo $include_with_flight; ?></span></div>
+                        </div>
+                        <?php
+                                    }
+                              }
+                            }
+                          }
+                          ?>    
+                    </div>
+                </div>
+                <div style="display: none;" id="tab2">
+                    <div class="flight-chart">
+                        <div class="flight-chart-row">
+                            <div class="flight-chart-header-col-1"><?php echo $this->translator->translator('flight_front_page_home_tab_title1'); ?></div>
+                            <div class="flight-chart-header-col-1 col-2"><?php echo $this->translator->translator('flight_front_page_home_tab_title2'); ?></div>
+                            <div class="flight-chart-header-col-1 col-3"><?php echo $this->translator->translator('flight_front_page_home_tab_title3'); ?></div>
+                            <div class="flight-chart-header-col-1 col-4"><?php echo $this->translator->translator('flight_front_page_home_tab_title4'); ?></div>
+                            <div class="flight-chart-header-col-1 col-5"><?php echo $this->translator->translator('flight_front_page_home_tab_title5'); ?></div>
+                        </div>
+                        <?php
+                              if($this->top_destination)
+                              {
+                                $last_minute_deal = $route_db->sortByOneKey($this->top_destination, 'next_start_date', true); 					  		
+                                foreach($last_minute_deal as $entry)
+                                {
+                                    if($entry['departure_iata'])
+                                    {
+                        ?>
+                    
+                        <div class="flight-chart-row2">
+                            <div class="row2-col"><?php echo $this->escape($entry['departure_iata']); ?></div>
+                            <div class="row2-col"><a href="<?php echo $this->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>" class="preview" link="" title="<?php echo $this->escape($entry['flight_route_name']); ?>"><?php echo $this->escape($entry['arrival_city']); ?></a></div>
+                            <div class="row2-col"><?php echo strftime("%d %b", $entry['next_start_date']); ?> - <?php echo strftime("%d %b", $entry['next_end_date']); ?></div>
+                            <div class="row2-col flight-price"><?php echo $currency->getSymbol().$entry['only_flight_price']; ?></div>
+                            <div class="row2-col"><span class="flight-price"><?php echo $currency->getSymbol().$entry['total_price']; ?></span>&nbsp;&nbsp;<span class="flight-value"><?php echo $entry['include_with_flight']; ?></span></div>
+                        </div>
+                        <?php
+                                    }
+                                }
+                              }
+                        ?>
+                    </div>		
+                </div>
+                <div style="display: none;" id="tab3">
+                    <div class="flight-chart">
+                        <div class="flight-chart-row">
+                            <div class="flight-chart-header-col-1 airline-col-1"><?php echo $this->translator->translator('flight_front_page_home_tab_title1'); ?></div>
+                            <div class="flight-chart-header-col-1 airline-col-2"><?php echo $this->translator->translator('flight_front_page_home_tab_title2'); ?></div>
+                            <div class="flight-chart-header-col-1 airline-col-3"><?php echo $this->translator->translator('flight_front_page_home_tab_title3'); ?></div>
+                            <div class="flight-chart-header-col-1 airline-col-4"><?php echo $this->translator->translator('flight_front_page_home_tab_title4'); ?></div>
+                            <div class="flight-chart-header-col-1 airline-col-5"><?php echo $this->translator->translator('flight_front_page_home_tab_title5'); ?></div>
+                        </div>
+                        <?php
+                          if($this->top_destination)
+                          {
+                            $last_minute_deal = $route_db->sortByOneKey($this->top_destination, 'next_start_date', true); 					  		
+                            foreach($last_minute_deal as $entry)
+                            {
+                                if($entry['airlines_name'])
+                                {
+                        ?>
+                        <div class="flight-chart-row2">
+                            <div class="row2-col"><?php echo $this->escape($entry['airlines_name']); ?></div>
+                            <div class="row2-col"><a href="<?php echo $this->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>" class="preview" link="" title="<?php echo $this->escape($entry['flight_route_name']); ?>"><?php echo $this->escape($entry['arrival_city']); ?></a></div>
+                            <div class="row2-col"><?php echo strftime("%d %b", $entry['next_start_date']); ?> - <?php echo strftime("%d %b", $entry['next_end_date']); ?></div>
+                            <div class="row2-col flight-price"><?php echo $currency->getSymbol().$entry['only_flight_price']; ?></div>
+                            <div class="row2-col"><span class="flight-price"><?php echo $currency->getSymbol().$entry['total_price']; ?></span>&nbsp;&nbsp;<span class="flight-value"><?php echo $entry['include_with_flight']; ?></span></div>
+                        </div>
+                        <?php
+                                }
+                            }
+                          }
+                        ?>
+                    </div>
+                </div>
+                <div style="display: none;" id="tab4">
+                    <div class="flight-chart">
+                        <div class="flight-chart-row">
+                            <div class="flight-chart-header-col-1"><?php echo $this->translator->translator('flight_front_page_home_tab_title1'); ?></div>
+                            <div class="flight-chart-header-col-1 col-2"><?php echo $this->translator->translator('flight_front_page_home_tab_title2'); ?></div>
+                            <div class="flight-chart-header-col-1 col-3"><?php echo $this->translator->translator('flight_front_page_home_tab_title3'); ?></div>
+                            <div class="flight-chart-header-col-1 col-4"><?php echo $this->translator->translator('flight_front_page_home_tab_title4'); ?></div>
+                            <div class="flight-chart-header-col-1 col-5"><?php echo $this->translator->translator('flight_front_page_home_tab_title5'); ?></div>
+                        </div>
+                        <?php
+                          if($this->top_destination)
+                          {
+                            $last_minute_deal = $route_db->sortByOneKey($this->top_destination, 'next_start_date', true); 					  		
+                            foreach($last_minute_deal as $entry)
+                            {
+                                if($entry['departure_iata'])
+                                {
+                        ?>
+                        <div class="flight-chart-row2">
+                            <div class="row2-col"><?php echo $this->escape($entry['departure_iata']); ?></div>
+                            <div class="row2-col"><a href="<?php echo $this->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>" class="preview" link="" title="<?php echo $this->escape($entry['flight_route_name']); ?>"><?php echo $this->escape($entry['arrival_city']); ?></a></div>
+                            <div class="row2-col"><?php echo strftime("%d %b", $entry['next_start_date']); ?> - <?php echo strftime("%d %b", $entry['next_end_date']); ?></div>
+                            <div class="row2-col flight-price"><?php echo $currency->getSymbol().$entry['only_flight_price']; ?></div>
+                            <div class="row2-col"><span class="flight-price"><?php echo $currency->getSymbol().$entry['total_price']; ?></span>&nbsp;&nbsp;<span class="flight-value"><?php echo $entry['include_with_flight']; ?></span></div>
+                        </div>
+                        <?php
+                                }
+                            }
+                          }
+                        ?>
+                    </div>			
+                </div>
+		</div>
+	  	<script type="text/javascript">
+        	$("#usual1 ul").idTabs();
+      	</script>
+        <!-- TAB Panel End -->
+    
+        <!--Bottom List Block Start -->
+        <div class="block">
+            <div class="block-body">
+                <h4><?php echo $this->translator->translator('flight_front_page_home_cheap_flight_title','', '', $front_template['theme_folder']); ?></h4>
+                    <?php
+                    if($this->cheap_destination)
+                    {
+                    ?>
+                    <div class="list">
+                        <ul>
+                            <?php						
+                            foreach($this->cheap_destination as $cheap_destination_key => $entry)
+                            {
+                            ?>
+                            <li><a href="<?php echo $this->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>" class="preview" link="" title="<?php echo $this->escape($entry['flight_route_name']).' - '.$currency->getSymbol().$this->escape($entry['total_price']); ?>"><?php echo flight_truncate($this->escape($entry['flight_route_name']), 0, 3); ?></a></li>                       
+                            <?php
+                                if(($cheap_destination_key + 1) % 5 == 0)
+                                {
+                                    echo '</ul></div><div class="list"><ul>';
+                                }							
+                            }
+                            ?>
+                        </ul>	
+                    </div>
+                    <?php
+                    }
+                    ?>   
+            </div>             
+        </div>
+    
+        <!--Bottom List Block End -->
+    
+        <!--Bottom List Block Start -->
+        <div class="block">
+            <div class="block-body">
+                	<h4><?php echo $this->translator->translator('flight_front_page_home_world_wide_flight_title','', '', $front_template['theme_folder']); ?></h4>
+                    <?php
+                    if($this->world_destination)
+                    {
+                    ?>
+                    <div class="list">
+                    	<ul>
+                            <?php						
+                            foreach($this->world_destination as $world_destination_key => $entry)
+                            {
+                            ?>
+                            <li><a href="<?php echo $this->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>" class="preview" link="" title="<?php echo $this->escape($entry['flight_route_name']).' - '.$currency->getSymbol().$this->escape($entry['total_price']); ?>"><?php echo flight_truncate($this->escape($entry['flight_route_name']),0 ,3); ?></a></li>                       
+                            <?php
+                                if(($world_destination_key + 1) % 5 == 0)
+                                {
+                                    echo '</ul></div><div class="list"><ul>';
+                                }							
+                            }
+                            ?>
+                       	</ul>	
+                    </div>
+                    <?php
+                    }
+                    ?> 
+            </div>       
+        </div>
+        <!--Bottom List Block End -->
+    </div>
+<!-- Content End -->
+</div>
+<div id="dialog_container" title="<?php echo $this->translator->translator('common_dialog_msg',$this->translator->translator('flight_front_page_AirlineFlightSchedules_name')); ?>"></div>

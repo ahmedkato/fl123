@@ -1,0 +1,162 @@
+<?php
+class featured_tours_special
+{
+	protected	$_group = 2;
+	protected	$_limit = 3;
+	protected	$_DBconn;
+	protected	$_front_template;
+	protected	$_global_conf;
+	protected	$_view;
+	protected	$area_db;
+	protected 	$group_datas;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_global_conf 		= Zend_Registry::get('global_conf');
+		$this->_view =	$view;
+		//DB Connection
+		$this->_DBconn = Zend_Registry::get('msqli_connection');
+		$this->_DBconn->getConnection();
+		
+		$this->area_db = new Tours_Model_DbTable_Area();	
+		$group_db =  new Tours_Model_DbTable_ToursGroup();
+		$this->group_datas = $group_db->getGroupName($this->_group);		
+	}
+	
+	public function truncate($phrase,$start_words, $max_words)
+	{
+	   $phrase_array = explode(' ',$phrase);
+	   if(count($phrase_array) > $max_words && $max_words > 0)
+		  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+	   return $phrase;
+	}
+	
+	public function class_body()
+	{		
+		$currency = new Zend_Currency($this->_global_conf['default_locale']);
+		$currency_symbol = $currency->getSymbol();
+		$translator = Zend_Registry::get('translator');
+		$maximum_rating_digit = $translator->translator('maximum_rating_digit','','',$this->_front_template['theme_folder']);	
+		$review_helper = new Review_View_Helper_Review();
+		
+	    $selectGP = $this->_DBconn->select()
+						->from(array('hp' => Zend_Registry::get('dbPrefix').'tours_page'), array('*'))
+						->joinLeft(array('bt' => Zend_Registry::get('dbPrefix').'tours_business_type'), 'hp.tours_type = bt.id', array('business_type' => 'bt.business_type'))
+					   	->joinLeft(array('gp' => Zend_Registry::get('dbPrefix').'tours_group'), 'gp.id = '. $this->_group, array('review_id' => 'gp.review_id'))
+						->where('hp.group_id = ?',$this->_group)
+						->where('hp.featured  = ?','1')
+					   	->where('hp.active  = ?','1')
+					   	->limit($this->_limit);
+		
+		$tours_info =  $selectGP->query()->fetchAll();		
+?>
+
+<div class="block block-grid">
+	<div class="block-body">
+    	<h2><?php echo $translator->translator('tours_block_featured_list_title','','',$this->_front_template['theme_folder']); ?></h2>
+        
+        <?php						  
+		if($tours_info)
+		{
+			$j = 1;	
+			foreach($tours_info as $entry)
+			{
+				$link = $this->_view->url( array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => $this->_view->escape($entry['tours_title']) ),'Tours-details/:tours_title',    true);
+                
+				$tours_image_val_arr = explode(',',$entry['tours_image']);
+				$tours_image_no = count($tours_image_val_arr);
+				if($this->_view->escape($entry['traveler_photos']))
+				{ 
+					$thumb_image = 'data/frontImages/tours/tours_image/'.$this->_view->escape($entry['traveler_photos']); 
+				}
+				else
+				{ 
+					if($this->_view->escape($entry['tours_image']))
+					{											
+						$thumb_image = 'data/frontImages/tours/tours_image/'.$this->_view->escape($tours_image_val_arr[0]); 
+					}
+					else
+					{
+						$thumb_image = 'application/layouts/scripts/'.$this->_front_template['theme_folder'].'/images/mod_tour_img/no_image.png'; 
+					}		
+				}
+				if($this->group_datas['file_thumb_width'] && $this->group_datas['file_thumb_resize_func'] != 'resizeToHeight')
+				{ 
+					$width = 'width="'.$this->_view->escape($this->group_datas['file_thumb_width']).'"'; 
+				}
+				else
+				{
+					$width = '';
+				} 
+				if($this->group_datas['file_thumb_height'] && $this->group_datas['file_thumb_resize_func'] != 'resizeToWidth')
+				{ 
+					$height = 'height="'.$this->_view->escape($this->group_datas['file_thumb_height']).'"'; 
+				} 
+				else
+				{
+					$height = '';
+				}						
+				$lication_info = ($entry['area_id'])? $this->area_db->getAreaInfo($entry['area_id']) : '';		
+		?>
+        
+        <div class="col">
+            <span class="block-title">
+            	<a href="<?php echo $this->_view->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => $this->_view->escape($entry['tours_title']) ),'Tours-details/:tours_title',true); ?>" class="preview" link="" title="<?php echo $this->_view->escape($entry['tours_name']); ?>"><?php echo $this->truncate($this->_view->escape($entry['tours_name']), 0, 2); ?></a>
+            </span>
+            
+            <div class="tours-stars">
+				<?php
+                    for($i = 1; $i < $maximum_rating_digit; $i++)
+                    {
+                        $tours_rating = ($i <= $this->_view->escape($entry['rating'])) ? '<img src="application/layouts/scripts/'.$this->_front_template["theme_folder"].'/images/mod_tour_img/star-small-active.png" />' : '<img src="application/layouts/scripts/'.$this->_front_template["theme_folder"].'/images/mod_tour_img/star-small-inactive.png" />';
+                        echo $tours_rating.'&nbsp;';
+                    }
+                ?>
+			</div>
+            
+            <div class="img-wrapper">
+            	<span class="type"><?php  echo $this->_view->escape($entry['business_type']); ?></span>
+				<a href="<?php echo $this->_view->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => $this->_view->escape($entry['tours_title']) ),'Tours-details/:tours_title',true); ?>" class="preview" link="<?php echo $thumb_image; ?>" width="300"  title="<?php echo $this->_view->escape($entry['tours_name']); ?>" ><img src="<?php echo $thumb_image; ?>"border="0" class="thumb" <?php echo $width." ".$height; ?>></a>
+                <div class="photo-count-container">
+                    <div class="photo-count">
+                        <a href="<?php echo $this->_view->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details',tours_title => $this->_view->escape($entry['tours_title']),'tab' => 1 ),'Tours-details/:tours_title/:tab',true); ?>" title="<?php echo $translator->translator('tours_front_page_tours_click_view_listing','','',$this->_front_template['theme_folder']); ?>"><?php echo $translator->translator('tours_front_page_tours_photo_no', '<span>'.$tours_image_no.'</span>','',$this->_front_template['theme_folder']); ?></a>
+                    </div>
+                </div>
+			</div>
+            
+            <div class="details">				
+				<span><?php echo $translator->translator('tours_block_featured_label_price','','',$this->_front_template['theme_folder']); ?></span> <span class="price price-big"><?php echo $currency->getSymbol().''.$this->_view->escape($entry['tours_price']); ?></span><br />
+              	<span><?php echo $translator->translator('tours_block_featured_label_location','','',$this->_front_template['theme_folder']); ?></span> <a href="<?php echo $link; ?>"><?php echo $this->_view->escape($lication_info['city']); ?></a><br />
+              	<div class="duration"><span class="night"><?php if(!empty($entry['num_of_nights'])){ echo (int)$this->_view->escape($entry['num_of_nights']);  echo ' '.$translator->translator('tours_num_of_nights','','',$this->_front_template['theme_folder']); } ?></span><span class="day"><?php if(!empty($entry['num_of_days'])){ echo (int)$this->_view->escape($entry['num_of_days']);  echo ' '.$translator->translator('tours_num_of_days','','',$this->_front_template['theme_folder']); } ?></span></div>
+              	<span><?php if(!empty($entry['tours_desc'])){ echo $translator->translator('tours_block_featured_label_description','','',$this->_front_template['theme_folder']); ?></span> <?php echo $this->truncate($this->_view->escape(strip_tags($entry['tours_desc'])), 0, 6); } ?><br />
+            
+            	<?php 				
+                if(!empty($entry['review_id'])){ 
+                $review_no = $review_helper->getNumOfReviews($entry['id'], $this->_view->escape($entry['review_id']));
+                ?>
+                <?php echo $translator->translator('block_score','', '', $this->_front_template['theme_folder']); ?>&nbsp;<span class="review-count"><a href="<?php echo $this->_view->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => $this->_view->escape($entry['tours_title']),'tab' => 7 ),'Tours-details/:tours_title/:tab',true); ?>"><?php echo $translator->translator('common_review_no',htmlentities($review_no), 'Tours'); ?></a></span> <?php } ?>
+            </div>
+		</div>
+        
+        <?php				
+				$j++;
+			}
+		}
+		?>
+	</div>
+</div>
+
+<?php
+	}
+}
+try
+{
+	$featured_tours_special_class = new featured_tours_special($this);
+	$featured_tours_special_class->class_body();
+}
+catch(Exception $e)
+{
+	echo $e->getMessage();
+}
+?>

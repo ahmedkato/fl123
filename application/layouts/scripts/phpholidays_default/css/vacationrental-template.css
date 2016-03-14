@@ -1,0 +1,570 @@
+/* ___________________________________________________________________________________
+   
+   CSS Framework for Eicra Vacationrental Script [Templates, Blocks & Product Modules] 
+   ___________________________________________________________________________________ */
+   
+
+@charset "utf-8";
+
+
+/* LAYOUT STYLES ******************************************************************** */
+
+#content{
+}
+
+#sidebar{
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Banner --------------------------------------------------------------------------- */
+
+#banner{
+	width:1000px;
+	margin:15px auto;
+	position:relative;
+}
+
+#banner img{
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Block Box Model ------------------------------------------------------------------ */
+
+.block .block-body{
+	padding:5px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Banner Search -------------------------------------------------------------------- */
+
+.block-search{
+	width:49%;
+	position:absolute;
+	top:10px;
+	right:9px;
+	z-index:2;
+}
+
+.block-search .block-content{
+	padding:10px;
+	margin:0 auto 15px auto;
+	background-color:rgba(255, 153, 0, 0.9);
+}
+
+.block-search h1{
+	color:#FFF;
+}
+
+.block-search .total-count{
+	font-size:16px;
+	font-family:Georgia, "Times New Roman", Times, serif;
+	color:#FFF;
+	font-weight:normal;
+	font-style:italic;
+	padding:2px 0 15px 0;
+}
+
+.block-search .col{
+	padding: 0 12px 10px 0;
+	float:left;
+}
+
+.block-search p{
+	color: #FFF;
+	font-weight: bold;
+	padding: 4px 8px 4px 0;
+}
+
+.block-search input[type="text"],
+.block-search select{
+	font-size:13px;
+	border:1px solid #FFF;
+	border-radius:0;
+	-moz-border-radius:0;
+	-webkit-border-radius:0;
+	/*box-shadow: 1px 1px 3px #CDCDCD inset;*/
+	transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+	padding:5px;
+	margin:0;
+}
+
+.block-search input[type="text"]:focus,
+.block-search select:focus{
+	border:1px solid;
+	border-color: rgba(82, 168, 236, 0.8);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6);
+}
+
+.block-search input[type="text"]{
+	width:148px;
+	padding:6px;
+}
+
+.block-search select{
+	width:125px;
+}
+
+.block-search select.medium{
+	width:155px;
+}
+
+.block-search .btn-container{
+	text-align:center;
+}
+
+.block-search input[type="submit"]{
+	background: #61A629;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#8EBD42', endColorstr='#61A629');
+	background: -webkit-gradient(linear, left top, left bottom, from(#8EBD42), to(#61A629));
+	background: -moz-linear-gradient(top, #8EBD42, #61A629);
+	border:1px solid #48991B;
+	box-shadow: 0 1px 1px #AFCC4D inset;
+	color:#FFF;
+	font-size:15px;
+	cursor:pointer;
+	text-decoration:none;
+	text-transform:uppercase;
+	border-radius:4px;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	padding: 15px 45px;
+	margin: 15px auto;
+	display:inline-block;
+}
+
+.block-search input[type="submit"]:hover{
+	background: #FFCC00;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF33', endColorstr='#FFCC00');
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFFF33), to(#FFCC00));
+	background: -moz-linear-gradient(top,  #FFFF33,  #FFCC00);
+	text-shadow: 1px 1px 1px #FFF;
+	box-shadow: 0 1px 1px #FFFFFF inset;
+	border: 1px solid #F90;
+	color: #000;
+}
+
+.block-search a{
+	color: #FFFFFF;
+	font-weight: bold;
+	background: url(../images/arrow-white.png) no-repeat 0 center;
+	padding: 0 0 0 15px;
+}
+
+.block-search a:hover{
+	color:#FF0;
+}
+
+.block-search img{
+	border:0 !important;
+	vertical-align:middle;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Sidebar Search ------------------------------------------------------------------- */
+
+.block-sidebar-search .block-body{
+	width:210px;
+	padding:0;
+	border:0;
+	box-shadow:none;
+}
+
+.block-sidebar-search .block-body select,
+.block-sidebar-search .block-body input[type="text"]{
+	border-radius:0;
+	padding:4px;
+}
+
+.block-sidebar-search .block-heading {
+	border:1px solid #004CA1;
+}
+
+.block-sidebar-search .block-heading h1{
+	color:#FFF;
+	font-style:normal;
+	text-shadow: 0 1px 0 #003;
+	text-align:center;
+	word-spacing:-2px;
+	padding:13px 0;
+	margin:0;
+}
+
+.block-sidebar-search .block-content-1,
+.block-sidebar-search .block-content-2,
+.block-sidebar-search .block-content-3{
+	background-color:#0087EA;
+	border-top:1px solid #24A2FF;
+	padding:8px;
+	color:#FFF;
+	overflow:hidden;
+}
+
+.block-sidebar-search p{
+	font-weight:bold;
+	display:block;
+	margin:4px 0;
+	clear:left;
+}
+
+.block-sidebar-search select,
+.block-sidebar-search input[type="text"]{
+	margin:2px 0;
+	width:100%;
+	border: 1px solid #0473FB;
+}
+
+.block-sidebar-search .block-content-1 input[type="text"]{
+	width:95%
+}
+
+.block-sidebar-search .block-content-2{
+	background-color:#24A2FF;
+}
+
+.block-sidebar-search .block-content-2 select.left{
+	width:49%;
+	float:left;
+}
+
+.block-sidebar-search .block-content-2 select.right{
+	width:49%;
+	float:right;
+}
+
+.block-sidebar-search .block-content-3{
+	background-color:#E6EDF6;
+}
+
+.block-sidebar-search .block-content-3 select{
+	border:1px solid #C1C1C1;
+}
+
+.block-sidebar-search .block-content-3 a{
+	text-decoration:underline;
+	display:block;
+	margin:10px 0;
+}
+
+.block-sidebar-search input[type="submit"]{
+	background: #FFCC00;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF33', endColorstr='#FFCC00');
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFFF33), to(#FFCC00));
+	background: -moz-linear-gradient(top,  #FFFF33,  #FFCC00);
+	text-shadow: 1px 1px 1px #FFF;
+	box-shadow: 0 1px 1px #FFFF00 inset;
+	border: 1px solid #F90;
+	color: #000;
+	padding:8px 10px;
+	font-size:15px;
+	cursor:pointer;
+	display:inline-block;
+	white-space: normal;
+	text-decoration:none;
+	border-radius:4px;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	margin:8px 0;
+	width:100%;
+}
+
+.block-sidebar-search input[type="submit"]:hover{
+	background: #00387D;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0076EC', endColorstr='#00387D');
+	background: -webkit-gradient(linear, left top, left bottom, from(#0076EC), to(#00387D));
+	background: -moz-linear-gradient(top,  #0076EC,  #00387D);
+	border:1px solid #0562BB;
+	box-shadow: 0 1px 1px #4AB7FF inset;
+	text-shadow: 1px 1px 1px #003399;
+	color:#FFF;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Featured Vacationrentals --------------------------------------------------------- */
+
+.block-featured .col{
+	width:21%;
+	min-height:320px;
+	margin: 5px 0 35px 30px;
+	float:left;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Popular & Recent Vacationrentals (Configuration ) -------------------------------- */
+
+.block-list .block-body{
+	width:48%;
+}
+
+.block-list .block-content{
+	width:98%;
+}
+
+.block-list .block-content .details{
+	width:58%;
+}
+
+.block-list .block-content .right-col{
+	margin-top:8px;
+}
+
+.block-list .block-body.popular{
+	float:left;
+	min-height:505px;
+}
+
+.block-list .block-body.recent{
+	float:right;
+	min-height:505px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Grid View ------------------------------------------------------------------------ */
+
+.block-grid .col{
+	width:215px;
+}
+
+.block-grid .img-wrapper .photo-count-container{
+	top:86px;
+}
+
+.block-grid .room{
+	font-size:13px;
+}
+
+.block-grid .block-body{
+	margin-bottom:0;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Social --------------------------------------------------------------------------- */
+
+.block-social{
+	float:right;
+	width:290px;
+}
+
+.block-social .block-body{
+	min-height:108px;
+}
+	
+/* ---------------------------------------------------------------------------------- */
+
+/* Content AD ----------------------------------------------------------------------- */
+
+.block-ad-home .block-body{
+	padding:0;
+}
+
+.block-social .block-body p{
+	padding-bottom:11px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* ********************************************************************************** */
+
+
+/* PRODUCT MODULES ****************************************************************** */
+
+/* Product Advance Search ----------------------------------------------------------- */
+
+.mod-advance-search form p{
+	margin:4px 0;
+}
+
+.mod-advance-search form span.info{
+	font-size: 11px;
+	display:block;
+	color:#666666;
+}
+
+.mod-advance-search input[type="text"]{
+	width:141px;
+}
+
+.mod-advance-search select{
+	width:234px;
+}
+
+.mod-advance-search select.small{
+	width:104px;
+}
+
+.mod-advance-search select.middle{
+	width:150px;
+}
+
+.mod-advance-search input[type="text"].small{
+	width:105px;
+}
+
+.mod-advance-search input[type="text"].big{
+	width:284px;
+}
+
+.mod-advance-search select.country,
+.mod-advance-search select.state,
+.mod-advance-search select.area{
+	width:230px;
+}
+
+.mod-advance-search input[type="button"]{
+	width:50%;
+}
+
+.mod-advance-search .ui-widget .ui-autocomplete-input{
+	width:334px;
+	float:left;
+}
+
+.mod-advance-search .ui-widget .ui-autocomplete-input,
+.mod-advance-search .ui-widget .ui-button-icon-only .ui-button-text{
+	padding: 7px;
+	line-height:1.3em;
+	height:1.3em;
+}
+
+.mod-advance-search .ui-widget .ui-button{ 
+	margin-left: -1px;
+}
+
+.mod-advance-search .ui-autocomplete-loading{
+	background-image: url("../images/loader/ui-anim_basic_16x16.gif");
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Product Booking ------------------------------------------------------------------ */
+
+.mod-booking h3{
+	margin:0 0 20px 0;
+}
+
+.mod-booking input[type="text"]{
+	width:110px;
+}
+
+.mod-booking input[type="button"]{
+	margin:12px 0 0 0;
+	padding: 8px 30px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Product List --------------------------------------------------------------------- */
+
+.availability{
+	background:url(../images/mod_vacation_img/check-availability.png);
+}
+
+.swimming{
+	background:url(../images/mod_vacation_img/swimming.png);
+	padding-left:28px;
+}
+
+.pet{
+	background:url(../images/mod_vacation_img/pet.png);
+	padding-left:28px;
+}
+
+.tub{
+	background:url(../images/mod_vacation_img/tub.png);
+	padding-left:28px;
+}
+
+.smoking{
+	background:url(../images/mod_vacation_img/smoking.png);
+	padding-left:28px;
+}
+
+.products-featured{
+	background:url(../images/mod_vacation_img/hot-deal.png) no-repeat;
+	background-position:74% 45px;
+	background-color:#FFFFE6;
+	z-index:10;
+}
+
+.products-available,
+.products-not-available{
+	color:#00AE00;
+	font-weight:bold;
+	background-image:url(../images/mod_vacation_img/available.png);
+	background-repeat:no-repeat;
+	background-position: 1px center;
+	padding-left:20px;
+}
+
+.products-not-available{
+	color:#D00;
+	background-image:url(../images/mod_vacation_img/not-available.png);
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Product Details ------------------------------------------------------------------ */
+
+.mod-details .products-type{
+	float:left;
+	margin:15px 0 0 0;
+}
+
+/* Wego API ------------------------------------------------------------------------- */
+
+.mod-wego .mod-advance-search p span{
+	color: #666666;
+    font-size: 11px;
+	text-align:left;
+	display:inline-block;
+	font-weight:normal;
+}
+
+.mod-wego .mod-advance-search input[type="text"].location{
+	width:550px;
+}
+
+.mod-wego .mod-advance-search input[type="button"]{
+	width:auto;
+}
+
+.mod-wego .products-options li {
+	list-style:circle;
+	padding:0;
+}
+
+.mod-wego .products-chart .label{
+	width:34%;
+}
+
+.mod-wego .products-chart .value{
+	width:65%;
+	text-indent: 0;
+	padding: 0 2px 0 5px;
+}
+
+.mod-wego .itinerary_main_body_block_clild_body_box1 p,
+.mod-wego .itinerary_main_body_block_clild_body_box3 p{
+	width:98%;
+	text-align:justify;
+	margin:auto;
+}
+
+.mod-wego .itinerary_main_body_block_clild_body_box1{
+	text-align:left;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* ___________________________________________________________________________________
+   
+   New CSS used by Developer
+   ___________________________________________________________________________________ */
+

@@ -1,0 +1,670 @@
+<div id="container">
+<?php if (!$this->allow('list')) : ?>
+	<div class="grid_12 t_a_bottom">
+		<?php echo $this->translator->translator('Member_Access_deny_desc'); ?>
+	</div>
+<?php else : 
+	$locale_direction = Eicra_Global_Variable::getSession()->site_direction;
+	$locale = Eicra_Global_Variable::getSession()->sess_lang;
+	
+	echo $this->headScript()->setFile($this->baseUrl().'/vendor/scripts/BookingCalendar/js/jquery.dop.BookingCalendar.js');
+	echo $this->headLink()->setStylesheet($this->baseUrl().'/vendor/scripts/BookingCalendar/css/jquery.dop.BookingCalendar.css');
+	
+	$permission_arr = array('add_enable' => $this->allow('add','backendpro','Vacationrentals'), 'edit_enable' => $this->allow('edit','backendpro','Vacationrentals'), 'publish_enable' => $this->allow('publish','backendpro','Vacationrentals'), 'delete_enable' => $this->allow('delete','backendpro','Vacationrentals'), 'featured_enable' => $this->allow('featured','backendpro','Vacationrentals'), 'search_enable' => $this->allow('search','backendpro','Vacationrentals'));
+	$param_group_id = ($this->group_id) ? ($this->group_id) : null;	
+	
+	$global_conf = Zend_Registry::get('global_conf');
+	$currency = new Zend_Currency($global_conf['default_locale']);
+?>
+<script type="text/javascript">
+$(function() {
+<?php
+if($this->auth->hasIdentity() && $this->auth->getIdentity()->access_other_user_article == '1')
+{
+?>
+	$( "#vacationrentals_owner" ).combobox();		
+<?php
+}
+?>
+	autoSuggestion('vacationrentals_name', "<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'searchname' ), 'adminrout',    true) ?>", {'vacationrentals_name': ''}, ['vacationrentals_primary_image', 'vacationrentals_image', 'vacationrentals_name', 'vacationrentals_name', 'owner_name','vacationrentals_postcode' ,'vacationrentals_room', 'vacationrentals_location'], 'data/frontImages/vacationrentals/vacationrentals_image', 2);	
+	autoSuggestion('property_size', "<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'searchname' ), 'adminrout',    true) ?>", {'property_size': ''}, ['vacationrentals_primary_image', 'vacationrentals_image', 'vacationrentals_name', 'property_size', 'owner_name','vacationrentals_postcode', 'vacationrentals_property_size' ,'vacationrentals_room', 'vacationrentals_location'], 'data/frontImages/vacationrentals/vacationrentals_image', 2);
+	autoSuggestion('vacationrentals_price', "<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'searchname' ), 'adminrout',    true) ?>", {'vacationrentals_price': ''}, ['vacationrentals_primary_image', 'vacationrentals_image', 'vacationrentals_name', 'price', 'owner_name','vacationrentals_postcode', 'vacationrentals_price' ,'vacationrentals_room', 'vacationrentals_location'], 'data/frontImages/vacationrentals/vacationrentals_image', 2);
+})
+
+ function availableCalendar()
+ {
+	$('a.calendar_btn').unbind('click');
+	$('a.calendar_btn').click(function(){
+		var self = this;
+		var id = $(self).attr('rel');
+		openCalendarDialog(id);
+	 });
+ }
+ 
+function openCalendarDialog(id)
+{
+	$('#dialog_calendar_loader').dialog({
+				autoOpen: true,
+				width: 880,
+				height:480,
+				modal: false,
+				show: 'fade',
+				resizable: 'false',				
+				open: function(event, ui){
+						$('#dialog_calendar').html('');
+						$('#dialog_calendar').DOPBookingCalendar({'Type':'BackEnd', 'DataURL':'<?php echo $this->url( array("module"=> "Vacationrentals", "controller" => "backendpro", "action"     => "load", "id" => "" ), "adminrout",    true) ?>'+id, 'SaveURL':'<?php echo $this->url( array("module"=> "Vacationrentals", "controller" => "backendpro", "action"     => "update", "id" => "" ), "adminrout",    true) ?>'+id,'Currency':'<?php echo $currency->getSymbol(); ?>'});						
+					 },
+				beforeClose: function(event, ui) { 
+						$('#dialog_calendar').html('');
+					 }
+			});
+}
+
+
+$(document).ready(function() {
+	floatingbar('#floatingbar',"#button_top_bar",null);
+	
+	var settingObj = {
+						grid_id : 'grid',
+						dest_url : "<?php echo $this->url(); ?>",
+						pageSize : '<?php echo Eicra_Global_Variable::getSession()->viewPageNum; ?>',
+						page: '<?php echo ($this->posted_data['page']) ? $this->posted_data['page'] : ''; ?>',	
+						calendar: {
+							calendar_include_time: false,
+							calendar_img_link: 'application/modules/Administrator/layouts/scripts/images/common/calendar.png',
+							monthNamesShort: <?php echo $this->translator->translator("common_calender_monthNamesShort"); ?>,
+							monthNames:		<?php echo $this->translator->translator("common_calender_monthNames"); ?>,
+							dayNamesMin:		<?php echo $this->translator->translator("common_calender_dayNamesMin"); ?>,
+							buttonText:		'calendar',
+							dateFormat:		'yy-mm-dd',
+							dateTimeFormat:     "yyyy-MM-dd hh:mm:ss tt",
+							culture: "<?php echo str_ireplace('_', '-', $locale); ?>",
+							value: ''
+						},
+						dynamic_list_action: [
+									{
+										list_id:'country_id',
+										sub_list: {
+											list_id:'state_id',
+											list_dest_url: '<?php echo $this->url( array('module' =>'Vacationrentals','controller' => 'backendpro', 'action' => 'states' ), 'adminrout',    true) ?>',
+											list_any_value: '<?php echo html_entity_decode($this->translator->translator("vacationrentals_select_state"), ENT_QUOTES, 'UTF-8'); ?>',
+											list_input_value_field: 'state_id',
+											list_input_option_field: 'state_name',
+											list_return_field: 'states',
+											list_loader_info : {
+														loader_id : 'state_id_err',
+														loader_img : 'application/modules/Administrator/layouts/scripts/images/loader/ajax_loader.gif',
+														on_loading : [
+																		{id : 'state_id', type:'html', loading_lang: '<?php echo html_entity_decode($this->translator->translator("common_loading_language"), ENT_QUOTES, 'UTF-8'); ?>', normal_lang: '<?php echo html_entity_decode($this->translator->translator("vacationrentals_select_state"), ENT_QUOTES, 'UTF-8'); ?>'},
+																		{id : 'area_id', type:'html', loading_lang: '<?php echo html_entity_decode($this->translator->translator("vacationrentals_select_area"), ENT_QUOTES, 'UTF-8'); ?>', normal_lang: '<?php echo html_entity_decode($this->translator->translator("vacationrentals_select_area"), ENT_QUOTES, 'UTF-8'); ?>'}
+																	]
+												},
+											sub_list:{
+												list_id:'area_id',
+												list_dest_url: '<?php echo $this->url( array('module' =>'Vacationrentals','controller' => 'backendpro', 'action' => 'areas' ), 'adminrout',    true) ?>',
+												list_any_value: '<?php echo html_entity_decode($this->translator->translator("vacationrentals_select_area"), ENT_QUOTES, 'UTF-8'); ?>',
+												list_input_value_field: 'city_id',
+												list_input_option_field: 'city',
+												list_return_field: 'cities',
+												list_loader_info : {
+															loader_id : 'area_id_err',
+															loader_img : 'application/modules/Administrator/layouts/scripts/images/loader/ajax_loader.gif',
+															on_loading : [
+																			{id : 'area_id', type:'html', loading_lang: '<?php echo html_entity_decode($this->translator->translator("common_loading_language"), ENT_QUOTES, 'UTF-8'); ?>', normal_lang: '<?php echo html_entity_decode($this->translator->translator("vacationrentals_select_area"), ENT_QUOTES, 'UTF-8'); ?>'}
+																		]
+													}
+											}
+										}
+									}
+						],
+						search_action: {
+							search_form_id : 'searchForm',
+							search_form_btn : 'search_btn',
+							hasTinyMCE 	: false
+						},
+						common_action : {
+								permission_arr : {
+										publish_enable 	: 	'<?php echo $permission_arr['publish_enable']; ?>',
+										delete_enable	:	'<?php echo $permission_arr['delete_enable']; ?>',
+										featured_enable	:	'<?php echo $permission_arr['featured_enable']; ?>'
+								},
+								publish_dest_url			:	"<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'publish' ), 'adminrout',    true); ?>",
+								publish_dest_data_field 	: 	['id', 'vacationrentals_name', 'paction', 'activation_never', 'available_activation_date', 'available_expire_date'],
+								publish_active_icon_link	:	"application/modules/Administrator/layouts/scripts/images/tools/published.gif",
+								publish_deactive_icon_link	:	"application/modules/Administrator/layouts/scripts/images/tools/unpublished.gif",
+								
+								delete_dest_url				:	"<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'delete' ), 'adminrout',    true); ?>",
+								delete_dest_data_field 		: 	['id', 'group_id'],
+																
+								publish_multi_dest_url		:	"<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'publishall' ), 'adminrout',    true); ?>",
+								delete_multi_dest_url		:	"<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'deleteall' ), 'adminrout',    true); ?>",
+								
+								toolbar_button_loader		:	'<span class="icon loader"></span>',
+								ajax_loader_link			:	"application/modules/Administrator/layouts/scripts/images/loader/ajax_loader.gif",
+						
+								multi_action	: [
+														{
+															multi_action_caller_id				:	"a.featured_btn",
+															multi_action_dest_url				:	"<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'featured' ), 'adminrout',    true) ?>",
+															multi_action_dest_data_field 		: 	['id', 'vacationrentals_name', 'paction'],
+															multi_action_data_return_field 		: 	['featured'],
+															multi_action_data_permission_field 	: 	['featured_enable'],
+															multi_action_dest_data_paction 		: 	[
+																										{'paction' : 'featured', 'title' : "<?php echo html_entity_decode($this->translator->translator("common_feature_title"), ENT_QUOTES, 'UTF-8'); ?>", "icon_link" : "application/modules/Administrator/layouts/scripts/images/tools/unfeatured.gif"},
+																										{'paction' : 'unfeatured', 'title' : "<?php echo html_entity_decode($this->translator->translator("common_unfeature_title"), ENT_QUOTES, 'UTF-8'); ?>", "icon_link" : "application/modules/Administrator/layouts/scripts/images/tools/featured.gif"}
+																									]															
+														}
+													]
+						},
+						order_action: {
+								order_dest_data_field		:	['id', 'vacationrentals_order'],
+								
+								order_up_dest_url			:	"<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'up' ), 'adminrout',    true) ?>",
+								order_up_ajax_loader_link	:	"application/modules/Administrator/layouts/scripts/images/tools/up-animation.gif",
+								order_down_dest_url			:	"<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'down' ), 'adminrout',    true) ?>",
+								order_down_ajax_loader_link	:	"application/modules/Administrator/layouts/scripts/images/tools/down-animation.gif",
+								
+								order_all_dest_data_field	:	['id_arr', 'vacationrentals_order_arr'],
+								order_all_dest_url			:	"<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'orderall' ), 'adminrout',    true) ?>",
+								order_all_ajax_loader_link	:	"application/modules/Administrator/layouts/scripts/images/loader/order_all_loader.gif"
+						},
+						search_data : {},
+						batch:		false,
+						editable:	false,
+						scrollable: false,
+						detailInit:	false,
+						dataBound: function(e) {									
+								var self = this;		
+																							
+								self.tbody.find("tr").children('td:nth-child(4)').css({'overflow' : 'visible'});
+								commonImageThumbnil();
+								availableCalendar();
+																
+								<?php if($this->auth->getIdentity()->allow_change_order_listing == '1') : ?>
+								self.thead.find("th[data-field='vacationrentals_order']").unbind('click');
+								self.thead.find("th[data-field='vacationrentals_order']>a").attr('href', 'javascript:void(0)');
+								<?php endif; ?>								                      
+                        },
+						filterable:{
+						  extra: true,
+						  messages: {
+							  info: "<?php echo $this->translator->translator("portfolio_filter_messages_info", '', 'Portfolio'); ?>", // sets the text on top of the filter menu
+							  filter: "<?php echo $this->translator->translator("portfolio_filter_messages_filter", '', 'Portfolio'); ?>", // sets the text for the "Filter" button
+							  clear: "<?php echo $this->translator->translator("portfolio_filter_messages_clear", '', 'Portfolio'); ?>", // sets the text for the "Clear" button
+					  
+							  // when filtering boolean numbers
+							  isTrue: "<?php echo $this->translator->translator("portfolio_filter_messages_isTrue", '', 'Portfolio'); ?>", // sets the text for "isTrue" radio button
+							  isFalse: "<?php echo $this->translator->translator("portfolio_filter_messages_isFalse", '', 'Portfolio'); ?>", // sets the text for "isFalse" radio button
+					  
+							  //changes the text of the "And" and "Or" of the filter menu
+							  and: "<?php echo $this->translator->translator("portfolio_filter_messages_and", '', 'Portfolio'); ?>",
+							  or: "<?php echo $this->translator->translator("portfolio_filter_messages_or", '', 'Portfolio'); ?>"
+						  },
+						  operators: {
+							  string: {
+								  startswith: "<?php echo $this->translator->translator("portfolio_filter_messages_operators_string_startswith", '', 'Portfolio'); ?>",
+								  contains: "<?php echo $this->translator->translator("portfolio_filter_messages_operators_string_contains", '', 'Portfolio'); ?>",
+								  doesnotcontain: "<?php echo $this->translator->translator("portfolio_filter_messages_operators_string_doesnotcontain", '', 'Portfolio'); ?>",
+								  endswith: "<?php echo $this->translator->translator("portfolio_filter_messages_operators_string_endswith", '', 'Portfolio'); ?>",
+								  eq: "<?php echo $this->translator->translator("portfolio_filter_messages_operators_string_eq", '', 'Portfolio'); ?>",
+								  neq: "<?php echo $this->translator->translator("portfolio_filter_messages_operators_string_neq", '', 'Portfolio'); ?>"
+							  },
+							  number: {
+								  eq:	"<?php echo $this->translator->translator("portfolio_filter_messages_operators_number_eq", '', 'Portfolio'); ?>",
+								  neq:	"<?php echo $this->translator->translator("portfolio_filter_messages_operators_number_neq", '', 'Portfolio'); ?>",
+								  gte:	"<?php echo $this->translator->translator("portfolio_filter_messages_operators_number_gte", '', 'Portfolio'); ?>",
+								  gt:	"<?php echo $this->translator->translator("portfolio_filter_messages_operators_number_gt", '', 'Portfolio'); ?>",
+								  lte:	"<?php echo $this->translator->translator("portfolio_filter_messages_operators_number_lte", '', 'Portfolio'); ?>",
+								  lt:	"<?php echo $this->translator->translator("portfolio_filter_messages_operators_number_lt", '', 'Portfolio'); ?>"
+							  },
+							  date: {
+								  gte:	"<?php echo $this->translator->translator("portfolio_filter_messages_operators_date_gte", '', 'Portfolio'); ?>",
+								  gt:	"<?php echo $this->translator->translator("portfolio_filter_messages_operators_date_gt", '', 'Portfolio'); ?>",
+								  lte:	"<?php echo $this->translator->translator("portfolio_filter_messages_operators_date_lte", '', 'Portfolio'); ?>",
+								  lt:	"<?php echo $this->translator->translator("portfolio_filter_messages_operators_date_lt", '', 'Portfolio'); ?>",
+							  	  eq:	"<?php echo $this->translator->translator("portfolio_filter_messages_operators_date_eq", '', 'Portfolio'); ?>",
+								  neq:	"<?php echo $this->translator->translator("portfolio_filter_messages_operators_date_neq", '', 'Portfolio'); ?>"
+							  },
+							  enums: {
+									eq: "<?php echo $this->translator->translator("portfolio_filter_messages_operators_enum_eq", '', 'Portfolio'); ?>",
+									neq: "<?php echo $this->translator->translator("portfolio_filter_messages_operators_enum_neq", '', 'Portfolio'); ?>"
+							  }
+						  }
+						},
+						model: {
+                                    fields: {
+                                        id: { type: "number" },
+                                        category_name: { type: "string" },
+                                        vacationrentals_name: { type: "string" },
+                                        vacationrentals_order: { type: "number", editable: false },
+                                        vacationrentals_date: { type: "date" },
+										active: { type: "enums", editable: false },
+										common_action: { editable: false }
+                                    }
+                                },					
+						column_fields: [
+											{ field:"checkAll", headerTemplate: '<input type="checkbox" name="checkAll" id="checkAll" class="checkAll_btn" <?php if(!$permission_arr['publish_enable'] && !$permission_arr['delete_enable'] && !$permission_arr['featured_enable']) : ?>disabled="disabled"<?php endif; ?>  />',	template: '<input type="checkbox" value="${id}" class="check_btn" <?php if(!$permission_arr['publish_enable'] && !$permission_arr['delete_enable'] && !$permission_arr['featured_enable']) : ?>disabled="disabled"<?php endif; ?> />' , width: 28, filterable: false, sortable: false, columnMenu: false},  // For Header : #= Selected ? checked="checked" : "" #       For Body :  # (checkAll) ? checked="checked" :  ""  #  # if(checkAll){ # checked # } #
+											{ 
+												field: "id", 
+												template: '#= id_format #',		
+												title: 	"<?php echo $this->translator->translator('vacationrentals_page_list_page_id'); ?>", 
+												width: 50, 
+												filterable: { 
+													ui: function(element) {
+														element.kendoNumericTextBox({
+															culture: "<?php echo str_ireplace('_', '-', $locale); ?>",
+															format: "0",
+															min: 1,															
+															placeholder: "<?php echo html_entity_decode($this->translator->translator("portfolio_numeric_text_box_messages_placeholder", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>",
+															upArrowText: "<?php echo html_entity_decode($this->translator->translator("portfolio_numeric_text_box_messages_upArrowText", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>",
+															downArrowText: "<?php echo html_entity_decode($this->translator->translator("portfolio_numeric_text_box_messages_downArrowText", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>"
+														});
+													}
+												}  
+											},
+											{ field: "category_name", title: "<?php echo $this->translator->translator('vacationrentals_page_list_page_cat'); ?>", template: '#= (category_name) ? category_name : "<?php echo html_entity_decode($this->translator->translator('common_no_catagory'), ENT_QUOTES, 'UTF-8'); ?>" #', width: 190},
+											{ 
+												field: "vacationrentals_image", 		
+												title:	"<?php echo $this->translator->translator('vacationrentals_page_list_page_thumb'); ?>",
+												width: 50,
+												template: '# if(vacationrentals_image_format){ # <div class="thumb"><img src="${vacationrentals_image_format}" width="30" height="20" /></div> # } #',
+												filterable: false, 
+												sortable: false,
+												columnMenu: false 
+											},
+											{ 
+												field: "vacationrentals_name", 		
+												title:	"<?php echo $this->translator->translator('vacationrentals_page_list_page_pro_name'); ?>",
+												template: '#= vacationrentals_name #',
+												attributes: {
+													title: 	'<strong>#= vacationrentals_name #</strong><br /># if(owner_name){ # #= \'<strong><?php echo html_entity_decode($this->translator->translator('vacationrentals_owner'), ENT_QUOTES, 'UTF-8'); ?> : </strong>\' # #= owner_name # # } ' +
+															' if(vacationrentals_price){ #<br /><strong><?php echo html_entity_decode($this->translator->translator('vacationrentals_price'), ENT_QUOTES, 'UTF-8'); ?> : </strong>#= vacationrentals_price_format # #= \'<?php echo " ".$currency->getSymbol(); ?>\' # # } '+
+															' if(feature_room_no){ #&nbsp;&nbsp;<strong><?php echo html_entity_decode($this->translator->translator('vacationrentals_room'), ENT_QUOTES, 'UTF-8'); ?> : </strong>#= feature_room_no_format # # } '+
+															' if(property_size){ #<br /><strong><?php echo html_entity_decode($this->translator->translator('vacationrentals_property_size'), ENT_QUOTES, 'UTF-8'); ?> : </strong>#= property_size_format # <?php echo html_entity_decode($this->translator->translator('vacationrentals_list_page_search_property_size_sqf'), ENT_QUOTES, 'UTF-8'); ?> # } #'
+												}
+											},
+											{ 
+												field: "vacationrentals_order", 		
+												title:	"<?php echo $this->translator->translator('common_order'); ?>", 
+												width: 110,												
+												headerTemplate: '<?php echo html_entity_decode($this->translator->translator('common_order'), ENT_QUOTES, 'UTF-8'); if($this->auth->getIdentity()->allow_change_order_listing == '1') : ?>&nbsp;&nbsp;<a href="javascript: void(0);" class="all_order_btn"><img src="application/modules/Administrator/layouts/scripts/images/tools/save.png" border="0" /></a><?php endif; ?>',
+												template: '<?php if($this->auth->getIdentity()->allow_change_order_listing == '1') : ?><input type="text" size="1" name="vacationrentals_order" id="vacationrentals_order" class="order_text" value="${vacationrentals_order}" />&nbsp;<a href="javascript: void(0);" rel="${id}" class="up_btn"><img src="application/modules/Administrator/layouts/scripts/images/tools/up-arrow.gif" border="0" /></a>&nbsp;<a href="javascript: void(0);" rel="${id}" class="down_btn"><img src="application/modules/Administrator/layouts/scripts/images/tools/down-arrow.gif" border="0" /></a><?php else : ?>${vacationrentals_order}<?php endif; ?>',
+												attributes:{ 'align' : 'center' },
+												filterable: { 
+													ui: function(element) {
+														element.kendoNumericTextBox({
+															culture: "<?php echo str_ireplace('_', '-', $locale); ?>",
+															format: "0",
+															min: 1,															
+															placeholder: "<?php echo html_entity_decode($this->translator->translator("portfolio_numeric_text_box_messages_placeholder", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>",
+															upArrowText: "<?php echo html_entity_decode($this->translator->translator("portfolio_numeric_text_box_messages_upArrowText", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>",
+															downArrowText: "<?php echo html_entity_decode($this->translator->translator("portfolio_numeric_text_box_messages_downArrowText", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>"
+														});
+													}
+												} 
+											},
+											{ 
+												field: "vacationrentals_date", 	
+												title:	"<?php echo $this->translator->translator('common_date'); ?>",  
+												format: "{0:MM/dd/yyyy}", 
+												template: '#= vacationrentals_date_lang_format #',
+												attributes:{ 
+																'align' : 'center' ,
+																'title'	: '<strong><?php echo html_entity_decode($this->translator->translator('common_date'), ENT_QUOTES, 'UTF-8'); ?> : </strong>${vacationrentals_date_format}<br /><strong><?php echo html_entity_decode($this->translator->translator('common_entry'), ENT_QUOTES, 'UTF-8'); ?> : </strong>${username}'
+															},
+												width: 80, 
+												filterable: { 
+													ui: function(element) {
+														kendoDateTimeCalendar(element, settingObj);
+													}
+												}
+											},
+											{ 	
+												field: "active", 	
+												title:	"<?php echo $this->translator->translator('common_status'); ?>", 
+												width: 80,
+												template: '<a href="javascript:void(0);" class="publish_btn"  rel="${id}_${publish_status_vacationrentals_name}_#= (active == 1) ? \'unpublish\' : \'publish\' #"><img src="#= (active == 1) ? \'application/modules/Administrator/layouts/scripts/images/tools/published.gif\' : \'application/modules/Administrator/layouts/scripts/images/tools/unpublished.gif\' #" title="#= (active == 1) ? \'<?php echo html_entity_decode($this->translator->translator('common_unpublish_title'), ENT_QUOTES, 'UTF-8'); ?>\' : \'<?php echo html_entity_decode($this->translator->translator('common_publish_title'), ENT_QUOTES, 'UTF-8'); ?>\' #" alt="#= (active == 1) ? \'<?php echo html_entity_decode($this->translator->translator('common_unpublish_title'), ENT_QUOTES, 'UTF-8'); ?>\' : \'<?php echo html_entity_decode($this->translator->translator('common_publish_title'), ENT_QUOTES, 'UTF-8'); ?>\' #" border="0" /></a>',
+												attributes:{ 'align' : 'center' },
+												filterable: { 
+													ui: function(element) {
+														element.kendoDropDownList({
+															dataSource: [ { Id: 0, Title: "<?php echo html_entity_decode($this->translator->translator("common_unpublished_language"), ENT_QUOTES, 'UTF-8'); ?>" }, { Id: 1, Title: "<?php echo html_entity_decode($this->translator->translator("common_published_language"), ENT_QUOTES, 'UTF-8'); ?>" } ],
+															dataTextField: "Title",
+    														dataValueField: "Id",
+															optionLabel: "<?php echo html_entity_decode($this->translator->translator("common_select"), ENT_QUOTES, 'UTF-8'); ?>"
+														});
+													}
+												}
+											},
+											{ 
+												field: "common_action",	
+												title:	"<?php echo $this->translator->translator('common_action'); ?>", 
+												width: 140, 
+												template:	'<?php if ($permission_arr['edit_enable']) : ?># if(edit_enable){ # <a href="<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'edit', 'id' => '' ), 'adminrout',    true) ?>${id}/group_id/${group_id}"><img src="application/modules/Administrator/layouts/scripts/images/tools/edit.png" title="<?php echo html_entity_decode($this->translator->translator('common_edit_title'), ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo html_entity_decode($this->translator->translator('common_edit_title'), ENT_QUOTES, 'UTF-8'); ?>" border="0" /></a> # } #<?php endif; ?>'+
+															'<?php if ($permission_arr['edit_enable']) : ?>&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" class="calendar_btn" rel="${id}"><img src="application/modules/Administrator/layouts/scripts/images/tools/calendar.png" title="<?php echo html_entity_decode($this->translator->translator('common_booking_calendar_title'), ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo html_entity_decode($this->translator->translator('common_booking_calendar_title'), ENT_QUOTES, 'UTF-8'); ?>"  border="0" /></a><?php endif; ?>'+
+															'<?php if ($permission_arr['delete_enable']) : ?>&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" class="delete_btn"  rel="${id}_${group_id}"><img src="application/modules/Administrator/layouts/scripts/images/tools/delete.png" title="<?php echo html_entity_decode($this->translator->translator('common_delete_title'), ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo html_entity_decode($this->translator->translator('common_delete_title'), ENT_QUOTES, 'UTF-8'); ?>"  border="0" /></a><?php endif; ?>'+
+															'&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);"  rel="${id}_${publish_status_vacationrentals_name}_#= (featured == 1) ? \'unfeatured\' : \'featured\' #" class="featured_btn"><img src="#= (featured == 1) ? \'application/modules/Administrator/layouts/scripts/images/tools/featured.gif\' : \'application/modules/Administrator/layouts/scripts/images/tools/unfeatured.gif\' #" border="0" title="#= (featured == 1) ? \'<?php echo html_entity_decode($this->translator->translator('common_unfeature_title'), ENT_QUOTES, 'UTF-8'); ?>\' : \'<?php echo html_entity_decode($this->translator->translator('common_feature_title'), ENT_QUOTES, 'UTF-8'); ?>\' #" alt="#= (featured == 1) ? \'<?php echo html_entity_decode($this->translator->translator('common_unfeature_title'), ENT_QUOTES, 'UTF-8'); ?>\' : \'<?php echo html_entity_decode($this->translator->translator('common_feature_title'), ENT_QUOTES, 'UTF-8'); ?>\' #" /></a>', 
+												attributes:{ 'align' : 'center' },
+												filterable: false, 
+												sortable: false,
+												columnMenu: false 
+											}
+										],
+						columnMenu:	{
+							columns: true,
+							messages: {
+									sortAscending: "<?php echo html_entity_decode($this->translator->translator("portfolio_column_menu_messages_sort_ascending", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>",
+									sortDescending: "<?php echo html_entity_decode($this->translator->translator("portfolio_column_menu_messages_sort_descending", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>",
+									filter: "<?php echo html_entity_decode($this->translator->translator("portfolio_column_menu_messages_filter", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>",
+									columns: "<?php echo html_entity_decode($this->translator->translator("portfolio_column_menu_messages_columns", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>"
+								}
+						},
+						messages: {
+										display				: 	'<?php echo $this->translator->translator("portfolio_pagination_messages_display", '', 'Portfolio'); ?>',
+										empty				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_empty", '', 'Portfolio'); ?>',
+										page				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_page", '', 'Portfolio'); ?>',
+										of					:	'<?php echo $this->translator->translator("portfolio_pagination_messages_of", '', 'Portfolio'); ?>',
+										itemsPerPage		:	'<?php echo $this->translator->translator("portfolio_pagination_messages_items_per_page", '', 'Portfolio'); ?>',
+										first				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_first", '', 'Portfolio'); ?>',
+										previous			:	'<?php echo $this->translator->translator("portfolio_pagination_messages_previous", '', 'Portfolio'); ?>',
+										next				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_next", '', 'Portfolio'); ?>',
+										last				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_last", '', 'Portfolio'); ?>',
+										refresh				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_refresh", '', 'Portfolio'); ?>',
+										
+										common_msg_dialog_id 		:	'dialog_msg',
+										common_confirn_dialog_id	:	'dialog-confirm',
+										common_ok					:	"<?php echo html_entity_decode($this->translator->translator('common_ok'), ENT_QUOTES, 'UTF-8'); ?>",
+										common_delete_title			:	"<?php echo html_entity_decode($this->translator->translator('common_delete_title'), ENT_QUOTES, 'UTF-8'); ?>",
+										common_delete_selected		:	"<?php echo html_entity_decode($this->translator->translator("common_delete_selected"), ENT_QUOTES, 'UTF-8'); ?>",
+										common_cancel				:	"<?php echo html_entity_decode($this->translator->translator("common_cancel"), ENT_QUOTES, 'UTF-8'); ?>",
+										common_delete_confirm		:	"<?php echo $this->translator->translator("vacationrentals_list_delete_confirm"); ?>",
+										common_save_btn_text		:	"<?php echo html_entity_decode($this->translator->translator("vacationrentals_date_add_page_save"), ENT_QUOTES, 'UTF-8'); ?>",
+										common_field_must_not_empty	:	"<?php echo html_entity_decode($this->translator->translator("common_field_must_not_empty"), ENT_QUOTES, 'UTF-8'); ?>",
+										common_publish_title		:	"<?php echo $this->translator->translator("common_publish_title"); ?>",
+										common_unpublish_title		:	"<?php echo $this->translator->translator("common_unpublish_title"); ?>",										
+										common_publish_selected		:	"<?php echo $this->translator->translator("common_publish_selected"); ?>",
+										common_unpublish_selected	:	"<?php echo $this->translator->translator("common_unpublish_selected"); ?>",
+										common_publish_perm	 		:	"<?php echo $this->translator->translator("common_publish_perm"); ?>",
+										common_perm_err				:	"<?php echo $this->translator->translator("common_perm_err"); ?>",
+										common_selected_err	 		:	"<?php echo $this->translator->translator("vacationrentals_selected_err"); ?>"
+									}
+					};
+	commonGrid(settingObj);	
+});
+function inputActivation()
+{	
+	var input = '<table width="95%" border="0" align="center" cellpadding="0" cellspacing="10">'+
+					'<tr>'+
+						'<td colspan="2" id="actionMessage"></td>'+
+					'</tr>'+
+					'<tr>'+
+					  '<td width="40%"><?php echo addslashes($this->translator->translator("vacationrentals_dialog_available_form_label")); ?></td>'+
+					  '<td width="60%">'+
+					  '<input type="text" size="20" name="available_activation_date" id="available_activation_date" />&nbsp;<span id="available_activation_date_err"></span>'+					  
+					  '</td>'+
+					'</tr>'+
+					'<tr>'+
+					  '<td><?php echo addslashes($this->translator->translator("vacationrentals_dialog_available_to_label")); ?></td>'+
+					  '<td>'+
+					  '<input type="text" size="20" name="available_expire_date" id="available_expire_date" />&nbsp;<span id="available_expire_date_err"></span>'+					  
+					  '</td>'+
+					'</tr>'+
+					'<tr>'+
+					  '<td><?php echo addslashes($this->translator->translator("vacationrentals_dialog_available_never_label")); ?></td>'+
+					  '<td>'+
+					  '<input type="checkbox"  name="activation_never" id="activation_never" />&nbsp;<span id="activation_never_err"></span>'+					  
+					  '</td>'+
+					'</tr>'+
+				  '</table>';
+	return input;
+}
+</script>
+<div id="button_top_bar"></div>
+<div class="title-container">
+	<div class="vacationrentals"><h1><?php echo $this->translator->translator('vacationrentals_page_list_page_name'); ?> <?php if(!empty($this->group_id)){ echo ' ('.$this->escape($this->group_info['vacationrentals_name']).')'; } ?></h1></div>
+    
+    <div class="button-container">
+        <?php if ($permission_arr['add_enable']) : ?>
+        <span class="button  ui-widget-content-1"><a href="<?php echo $this->url(array('module'=> 'Vacationrentals','controller'=>'Backendpro', 'action'=>'add','group_id' => $param_group_id),'adminrout',true);?>"><span class="icon add"><?php echo $this->translator->translator('vacationrentals_page_list_page_new'); ?></span></a></span>
+        <?php endif; ?>
+        
+		<?php if ($permission_arr['publish_enable']) : ?>
+        <span class="button  ui-widget-content-1"><a href="javascript: void(0);" rel="publish" class="publish_all"><span class="icon publish"><?php echo $this->translator->translator('common_publish_selected'); ?></span></a></span>
+        <?php endif; ?>
+
+		<?php if ($permission_arr['publish_enable']) : ?>
+        <span class="button  ui-widget-content-1"><a href="javascript: void(0);" rel="unpublish" class="publish_all"><span class="icon unpublish"><?php echo $this->translator->translator('common_unpublish_selected'); ?></span></a></span>
+        <?php endif; ?>
+	
+    	<?php if ($permission_arr['delete_enable']) : ?>
+        <span class="button  ui-widget-content-1"><a href="javascript: void(0);" class="delete_all"><span class="icon delete"><?php echo html_entity_decode($this->translator->translator("common_delete_selected"), ENT_QUOTES, "UTF-8"); ?></span></a></span>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="content-container">
+
+	<div id="sidebar-inner">
+    	<?php echo $this->partial('nav_menu.phtml');  ?>
+    </div>  
+    
+    <div id="content-inner">
+    	<?php if ($permission_arr['search_enable']) : ?>
+        	<div class="toggle-link"><a href="#" id="slick-slidetoggle" class="vacation-icon"><?php echo $this->translator->translator('vacationrentals_list_page_search'); ?></a></div>
+		<?php endif; ?>
+		<div id="slickbox" class="toggle-container">
+            <form name="searchForm" id="searchForm">
+                <div class="toggle-search">
+                    <div class="toggle-row">
+                        <div class="toggle-label">
+                            <span class="label"><?php echo $this->translator->translator('vacationrentals_list_page_search_name'); ?></span>
+                        </div>
+                        
+                        <div class="toggle-field">
+                            <input type="text" name="vacationrentals_name" id="vacationrentals_name" value="" size="50" class = "ui-widget-content ui-corner-all" operator="contains"/>
+                        </div>
+                        
+                        <div class="toggle-label">
+                            <span class="label"><?php echo $this->translator->translator('vacationrentals_list_page_search_property_size'); ?></span>
+                        </div>
+                        
+                        <div class="toggle-field">
+                            <input type="text" name="property_size" id="property_size" class = "ui-widget-content ui-corner-all"/>&nbsp;<?php echo $this->translator->translator('vacationrentals_list_page_search_property_size_sqf'); ?>
+                           &nbsp;&nbsp; <span class="label"><?php echo $this->translator->translator('vacationrentals_list_page_search_room'); ?></span>
+                            <select name="feature_room_no" id="feature_room_no" class = "ui-widget-content ui-corner-all" operator="eq">
+                            <option value="any"><?php echo $this->translator->translator('common_any_language'); ?></option>
+                            <?php
+                                
+                                for($i = 1; $i<=1000;$i++)
+                                {
+                            ?>
+                                <option value="<?php echo $i; ?>"><?php echo $this->escape($i); ?></option>
+                            <?php
+                                }
+                            ?>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Row 2 Start -->
+                    <div class="toggle-row">
+                        <div class="toggle-label">
+                            <span class="label"><?php echo $this->translator->translator('vacationrentals_list_page_search_country'); ?></span>
+                        </div>
+                        
+                        <div class="toggle-field">
+                           <select name="country_id" id="country_id" class="country_id ui-widget-content ui-corner-all" operator="eq">
+                            <option value="any"><?php echo $this->translator->translator('common_any_language'); ?></option>
+                            <?php
+                            if($this->country_data)
+							{    
+                                foreach($this->country_data as $key=>$value)
+                                {
+                            ?>
+                                <option value="<?php echo $key; ?>"><?php echo $this->escape($value); ?></option>
+                            <?php
+                                }
+							}
+                            ?>
+                            </select>
+                        </div>
+                        
+                        <div class="toggle-label">
+                            <span class="label"><?php echo $this->translator->translator('vacationrentals_list_page_search_pro_type'); ?></span>
+                        </div>
+                        
+                        <div class="toggle-field">                           
+                            <select name="vacationrentals_type" id="vacationrentals_type" class = "ui-widget-content ui-corner-all" operator="eq">
+                                <option value="any"><?php echo $this->translator->translator('common_any_language'); ?></option>
+                                <?php	
+								if($this->type_info)
+								{
+                                    foreach($this->type_info as $info)
+                                    {
+                                ?>
+                                <option value="<?php echo $info['id']; ?>"><?php echo $this->escape($info['business_type']); ?></option>
+                                <?php
+                                    }
+								}
+                                ?>
+                            </select>
+                            
+                            <span class="label"><?php echo $this->translator->translator('vacationrentals_list_page_search_category'); ?></span>
+                             <select name="category_id" id="category_id" class = "ui-widget-content ui-corner-all" operator="eq" <?php if(!empty($this->category_id)){ ?>disabled="disabled" style="background:#CCC;"<?php } ?>>
+                                <option value="any"><?php echo $this->translator->translator('common_any_language'); ?></option>
+                                <?php
+								if($this->cat_data)
+								{
+                                    foreach($this->cat_data as $info)
+                                    {
+										$selected = ($this->category_id == $info['id']) ? 'selected="selected"' : '';
+                                ?>
+                                <option value="<?php echo $info['id']; ?>" <?php echo $selected; ?>><?php echo $this->escape($info['category_name']); ?></option>
+                                <?php
+                                    }
+								}
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Row 2 End -->
+                    
+                    <!-- Row 3 Start -->
+                    <div class="toggle-row">
+                        <div class="toggle-label">
+                            <span class="label"><?php echo $this->translator->translator('vacationrentals_list_page_search_state'); ?></span>
+                        </div>
+                        
+                        <div class="toggle-field">
+                            <select name="state_id" id="state_id" class="state_id ui-widget-content ui-corner-all" operator="eq">
+                           		<option value="any"><?php echo $this->translator->translator('vacationrentals_select_state'); ?></option>																			
+                            </select><span class="input-errors" id="state_id_err"></span>
+                        </div>
+                        
+                        <div class="toggle-label">
+                            <span class="label"><?php echo $this->translator->translator('vacationrentals_list_page_search_price'); ?></span>
+                        </div>
+                        
+                        <div class="toggle-field">
+                            <input type="text" name="vacationrentals_price" id="vacationrentals_price" value="" class = "ui-widget-content ui-corner-all" operator="contains"/><?php echo $currency->getSymbol(); ?>  &nbsp;
+                            
+                            <span class="label"><?php echo $this->translator->translator('vacationrentals_list_page_search_status'); ?></span>
+                            <select name="active" id="active" class = "ui-widget-content ui-corner-all" operator="eq" <?php if($this->approve != ''){ ?>disabled="disabled" style="background:#CCC;"<?php } ?>>
+                                <option value="any"><?php echo $this->translator->translator('common_any_language'); ?></option>
+                                <option value="1" <?php if($this->approve == '1'){ ?>selected="selected"<?php } ?>><?php echo $this->translator->translator('common_published_language'); ?></option>
+                                <option value="0" <?php if($this->approve == '0'){ ?>selected="selected"<?php } ?>><?php echo $this->translator->translator('common_unpublished_language'); ?></option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Row 3 End -->
+                    
+                    <!-- Row 4 Start -->
+                    <div class="toggle-row">
+                    
+                    <div class="toggle-label">
+                        <span class="label"><?php echo $this->translator->translator('vacationrentals_list_page_search_area'); ?></span>
+                    </div>
+                    
+                    <div class="toggle-field">
+                    	<select name="area_id" id="area_id" class="area_id ui-widget-content ui-corner-all" operator="eq">
+                        <option value="any"><?php echo $this->translator->translator('vacationrentals_select_area'); ?></option>																			
+                        </select><span class="input-errors" id="area_id_err"></span>
+                    </div>
+                    
+                    
+					<?php
+						if($this->auth->hasIdentity() && $this->auth->getIdentity()->access_other_user_article == '1')
+						{
+						?>
+                        <div class="toggle-label">
+                            <span class="label"><?php echo $this->translator->translator('vacationrentals_list_page_search_owner'); ?></span>
+                        </div>
+                        
+                        <div class="toggle-field">
+                            <span class="ui-widget">
+                            <select name="vacationrentals_owner" id="vacationrentals_owner" operator="eq">
+                            <option value="any"><?php echo $this->translator->translator('common_any_language'); ?></option>
+                            <?php
+                             if($this->mem_data)
+							 {   
+                                foreach($this->mem_data as $key=>$value)
+                                {
+                            ?>
+                                <option value="<?php echo $key; ?>"><?php echo $this->escape($value); ?></option>
+                            <?php
+                                }
+							 }
+                            ?>
+                            </select>
+                            </span>
+                        </div>
+                      <?php
+					  }
+					  ?>  
+                    </div>
+                    <!-- Row 4 Start -->
+                </div>
+                
+                <hr />
+                <div class="clr form-button-container">
+                    <span class="button ui-widget-content-1"><a href="javascript: void(0);" class="search_btn"><span class="icon search"><?php echo $this->translator->translator('prperty_list_page_search_button'); ?></span></a></span>
+                </div>
+            </form>
+        </div>
+        
+        <div class="chart">
+			<div <?php if($locale_direction == 'rtl'){ ?> class="k-rtl" <?php } ?>>
+               <div id="grid"></div>  
+           </div>
+      	</div>        
+    </div>
+</div>
+
+<div id="floatingbar">
+	<h1><?php echo $this->translator->translator('vacationrentals_page_list_page_name'); ?> <?php if(!empty($this->group_id)){ echo ' ('.$this->escape($this->group_info['vacationrentals_name']).')'; } ?></h1>
+    
+    <div class="button-container">
+        <?php if ($permission_arr['add_enable']) : ?>
+        <span class="button  ui-widget-content-1"><a href="<?php echo $this->url(array('module'=> 'Vacationrentals','controller'=>'Backendpro', 'action'=>'add','group_id' => $param_group_id),'adminrout',true);?>"><span class="icon add"><?php echo $this->translator->translator('vacationrentals_page_list_page_new'); ?></span></a></span>
+        <?php endif; ?>
+        
+		<?php if ($permission_arr['publish_enable']) : ?>
+        <span class="button  ui-widget-content-1"><a href="javascript: void(0);" rel="publish" class="publish_all"><span class="icon publish"><?php echo $this->translator->translator('common_publish_selected'); ?></span></a></span>
+        <?php endif; ?>
+
+		<?php if ($permission_arr['publish_enable']) : ?>
+        <span class="button  ui-widget-content-1"><a href="javascript: void(0);" rel="unpublish" class="publish_all"><span class="icon unpublish"><?php echo $this->translator->translator('common_unpublish_selected'); ?></span></a></span>
+        <?php endif; ?>
+	
+    	<?php if ($permission_arr['delete_enable']) : ?>
+        <span class="button  ui-widget-content-1"><a href="javascript: void(0);" class="delete_all"><span class="icon delete"><?php echo html_entity_decode($this->translator->translator("common_delete_selected"), ENT_QUOTES, "UTF-8"); ?></span></a></span>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div id="dialog_calendar_loader" style="display:none;"><div id="dialog_calendar"></div></div>
+<div id="dialog_msg" title="<?php echo $this->translator->translator('common_dialog_msg',$this->translator->translator('vacationrentals_page_list_page_name')); ?>"></div>
+<div id="dialog-confirm" title="<?php echo $this->translator->translator('common_confirmation',$this->translator->translator('common_delete')); ?>"></div>
+<div id="add-date-confirm" title="<?php echo $this->translator->translator('vacationrentals_add_available_date'); ?>"></div>
+<?php endif; ?>
+</div>

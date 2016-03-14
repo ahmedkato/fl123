@@ -1,0 +1,8 @@
+[26-Jul-2013 13:06:28 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 13:06:28 Europe/Berlin] PHP Fatal error:  Class 'Zend_Application_Module_Bootstrap' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/Bootstrap.php on line 0
+[03-Aug-2013 13:41:18 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 13:41:18 Europe/Berlin] PHP Fatal error:  Class 'Zend_Application_Module_Bootstrap' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/Bootstrap.php on line 0
+[24-Aug-2013 03:12:46 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[24-Aug-2013 03:12:46 Europe/Berlin] PHP Fatal error:  Class 'Zend_Application_Module_Bootstrap' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/Bootstrap.php on line 0
+[27-Aug-2013 00:35:10 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[27-Aug-2013 00:35:10 Europe/Berlin] PHP Fatal error:  Class 'Zend_Application_Module_Bootstrap' not found in /home/wwwhotei/public_html/application/modules/Paymentgateway/Bootstrap.php on line 0

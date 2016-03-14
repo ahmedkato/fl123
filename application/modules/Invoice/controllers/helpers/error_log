@@ -1,0 +1,1 @@
+[26-Jul-2013 05:20:10 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0

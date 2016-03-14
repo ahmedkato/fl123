@@ -1,0 +1,261 @@
+<?php
+if($this->business_type_info)
+{
+if(!empty($this->business_type_info['meta_keywords'])) { $this->headMeta()->setName('keywords',$this->business_type_info['meta_keywords']);}
+if(!empty($this->business_type_info['meta_desc'])) { $this->headMeta()->setName('description',$this->business_type_info['meta_desc']); }
+if(!empty($this->business_type_info['business_type'])) { $this->headTitle()->headTitle($this->business_type_info['business_type'],'SET')->setSeparator(' - ')->headTitle($this->business_type_info['meta_title']); }
+
+echo $this->headScript()->setFile($this->baseUrl().'/vendor/scripts/jtruncate/jquery.jtruncate.pack.js');
+
+$front_template = Zend_Registry::get('front_template');
+$global_conf = Zend_Registry::get('global_conf');
+
+// 1ist param options are : like, inline, plus_minus, horizontal, triangle
+$vote = new Vote_Controller_Helper_ShowVoteButton('inline','tours_page' );
+
+$locale_direction = Eicra_Global_Variable::getSession()->site_direction;
+$locale = Eicra_Global_Variable::getSession()->sess_lang;
+?>
+
+<script type="text/javascript">
+$(document).ready(function() {
+		var settingObj = {
+                            grid_id : 'grid',
+                            dest_url : "<?php echo $this->url(); ?>",
+                            pageSize : '<?php echo Eicra_Global_Variable::getSession()->viewPageNum; ?>',
+                            page: '<?php echo ($this->posted_data['page']) ? $this->posted_data['page'] : ''; ?>',	
+                            calendar: {
+                                culture: "<?php echo str_ireplace('_', '-', $locale); ?>",
+                                value: ''
+                            },
+                            search_action: {},
+                            common_action : {
+                                    permission_arr : {},
+                                    toolbar_button_loader		:	'<span class="icon loader"></span>',
+                                    ajax_loader_link			:	"application/modules/Administrator/layouts/scripts/images/loader/ajax_loader.gif",
+                            
+                                    multi_action	: []
+                            },
+                            search_data : {},
+                            batch:		false,
+                            editable:	false,
+                            scrollable: false,
+                            detailInit:	false,
+                            dataBound: function(e) {									
+                                    var self = this;
+                                    self.element.css("border", "none");
+                                    self.element.height("").find(".k-grid-pager").css("border-width", "1px 1px 1px 1px");
+                                    self.thead.remove();
+                                    text_truncate();
+                                    commonVoting();													                      
+                            },
+                            filterable: false,
+                            rowTemplate: kendo.template($("#view_template").html()),
+                            model: {},					
+                            column_fields: [],
+                            columnMenu:	false,
+                            messages: {
+                                            display				: 	'<?php echo $this->translator->translator("portfolio_pagination_messages_display", '', 'Portfolio'); ?>',
+                                            empty				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_empty", '', 'Portfolio'); ?>',
+                                            page				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_page", '', 'Portfolio'); ?>',
+                                            of					:	'<?php echo $this->translator->translator("portfolio_pagination_messages_of", '', 'Portfolio'); ?>',
+                                            itemsPerPage		:	'<?php echo $this->translator->translator("portfolio_pagination_messages_items_per_page", '', 'Portfolio'); ?>',
+                                            first				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_first", '', 'Portfolio'); ?>',
+                                            previous			:	'<?php echo $this->translator->translator("portfolio_pagination_messages_previous", '', 'Portfolio'); ?>',
+                                            next				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_next", '', 'Portfolio'); ?>',
+                                            last				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_last", '', 'Portfolio'); ?>',
+                                            refresh				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_refresh", '', 'Portfolio'); ?>',
+                                            
+                                            common_msg_dialog_id 		:	'dialog_msg',
+                                            common_confirn_dialog_id	:	'dialog-confirm',
+                                            common_ok					:	"<?php echo html_entity_decode($this->translator->translator('common_ok'), ENT_QUOTES, 'UTF-8'); ?>",
+                                            common_delete_title			:	"<?php echo html_entity_decode($this->translator->translator('common_delete_title'), ENT_QUOTES, 'UTF-8'); ?>",
+                                            common_delete_selected		:	"<?php echo html_entity_decode($this->translator->translator("common_delete_selected"), ENT_QUOTES, 'UTF-8'); ?>",
+                                            common_cancel				:	"<?php echo html_entity_decode($this->translator->translator("common_cancel"), ENT_QUOTES, 'UTF-8'); ?>",
+                                            common_delete_confirm		:	"<?php echo $this->translator->translator("vacationrentals_list_delete_confirm"); ?>",
+                                            common_publish_title		:	"<?php echo $this->translator->translator("common_publish_title"); ?>",
+                                            common_unpublish_title		:	"<?php echo $this->translator->translator("common_unpublish_title"); ?>",										
+                                            common_publish_selected		:	"<?php echo $this->translator->translator("common_publish_selected"); ?>",
+                                            common_unpublish_selected	:	"<?php echo $this->translator->translator("common_unpublish_selected"); ?>",
+                                            common_publish_perm	 		:	"<?php echo $this->translator->translator("common_publish_perm"); ?>",
+                                            common_perm_err				:	"<?php echo $this->translator->translator("common_perm_err"); ?>",
+                                            common_selected_err	 		:	"<?php echo $this->translator->translator("vacationrentals_selected_err"); ?>"
+                                        }
+                        };
+        commonGrid(settingObj);		
+});
+
+function text_truncate()
+{
+	$('span.jTruncate').jTruncate({  
+		length:  70,  
+		minTrail: 0,  
+		moreText: "[<?php echo html_entity_decode($this->translator->translator('common_see_all'), ENT_QUOTES, "UTF-8"); ?>]", 
+		lessText: "[<?php echo html_entity_decode($this->translator->translator('common_hide'), ENT_QUOTES, "UTF-8"); ?>]", 
+		ellipsisText: "",
+		moreAni: "fast",  
+		lessAni: 2000  
+	});
+
+}
+</script>
+<script type="text/x-kendo-template" id="view_template">
+		<div class="products-list">
+			<!-- List Header Start -->
+			<div class="list-header">
+				<div class="header-row">
+					<div class="header-left">
+						<span class="title-small">#= tours_name_format #</span><br />
+						<span class="info">
+							# if(duration){ # #= duration_format # #= '<?php echo html_entity_decode($this->translator->translator('tours_duration'), ENT_QUOTES, "UTF-8"); ?>' # #} #
+							# if(num_of_days){ # #= ', ' # #= num_of_days_format # #= '<?php echo html_entity_decode($this->translator->translator('tours_num_of_days'), ENT_QUOTES, "UTF-8"); ?>' # #} #
+							# if(num_of_nights){ # #= ', ' # #= num_of_nights_format # #= '<?php echo html_entity_decode($this->translator->translator('tours_num_of_nights'), ENT_QUOTES, "UTF-8"); ?>' # #} #
+						</span>  
+					</div>
+				
+					<div class="header-middle">
+						<span class="products-mark">#= '<?php echo html_entity_decode($this->translator->translator('tours_front_page_tours_type'), ENT_QUOTES, "UTF-8"); ?>' #</span>&nbsp;<span class="products-type">#= business_type #</span>
+					</div>
+				
+					<div class="header-right"> 
+						# if(review_id){ #                                         
+						<span class="products-write-review"><a href="<?php echo $this->url( array('module' => 'Review','controller' => 'frontend', 'action'     => 'write', Eicra_File_Constants::ITEM_ID => '', 'group_id' => '' ), 'Review-Write/:group_id/:item_id',    true); ?>/${id}/${review_id}">#= '<?php echo html_entity_decode($this->translator->translator('common_write_review'), ENT_QUOTES, "UTF-8"); ?>' #</a></span> &nbsp; 
+						<span class="products-review-count"><a href="<?php echo $this->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => '','tab' => '' ),'Tours-details/:tours_title/:tab',true); ?>/${tours_title}/7">#= review_no_format #</a></span>
+						# } #
+					</div>
+				</div>
+			</div>
+			<!-- List Header End -->
+			
+			<!-- List Body Start -->
+			  <div class="body-container #= (featured == '1') ? 'products-featured' : '' #">
+				   <div class="left-content">
+						  <div class="img-wrapper">
+							  <a href="<?php echo $this->url(array('module' => 'tours','controller' =>'frontend', 'action' => 'details','tours_title' => '' ),'Tours-details/:tours_title',true); ?>/${tours_title}" class="preview" link="#= tours_image_format #" title="#= tours_name #"><img src="#= tours_image_format #" border="0" #= thumb_width # #= thumb_height # class="thumb" /></a>
+							  <div class="photo-count-container">
+								  <div class="photo-count">
+									  <a href="<?php echo $this->url(array('module' => 'tours','controller' =>'frontend', 'action' => 'details','tours_title' => '','tab' => '' ),'Tours-details/:tours_title/:tab',true); ?>/${tours_title}/1" title="#= '<?php echo html_entity_decode($this->translator->translator('tours_front_page_tours_click_view_listing'), ENT_QUOTES, "UTF-8"); ?>' #">#= tours_image_no_format #</a>
+								  </div>
+							  </div>                                            
+						  </div>
+						  
+						  <h2>
+							  <a href="<?php echo $this->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => '' ),'Tours-details/:tours_title',true); ?>/${tours_title}" class="preview" link="" title="#= tours_name #">#= tours_name_format #</a>
+						  </h2>
+						  
+						  <div class="products-stars">
+							  #= list_stars_format #
+						  </div>
+						  
+						  <div class="products-desc">
+						  		<p><?php echo html_entity_decode($this->translator->translator('tours_front_page_label_start_city'), ENT_QUOTES, "UTF-8"); ?></p> #= starting_city #<br />
+								<p><?php echo html_entity_decode($this->translator->translator('tours_front_page_label_end_city'), ENT_QUOTES, "UTF-8"); ?></p> #= ending_city #<br />
+								<p><?php echo html_entity_decode($this->translator->translator('tours_front_page_label_scheduled'), ENT_QUOTES, "UTF-8"); ?></p> #= scheduled_on # <br />
+								<p><?php echo html_entity_decode($this->translator->translator('tours_front_page_Title_additional_features'), ENT_QUOTES, "UTF-8"); ?> :</p> <span class="jTruncate">#= tour_highlights_format #</span><br />
+								<p><?php echo html_entity_decode($this->translator->translator('tours_front_page_tours_desc'), ENT_QUOTES, "UTF-8"); ?></p>
+							  <span class="jTruncate">#= tours_desc_format #</span>
+						  </div>
+						  
+				   </div>
+				   
+				   <div class="right-content">
+				   	<span class="products-price"># if(tours_price){ # #= '<?php  echo html_entity_decode($this->translator->translator('tours_front_page_price'), ENT_QUOTES, "UTF-8").$this->currency->getSymbol().' '; ?>' # #= tours_price_format # # } #</span>
+					  <ul class="products-options">							  
+						  #
+							  var feature_facilities_arr = (inclusions) ? inclusions.split(',') : [];															
+							  if($.inArray('Complimentary Breakfast', feature_facilities_arr) != -1)
+							  {
+						  #						  
+						  <li class="breakfast">#= '<?php echo html_entity_decode($this->translator->translator('tours_front_page_list_allow_breakfast'), ENT_QUOTES, "UTF-8"); ?>' #</li>						  
+						  #
+							  }
+							  if($.inArray('Cab Facilities', feature_facilities_arr) != -1)
+							  {
+						  #						  
+						  <li class="cab">#= '<?php echo html_entity_decode($this->translator->translator('tours_front_page_list_cab_availability'), ENT_QUOTES, "UTF-8"); ?>' #</li>						  
+						  #
+							  }
+							  if($.inArray('Guides / Assistance', feature_facilities_arr) != -1)
+							  {
+						  #						  
+						  <li class="guide">#= '<?php echo html_entity_decode($this->translator->translator('tours_front_page_list_assist_allow'), ENT_QUOTES, "UTF-8"); ?>' #</li>						  
+						  #
+							  }
+							  if($.inArray('Snacks / Drinkse', feature_facilities_arr) != -1)
+							  {
+						  #						  
+						  <li class="snacks">#= '<?php echo html_entity_decode($this->translator->translator('tours_front_page_list_hot_snacks_availability'), ENT_QUOTES, "UTF-8"); ?>' #</li>						  
+						  #   } #
+					  </ul>
+					  
+					  <div class="products-vote">
+						  <p>#= '<?php echo html_entity_decode($this->translator->translator('tours_front_page_label_voting'), ENT_QUOTES, "UTF-8"); ?>' #</p>
+						  <span>#= vote_format #</span>
+					  </div>
+				   </div>				   				   
+		  	</div>
+		  	<!-- List Body End -->
+			 
+		
+		<!-- List footer start -->
+			<div class="list-footer">
+				<div class="footer-left">
+					<a href="<?php echo $this->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => '','tab' => '' ),'Tours-details/:tours_title/:tab',true); ?>/#= tours_title #/0">#= '<?php echo html_entity_decode($this->translator->translator('tours_front_page_tours_view_details'), ENT_QUOTES, "UTF-8"); ?>' #</a> | 
+					<a href="<?php echo $this->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => '','tab' => '' ),'Tours-details/:tours_title/:tab',true); ?>/#= tours_title #/5">#= '<?php echo html_entity_decode($this->translator->translator('tours_front_page_itinerary'), ENT_QUOTES, "UTF-8"); ?>' #</a> |
+					<a href="<?php echo $this->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => '','tab' => '' ),'Tours-details/:tours_title/:tab',true); ?>/#= tours_title #/1">#= '<?php echo html_entity_decode($this->translator->translator('tours_front_page_tours_photo'), ENT_QUOTES, "UTF-8"); ?>' #</a>  | 											 
+					<a href="<?php echo $this->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => '','tab' => '' ),'Tours-details/:tours_title/:tab',true); ?>/#= tours_title #/6">#= '<?php echo html_entity_decode(ucfirst(strtolower($this->translator->translator('tours_front_page_Title_payment_process'))), ENT_QUOTES, "UTF-8"); ?>' #</a>  |
+					<a href="<?php echo $this->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => '','tab' => '' ),'Tours-details/:tours_title/:tab',true); ?>/#= tours_title #/3">#= '<?php echo html_entity_decode($this->translator->translator('tours_front_page_tours_facilities_features'), ENT_QUOTES, "UTF-8"); ?>' #</a>
+				</div>
+			
+				<div class="footer-right">
+					<?php if($global_conf['payment_system'] == 'On') : ?><span class="products-book-btn"><a href="<?php echo $this->url(array('module' => 'Tours','controller' =>'book', 'action' => 'booking','tours_title' => '' ),'Book-Tours/:tours_title',true) ?>/#= tours_title #">#= '<?php echo html_entity_decode($this->translator->translator('tours_front_page_tours_book'), ENT_QUOTES, "UTF-8"); ?>' #</a></span><?php endif; ?>
+					
+					<span class="products-details-btn"><a href="<?php echo $this->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => '' ),'Tours-details/:tours_title',true); ?>/#= tours_title #">#= '<?php echo html_entity_decode($this->translator->translator('tours_front_page_tours_more'), ENT_QUOTES, "UTF-8"); ?>' #</a></span>
+				</div>                                
+			</div>
+		<!-- List footer end -->
+		</div>	
+</script>
+<?php 
+
+$allow_obj = new Tours_View_Helper_Allow();
+
+if (!$allow_obj->allowRule('view',null,null,$this->business_type_info['role_id'])) : ?>
+	<?php echo $this->translator->translator('Member_Access_deny_desc'); ?>
+<?php else : ?>
+
+<div class="mod">
+	<div class="list-icon">
+        <h1><?php echo $this->translator->translator('tours_front_page_list').' ('.$this->escape($this->business_type_info['business_type']).')'; ?></h1>
+    </div>
+    
+    <div class="social">
+      	<!-- AddThis Button BEGIN -->
+        <div class="addthis_toolbox addthis_default_style">
+        <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+        <a class="addthis_button_tweet"></a>
+        <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+        <a class="addthis_counter addthis_pill_style"></a>
+        </div>
+        <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4e89660c7edb029a"></script>
+    	<!-- AddThis Button END -->
+    </div>
+    
+    <div class="clear"></div>
+	<div <?php if($locale_direction == 'rtl'){ ?> class="k-rtl" <?php } ?>>
+               <div id="grid"></div>  
+     </div>
+</div>
+<?php endif;
+}
+else
+{
+?>
+	<div class="mod">
+    	<div class="list-icon">
+            <h1><?php echo $this->translator->translator('tours_front_page_business_type_not_found'); ?></h1>
+        </div> 
+    </div>
+<?php	
+}
+?>

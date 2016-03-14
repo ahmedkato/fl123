@@ -1,0 +1,18 @@
+[26-Jun-2013 18:53:16] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/route/add.phtml on line 2
+[26-Jun-2013 20:17:01] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/route/add.phtml on line 2
+[26-Jun-2013 20:25:48] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/route/add.phtml on line 2
+[29-Jun-2013 03:39:33] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/route/add.phtml on line 2
+[08-Jul-2013 13:05:38 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[08-Jul-2013 13:05:38 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/route/add.phtml on line 2
+[27-Jul-2013 00:01:22 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[27-Jul-2013 00:01:22 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/route/add.phtml on line 2
+[30-Jul-2013 01:10:21 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Jul-2013 01:10:21 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/route/add.phtml on line 2
+[05-Aug-2013 12:03:36 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Aug-2013 12:03:36 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/route/add.phtml on line 2
+[05-Aug-2013 13:06:40 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Aug-2013 13:06:40 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/route/list.phtml on line 2
+[05-Aug-2013 15:53:07 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Aug-2013 15:53:07 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/route/edit.phtml on line 2
+[30-Aug-2013 09:54:03 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 09:54:03 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/route/edit.phtml on line 2

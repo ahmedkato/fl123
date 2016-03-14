@@ -1,0 +1,48 @@
+[26-Jul-2013 04:51:44 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 04:51:44 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/FrontendController.php on line 0
+[26-Jul-2013 07:52:12 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:52:12 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/BackendController.php on line 0
+[26-Jul-2013 07:57:48 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:57:48 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/BackendgrpController.php on line 0
+[26-Jul-2013 07:58:55 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 07:58:56 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/EmailsController.php on line 0
+[26-Jul-2013 08:02:19 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 08:02:19 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/BookController.php on line 0
+[26-Jul-2013 08:04:35 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 08:04:35 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/ApiController.php on line 0
+[27-Jul-2013 11:09:52 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[27-Jul-2013 11:09:52 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/MembersController.php on line 0
+[28-Jul-2013 04:17:33 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[28-Jul-2013 04:17:33 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/FrontendController.php on line 0
+[03-Aug-2013 02:36:12 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 02:36:12 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/WegoController.php on line 0
+[03-Aug-2013 02:53:41 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 02:53:41 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/BackendareaController.php on line 0
+[03-Aug-2013 03:00:40 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 03:00:40 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/CronController.php on line 0
+[03-Aug-2013 03:14:39 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 03:14:39 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/BackendstateController.php on line 0
+[03-Aug-2013 04:03:35 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 04:03:35 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/SearchController.php on line 0
+[03-Aug-2013 04:49:01 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 04:49:01 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/BackendproController.php on line 0
+[03-Aug-2013 04:52:31 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 04:52:31 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/BackendcrudController.php on line 0
+[03-Aug-2013 04:56:00 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 04:56:01 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/BackendtypeController.php on line 0
+[03-Aug-2013 11:56:27 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 11:56:27 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/BackendController.php on line 0
+[03-Aug-2013 12:17:25 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 12:17:25 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/BackendgrpController.php on line 0
+[03-Aug-2013 12:20:54 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 12:20:55 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/EmailsController.php on line 0
+[03-Aug-2013 12:45:22 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 12:45:23 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/BookController.php on line 0
+[03-Aug-2013 12:48:52 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 12:48:52 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/ApiController.php on line 0
+[26-Aug-2013 12:12:44 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Aug-2013 12:12:44 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/BackendgrpController.php on line 0
+[27-Aug-2013 06:47:35 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[27-Aug-2013 06:47:35 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/BackendController.php on line 0
+[30-Aug-2013 10:17:14 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 10:17:14 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/controllers/MembersController.php on line 0

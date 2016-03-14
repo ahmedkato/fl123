@@ -1,0 +1,12 @@
+[31-Jul-2013 19:23:15 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[31-Jul-2013 19:23:15 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/backendgrp/listgrp.phtml on line 2
+[01-Aug-2013 02:38:51 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[01-Aug-2013 02:38:51 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/backendgrp/editgrp.phtml on line 1
+[01-Aug-2013 13:26:51 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[01-Aug-2013 13:26:51 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/backendgrp/addgrp.phtml on line 1
+[02-Aug-2013 00:29:15 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 00:29:15 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/backendgrp/cronsetup.phtml on line 3
+[30-Aug-2013 10:52:35 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 10:52:35 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/backendgrp/editgrp.phtml on line 1
+[30-Aug-2013 16:05:42 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 16:05:42 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Vacationrentals/views/scripts/backendgrp/addgrp.phtml on line 1

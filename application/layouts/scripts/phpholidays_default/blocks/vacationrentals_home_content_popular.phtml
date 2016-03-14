@@ -1,0 +1,126 @@
+<?php
+class popular_vacationrentals
+{
+	protected	$_group = 1;
+	protected	$_limit = 4;
+	protected	$_DBconn;
+	protected	$_front_template;
+	protected	$_view;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template');
+		$this->_view =	$view;
+		//DB Connection
+		$this->_DBconn = Zend_Registry::get('msqli_connection');
+		$this->_DBconn->getConnection();		
+		$this->_global_conf = Zend_Registry::get('global_conf');
+	}
+	
+	public function truncate($phrase,$start_words, $max_words)
+	{
+	   $phrase_array = explode(' ',$phrase);
+	   if(count($phrase_array) > $max_words && $max_words > 0)
+		  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+	   return $phrase;
+	}
+	
+	public function class_body()
+	{			
+		$currency = new Zend_Currency($this->_global_conf['default_locale']);
+		$currency_symbol = $currency->getSymbol();
+		$translator = Zend_Registry::get('translator');	
+		$review_helper = new Review_View_Helper_Review();
+		
+		$selectGP = $this->_DBconn->select()
+						->from(array('vv' => Zend_Registry::get('dbPrefix').'vote_voting'), array('item_id' => 'DISTINCT(vv.table_id)', 'votes' => 'SUM(vv.vote_value)'))
+					   	->where('hp.group_id = ?',$this->_group)
+						->where('hp.active = ?', '1')
+					   	->where('vv.table_name = ?','vacationrentals_page')
+					   	->group('vv.table_id')
+					   	->order('votes DESC')
+					   	->joinLeft(array('hp' => Zend_Registry::get('dbPrefix').'vacationrentals_page'), 'vv.table_id = hp.id')
+						->joinLeft(array('ct' => Zend_Registry::get('dbPrefix').'cities'), 'ct.city_id = hp.area_id')	
+						->joinLeft(array('bt' => Zend_Registry::get('dbPrefix').'vacationrentals_business_type'), 'hp.vacationrentals_type = bt.id', array('business_type' => 'bt.business_type'))
+					   	->joinLeft(array('gp' => Zend_Registry::get('dbPrefix').'vacationrentals_group'), 'gp.id = '. $this->_group, array('review_id' => 'gp.review_id'))
+					   	->limit($this->_limit);
+		
+		$vacationrentals_info =  $selectGP->query()->fetchAll();	
+?>
+
+<div class="block block-list">
+	<div class="block-body popular">
+        <!--<h2><?php //echo $translator->translator('vacationrentals_block_popular_list_title','', '', $this->_front_template['theme_folder']); ?></h2>
+        <hr />-->
+        
+		<?php
+            foreach($vacationrentals_info as $partial_entry)
+            {
+                $link = $this->_view->url( array('module' => 'Vacationrentals','controller' =>'frontend','action' => 'details','vacationrentals_title' => $this->_view->escape($partial_entry['vacationrentals_title']) ), 'Vacationrentals-details/:vacationrentals_title',    true);
+                $vacationrentals_image_val_arr = explode(',',$partial_entry['vacationrentals_image']);
+                $vacationrentals_image_no = ($vacationrentals_image_val_arr[0]) ? count($vacationrentals_image_val_arr) : 0;                  
+                if($this->_view->escape($partial_entry['vacationrentals_primary_image']))
+                {
+                    $thumb_image = 'data/frontImages/vacationrentals/vacationrentals_image/'.$this->_view->escape($partial_entry['vacationrentals_primary_image']); 
+				}
+                else
+                {                    
+                    $thumb_image = 'data/frontImages/vacationrentals/vacationrentals_image/'.$this->_view->escape($vacationrentals_image_val_arr[0]); 
+                }
+		?>
+			<div class="block-content">
+				<div class="img-wrapper">
+                	<a href="<?php echo $link; ?>" class="preview" link="<?php echo $thumb_image; ?>" title="<?php echo $this->_view->escape($partial_entry['vacationrentals_name']); ?>" width="300"><img src="<?php echo $thumb_image; ?>" width="75" height="70" border="0" class="thumb"/></a>
+                    <div class="photo-count-container">
+                  		<div class="photo-count">
+                            <a href="<?php echo $this->_view->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details', 'vacationrentals_title' => $this->_view->escape($partial_entry['vacationrentals_title']),'tab' => 1 ),'Vacationrentals-details/:vacationrentals_title/:tab',true); ?>" title="<?php echo $translator->translator('vacationrentals_front_page_vacationrentals_click_view_listing','', '', $this->_front_template['theme_folder']); ?>"><?php echo $translator->translator('vacationrentals_front_page_vacationrentals_photo_no','<span>'.$vacationrentals_image_no.'</span>','', $this->_front_template['theme_folder']); ?></a>
+                        </div>
+                  	</div>
+                </div>
+                
+                <div class="details">     
+                   	<h2><a href="<?php echo $link; ?>" class="preview" link=""  title="<?php echo $this->_view->escape($partial_entry['vacationrentals_name']); ?>"><?php echo $this->truncate($this->_view->escape($partial_entry['vacationrentals_name']), 0, 4); ?></a></h2> &nbsp;&nbsp; <span class="type"><?php  echo $this->_view->escape($partial_entry['business_type']); ?></span><br />
+                    <a href="<?php echo $link; ?>"><?php echo $this->_view->escape($partial_entry['city']); ?></a><br />
+                    <?php echo $this->truncate($this->_view->escape(strip_tags($partial_entry['vacationrentals_desc'])), 0, 18); ?>
+                    <?php 
+						if(!empty($partial_entry['review_id'])){ 
+						$review_no = $review_helper->getNumOfReviews($partial_entry['id'], $this->_view->escape($partial_entry['review_id']));
+					?><br />
+					<?php echo $translator->translator('block_score','', '', $this->_front_template['theme_folder']); ?>&nbsp;<span class="review-count"><a href="<?php echo $this->_view->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->_view->escape($partial_entry['vacationrentals_title']),'tab' => 9 ),'Vacationrentals-details/:vacationrentals_title/:tab',true); ?>"><?php echo $translator->translator('common_review_no',htmlentities($review_no), 'Vacationrentals'); ?></a></span> <?php } ?>
+                </div>
+             
+				<div class="right-col">
+                    <?php
+						$maximum_stars_digit = $translator->translator('maximum_stars_digit','', 'Vacationrentals');
+						for($i = 1; $i < $maximum_stars_digit; $i++)
+						{
+							$vacationrentals_stars = ($i <= $this->_view->escape($partial_entry['stars'])) ? "<img src='application/layouts/scripts/".$this->_front_template['theme_folder']."/images/mod_vacation_img/star-small-active.png' border='0' />" : "<img src='application/layouts/scripts/".$this->_front_template['theme_folder']."/images/mod_vacation_img/star-small-inactive.png' border='0' />";
+							echo $vacationrentals_stars.'&nbsp;';
+						}
+					?>
+                    <br />
+                    <span class="room"><?php if(!empty($partial_entry['feature_room_no'])){ echo $this->_view->escape($partial_entry['feature_room_no']). ' '.$translator->translator('vacationrentals_room','', '', $this->_front_template['theme_folder']); } ?></span>
+                    <p class="size"><?php echo $this->_view->escape($partial_entry['property_size']).$translator->translator('vacationrentals_list_page_search_property_size_sqf','', '', $this->_front_template['theme_folder']); ?></p>
+                    <em><?php echo $translator->translator('vacationrentals_block_featured_label_price','', '', $this->_front_template['theme_folder']); ?></em>&nbsp; <span class="price price-big"><?php echo $currency_symbol.$this->_view->price($this->_view->escape($partial_entry['vacationrentals_price'])); ?></span>
+                </div>
+			</div>
+		<?php
+        	}
+        ?>      
+            
+		<div class="more"><a href="All-Vacation-List/group_id/<?php echo $this->_group; ?>"><?php echo $translator->translator('vacationrentals_frontend_login_link','', '', $this->_front_template['theme_folder']); ?></a></div>            
+	</div>     
+</div>
+	<?php
+	}
+}
+try
+{
+	$popular_vacationrentals_class = new popular_vacationrentals($this);
+	$popular_vacationrentals_class->class_body();
+}
+catch(Exception $e)
+{
+	echo $e->getMessage();
+}
+?>

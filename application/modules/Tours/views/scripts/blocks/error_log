@@ -1,0 +1,10 @@
+[02-Aug-2013 20:30:41 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 20:30:41 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Tours/views/scripts/blocks/tours_home_banner_search.phtml on line 14
+[02-Aug-2013 20:30:57 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 20:30:57 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Tours/views/scripts/blocks/home_banner_slideshow.phtml on line 15
+[30-Aug-2013 04:26:30 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 04:26:30 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Tours/views/scripts/blocks/tours_home_banner_search.phtml on line 14
+[30-Aug-2013 17:36:36 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 17:36:37 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Tours/views/scripts/blocks/ad_tours_banner.phtml on line 14
+[01-Sep-2013 16:02:45 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[01-Sep-2013 16:02:45 Europe/Berlin] PHP Fatal error:  Class 'Zend_Registry' not found in /home/wwwhotei/public_html/application/modules/Tours/views/scripts/blocks/home_banner_slideshow.phtml on line 15

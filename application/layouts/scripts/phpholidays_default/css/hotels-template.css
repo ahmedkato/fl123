@@ -1,0 +1,1100 @@
+/* ___________________________________________________________________________________
+   
+   CSS Framework for Eicra Hotel Script [Templates, Blocks & Product Modules] 
+   ___________________________________________________________________________________ */
+   
+
+@charset "utf-8";
+
+/* LAYOUT STYLES ******************************************************************** */
+
+#sidebar{
+	float:left;
+	width:295px;
+	overflow:hidden;
+	margin:0 0 0 0;
+}
+
+#content{
+	float:right; 
+	width:685px;
+	overflow:hidden;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Banner --------------------------------------------------------------------------- */
+
+#banner{
+	width:1000px;
+	margin:15px auto;
+	position:relative;
+}
+
+#banner img{
+}
+
+/* ********************************************************************************** */
+
+/* Block Count ---------------------------------------------------------------------- */
+
+.block-hotel-count{
+	width:41%;
+	background-color:rgba(255,204, 0, 0.7);
+	padding:6px 10px;
+	position:absolute;
+	top:20px;
+	left:20px;
+}
+
+.block-hotel-count h1{
+	font-family:Georgia, "Times New Roman", Times, serif;
+	color:#333;
+	font-size:17px;
+	font-weight:normal;
+	font-style:italic;
+	text-shadow: 1px 1px 1px #FFF;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Banner Search -------------------------------------------------------------------- */
+
+.block-search{
+	width:43%;
+	position:absolute;
+	top:60px;
+	left:20px;
+	z-index:2;
+}
+
+.block-search .block-content{
+	background-color:rgba(7,113, 222, 0.9);
+	border:0px solid #000;
+	padding:10px;
+}
+
+.block-search .block-content h1{
+	color:#FFF;
+}
+
+.block-search .col{
+	padding: 0 12px 3px 0;
+	float:left;
+}
+
+.block-search p{
+	color: #FFFFFF;
+	font-weight: bold;
+	padding: 4px 8px 4px 0;
+}
+
+.block-search input[type="text"],
+.block-search select{
+	font-size:13px;
+	border:1px solid #FFF;
+	border-radius:0px;
+	-moz-border-radius:0px;
+	-webkit-border-radius:0px;
+	/*box-shadow: 1px 1px 3px #CDCDCD inset;*/
+	transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+	padding:5px;
+	margin:0;
+}
+
+.block-search input[type="text"]:focus,
+.block-search select:focus{
+	border:1px solid;
+	border-color: rgba(82, 168, 236, 0.8);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6);
+}
+
+.block-search input[type="text"]{
+	width:110px;
+	padding:6px;
+}
+
+.block-search input[type="text"].city{
+	width:318px;
+}
+
+.block-search select{
+	width:220px;
+}
+
+.block-search input[type="submit"]{
+	background: #FFCC00;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF33', endColorstr='#FFCC00');
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFFF33), to(#FFCC00));
+	background: -moz-linear-gradient(top,  #FFFF33,  #FFCC00);
+	text-shadow: 1px 1px 1px #FFF;
+	box-shadow: 0 1px 1px #FFFFFF inset;
+	border: 1px solid #F90;
+	color: #000;
+	padding: 10px 45px;
+	font-size:15px;
+	cursor:pointer;
+	text-decoration:none;
+	text-transform:uppercase;
+	border-radius:4px;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	margin: 15px auto;
+	display:inline-block;
+}
+
+.block-search input[type="submit"]:hover{
+	background: #F88400;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFCC00', endColorstr='#F88400');
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFCC00), to(#F88400));
+	background: -moz-linear-gradient(top,  #FFCC00, #F88400);
+	text-shadow: 1px 1px 1px #FFF;
+	box-shadow: 0 1px 1px #FFFFFF inset;
+	border: 1px solid #F90;
+	color: #000;
+}
+
+.block-search a{
+	color:#FFF;
+	font-size:12px;
+	font-weight:bold;
+	background:url(../images/arrow-white.png) no-repeat 0 center;
+	padding:0 0 0 15px;
+}
+
+.block-search a:hover{
+
+}
+
+.block-search img{
+	border:0 !important;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Sidebar Search ------------------------------------------------------------------- */
+
+.block-sidebar-search .block-body{
+	width:210px;
+	padding:0;
+	border:0;
+	box-shadow:none;
+}
+
+.block-sidebar-search .block-body select,
+.block-sidebar-search .block-body input[type="text"]{
+	border-radius:0;
+	padding:4px;
+}
+
+.block-sidebar-search .block-heading {
+	border:1px solid #004CA1;
+}
+
+.block-sidebar-search .block-heading h1{
+	color:#FFF;
+	font-style:normal;
+	text-shadow: 0 1px 0 #003;
+	text-align:center;
+	word-spacing:-2px;
+	padding:13px 0;
+	margin:0;
+}
+
+.block-sidebar-search .block-content-1,
+.block-sidebar-search .block-content-2,
+.block-sidebar-search .block-content-3{
+	background-color:#0087EA;
+	border-top:1px solid #24A2FF;
+	padding:8px;
+	color:#FFF;
+	overflow:hidden;
+}
+
+.block-sidebar-search p{
+	font-weight:bold;
+	display:block;
+	margin:4px 0;
+	clear:left;
+}
+
+.block-sidebar-search .block-content-1 input[type="text"]{
+	border:0;
+	margin:0;
+}
+
+.block-sidebar-search .block-content-1 select,
+.block-sidebar-search .block-content-1 input[type="text"]{
+	width:100%;
+	border: 1px solid #0473FB;
+}
+
+.block-sidebar-search .block-content-1 input[type="text"]{
+	width:95%
+}
+
+.block-sidebar-search .block-content-2{
+	background-color:#24A2FF;
+}
+
+.block-sidebar-search .block-content-2 input[type="text"]{
+	width:70%;
+	border: 1px solid #0066CC;
+	margin:2px 0 3px 0;
+	padding:5px 0;
+}
+
+.block-sidebar-search .block-content-3{
+	background-color:#E6EDF6;
+}
+
+.block-sidebar-search .block-content-3 a{
+	text-decoration:underline;
+	display:block;
+	margin:10px 0;
+}
+
+.block-sidebar-search input[type="submit"]{
+	background: #FFCC00;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF33', endColorstr='#FFCC00');
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFFF33), to(#FFCC00));
+	background: -moz-linear-gradient(top,  #FFFF33,  #FFCC00);
+	text-shadow: 1px 1px 1px #FFF;
+	box-shadow: 0 1px 1px #FFFF00 inset;
+	border: 1px solid #F90;
+	color: #000;
+	padding:8px 10px;
+	font-size:15px;
+	cursor:pointer;
+	display:inline-block;
+	white-space: normal;
+	text-decoration:none;
+	border-radius:4px;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	margin:8px 0;
+	width:100%;
+}
+
+.block-sidebar-search input[type="submit"]:hover{
+	background: #00387D;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0076EC', endColorstr='#00387D');
+	background: -webkit-gradient(linear, left top, left bottom, from(#0076EC), to(#00387D));
+	background: -moz-linear-gradient(top,  #0076EC,  #00387D);
+	border:1px solid #0562BB;
+	box-shadow: 0 1px 1px #4AB7FF inset;
+	text-shadow: 1px 1px 1px #003399;
+	color:#FFF;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Link Listing View ---------------------------------------------------------------- */
+
+.block-listing .block-body{
+	padding:5px;
+	margin-bottom:0;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* ********************************************************************************** */
+
+
+/* PRODUCT MODULES ****************************************************************** */
+
+/* Product Advance Search ----------------------------------------------------------- */
+
+.mod-advance-search form p{
+	margin:4px 0;
+}
+
+.mod-advance-search form span.info{
+	font-size: 11px;
+	display:block;
+	color:#666666;
+}
+
+.mod-advance-search input[type="text"]{
+	width:150px;
+}
+
+.mod-advance-search select{
+	width:234px;
+}
+
+.mod-advance-search input[type="text"].location{
+	width:465px;
+}
+
+.mod-advance-search input[type="text"].wego-location{
+	width:650px;
+}
+
+.mod-advance-search select.category{
+	width:193px;
+}
+
+.mod-advance-search select.country,
+.mod-advance-search select.state,
+.mod-advance-search select.area{
+	width:232px;
+}
+
+.mod-advance-search input[type="button"]{
+	width:50%;
+}
+
+.mod-advance-search .ui-widget .ui-autocomplete-input{
+	width:328px;
+	line-height:21px;
+	height:19px;
+	padding:3px;
+}
+
+.mod-advance-search .ui-widget .ui-button{ 
+	margin-left: -1px;
+}
+
+.mod-advance-search .ui-widget .ui-button-icon-only .ui-button-text{ 
+	padding: 0.34em; 
+}
+
+.mod-advance-search .ui-autocomplete-loading{
+	background-image: url("../images/loader/ui-anim_basic_16x16.gif");
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Product Booking ------------------------------------------------------------------ */
+
+.mod-booking h3{
+	margin:0 0 20px 0;
+}
+
+.mod-booking input[type="text"]{
+	width:110px;
+}
+
+.mod-booking input[type="button"]{
+	margin:12px 0 0 0;
+	padding: 8px 30px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Product List --------------------------------------------------------------------- */
+
+.availability{
+	background:url(../images/mod_hotel_img/check-availability.png);
+}
+
+.airport-transfer{
+	background:url(../images/mod_hotel_img/aitport-transfer.gif);
+}
+
+.internet{
+	background:url(../images/mod_hotel_img/internet.gif);
+}
+
+.swimming{
+	background:url(../images/mod_hotel_img/swimming.png);
+}
+
+.pet{
+	background:url(../images/mod_hotel_img/pet.png);
+}
+
+.products-call{
+    background: url(../images/mod_hotel_img/phone.png) no-repeat 4px center #FFFFCC;
+    border: 1px solid #FFCC00;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+    color: #FF6600;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 2px 4px 0px 26px;
+	margin-top:15px;
+	float:left;
+}
+
+.products-featured{
+	background:url(../images/mod_hotel_img/featured.png) no-repeat;
+	background-position:72%  45px;
+	background-color:#E1FEE0;
+	z-index:10;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Hotel Room Availability Chart ---------------------------------------------------- */
+
+.room-chart-container{
+	padding-top:20px;
+	clear:both;
+}
+
+.room-chart{
+	width:100%;
+	margin:auto;
+	display:table;
+    border-spacing:0;
+	border:1px solid #0066CC;
+}
+
+.room-chart-row{
+	display:table-row;
+	background-color:#0896FF;
+}
+
+.room-chart-header-col-1{
+	width:42%;
+	border-right: 1px solid #FFF;
+	display:table-cell;
+	line-height:30px;
+	text-align:center;
+	font-weight:bold;
+	color:#FFF;	
+}
+
+.room-chart-header-col-1.room-chart-header-col-2{
+	width:15%;
+}
+
+.room-chart-header-col-1.room-chart-header-col-3{
+	width:18%;
+}
+
+.room-chart-header-col-1.room-chart-header-col-4{
+	width:26%;
+	border:none;
+}
+
+.room-chart-row2{
+	display:table-row;
+	background-color:#EDF1F8;
+}
+
+.room-chart-row2 .room-chart-c1{
+	width:42%;
+	border-right: 1px solid #FFF;
+	display:table-cell;
+	padding:6px 0 6px 5px;
+	text-align:left;
+}
+
+.room-chart-row2 .room-chart-c1.room-chart-c2{
+	width:15%;
+}
+
+.room-chart-row2 .room-chart-c1.room-chart-c3{
+	width:20%;
+	padding-right:2px;
+	line-height:20px;
+}
+
+.room-chart-row2 .room-chart-c1.room-chart-c4{
+	width:24%;
+	text-align:right;
+}
+
+.room-chart-row2.room-chart-row3{
+	background-color:#D9E2F0;
+}
+
+.room-chart-row3 .room-chart-c1.room-chart-c4{
+	text-align:right;
+}
+
+.hotel-price-save{
+	color: #339900;
+	font-size:11px;
+	vertical-align:super;
+}
+
+.hotel-available{
+	color:#00AE00;
+	font-weight:bold;
+	background:url(../images/mod_hotel_img/available.png) no-repeat left center;
+	padding-left:20px;
+}
+
+.hotel-not-available{
+	color:#D00;
+	font-weight:bold;
+	background:url(../images/mod_hotel_img/not-available.png) no-repeat left center;
+	padding-left:20px;
+}
+
+.hotel-room-left{
+	color:#F30;
+	font-weight:bold;
+	background:url(../images/mod_hotel_img/warning.png) no-repeat left center;
+	padding-left:20px;
+}
+
+.hotel-room-last{
+	color:#06F;
+	font-weight:bold;
+	background:url(../images/mod_hotel_img/last.png) no-repeat left center;
+	padding-left:20px;
+}
+
+.hotel-room-booked{
+	color: #FFFC00; 
+	white-space: nowrap; 
+	font-weight: bold;
+	padding: 0 5px;
+	margin: 0 0 0 5px;
+	background-color:#FF0000; 
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(9, 150, 89, 0.85)), to(rgba(40, 204, 133,0.85)));
+    background: -moz-linear-gradient(top, rgba(9, 150, 89, 0.85), rgba(40, 204, 133,0.85));
+		
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#099659,endColorstr=#28CC85);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#099659,endColorstr=#28CC85)";
+	
+	border:3px solid #FFFFFF;
+	-moz-border-radius: 6px 0 6px 0 ;
+	-webkit-border-radius: 6px 0 6px  0 ;
+	border-radius: 6px 0 6px 0 ;
+}
+
+.hotel-price{
+	background:#0562BB;
+	color:#FFF;
+	font-weight:bold;
+	padding: 3px 5px;
+	border-radius:3px;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	margin-right:4px;
+	display:inline-block;
+}
+
+.hotel-old-price{
+	color:#797979;
+	font-size:15px;
+	text-decoration:line-through;
+}
+
+.person-count{	
+	background:#0462AB;
+	text-align:center;
+	color:#FFFFFF;
+	font-weight:bold;
+	padding: 1px 4px;
+	margin-left:4px;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Hotel Room Availability Chart Details Page --------------------------------------- */
+
+.room-chart.chart-border{
+	border-top:0;
+}
+
+/* Details Page Chart Header Settings */
+
+.room-chart-header-col-1.details-header-col-1{
+	width:35%;
+}
+
+.room-chart-header-col-1.room-chart-header-col-3.details-header-col-3{
+	width:20%;
+}
+
+.room-chart-header-col-1.room-chart-header-col-4.details-header-col-4{
+	width:30%;
+}
+
+/* Details Page Chart Body Settings */
+
+.room-chart-row2 .room-chart-c1.room-chart-c1.details-col-1{
+	width:35%;
+}
+
+.room-chart-row2 .room-chart-c1.room-chart-c3.details-col-3{
+	width:20%;
+	text-align:right;
+}
+
+.room-chart-row2 .room-chart-c1.room-chart-c4.details-col-4{
+	width:30%;
+	text-indent:0;
+	text-align:left;
+}
+
+.row-height{
+	height:170px;
+}
+
+select.multi-hotel-room{
+	border:1px solid #09C;
+	width:99%;
+	margin-left:0px;
+	font-size:11px;
+	word-spacing:-1px;
+	margin-top:5px;
+}
+
+select.room-list{
+	border:1px solid #09C;
+	width:96%;
+}
+
+.room-chart-details{
+	display:none;
+	background-color:#FFFFE1;
+	padding:10px;
+}
+
+/* Room Price Per Day Chart - Start */
+
+fieldset.room-types{
+	border:1px solid #B7B7B7;
+	background-color:#FFF;
+	margin:20px 0 10px 0;
+}
+
+fieldset.room-types .price-container{
+	width:70%;
+	border:1px solid #E5E5E5;
+	border-bottom:0;
+	margin:auto;
+	text-align:center;
+	overflow:hidden;
+}
+
+fieldset.room-types .price-container .room-per-day{
+	width:50%;
+	float:left;
+	padding:2px 0;
+	border-bottom:1px solid #E5E5E5;
+}
+
+fieldset.room-types .price-container .price-per-day{
+	width:50%;
+	float:right;
+	padding:2px 0;
+	border-bottom:1px solid #E5E5E5;
+}
+
+fieldset.room-types{
+	border:1px solid #0896FF;
+}
+
+fieldset.room-types legend,
+.room-types h6{
+	font-weight:normal;
+	font-size:17px;
+	letter-spacing:0;
+	margin:10px 0;
+}
+
+/* Room Price Per Day Chart - End */
+
+a.chart-link{
+	font-weight:bold;
+	color:#09F;
+	display:block;
+}
+
+a.chart-link:hover{
+	text-decoration:underline;
+	color:#999;
+}
+
+.room-chart.book-btn-area{
+	text-align:center;
+	padding: 15px 0;
+	border:0;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Wego API ------------------------------------------------------------------------- */
+
+.mod-wego .wego-fearures{
+	margin: 10px 0 0 0;
+	padding: 0 0 5px 0px;
+	border-bottom:1px solid #CCC;
+	border-bottom-style:dashed;
+	overflow:hidden;
+}
+
+.mod-wego .room-chart-container{
+	width:50%;
+	float:left;
+}
+
+.mod-wego .room-chart-container a{
+	font-weight:bold;
+	color:#09F;
+}
+
+.mod-wego .products-feature{
+	float:right;
+	margin:19px 0 0 0;
+}
+
+.mod-wego .products-options li {
+	list-style:circle;
+	padding:0;
+}
+
+.mod-wego .products-info .products-options li{
+	margin:0 0 0 15px;	
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Expedia API ---------------------------------------------------------------------- */
+
+#travel-now .search{
+	color:#FFF;
+	background-color:#003E74;
+	padding:0 10px 10px 10px;
+	width:485px;
+	float:left;
+	min-height:392px;
+	overflow:hidden;
+}
+
+#travel-now .search select,
+#travel-now .search input[type="text"]{
+	border-radius:0;
+	-moz-border-radius:0;
+	-webkit-border-radius:0;
+	padding:4px;
+}
+
+#travel-now .search input[type="text"]{
+	padding:5px;
+}
+
+#travel-now .search .star_class{
+	color:#FF6;
+}
+
+#travel-now .home-ad{
+	float:right;
+	width:470px;
+	height:330px;
+}
+
+#travel-now .search p{
+	font-weight:bold;
+	color:#FFF;
+	margin:10px 0 10px 0;
+}
+
+#travel-now .field-label{
+	padding:10px 0 0 0;
+	clear:both;
+	overflow:hidden;
+}
+
+#travel-now .field-container{
+	margin:2px 0 5px 0;
+	overflow:hidden;
+}
+
+#travel-now .left-spacer{
+	width:80px;
+	float:left;
+}
+
+#travel-now .left-spacer .rooms-no{
+	padding-top:5px;
+}
+
+#travel-now .adults,
+#travel-now .children,
+#travel-now .age{
+	width:90px;
+	padding:0 0 0 12px;
+	float:left;
+}
+
+#travel-now .age{
+	width:auto;
+}
+
+#travel-now .age img{
+	margin-top:8px;
+}
+
+#travel-now .search a,
+.travelnow-search a{
+	background:url(../images/mod_hotel_img/add.png);
+	background-position:left center;
+	background-repeat:no-repeat;
+	padding:2px 0 0 20px;
+	margin: 10px 0;
+	color:#1AA4FF;
+	font-weight:bold;
+	display:inline-block;
+}
+
+#travel-now .search a:hover{
+	color:#7EC76F;
+}
+
+#travel-now .search .drop-list,
+.travelnow-search .mod-list{
+	width:48px;
+	font-size:13px;
+}
+
+#travel-now .age-list{
+	margin:0 5px 0 0;
+}
+
+#travel-now .search .mod-button{
+	background: #FFCC00;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFF33', endColorstr='#FFCC00');
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFFF33), to(#FFCC00));
+	background: -moz-linear-gradient(top,  #FFFF33,  #FFCC00);
+	text-shadow: 1px 1px 1px #FFF;
+	box-shadow: 0 1px 1px #FFFFFF inset;
+	color:#000;
+	border:1px solid #F90;
+}
+
+.travelnow-search p.location{
+	display:inline-block;
+}
+.travelnow-search input[type="text"].location{
+	width:465px;
+}
+
+.travelnow-content{
+	margin-right:6px;
+}
+
+.mod-title.rooms{
+	margin-top:45px;
+}
+
+.col.age{
+	text-align:center;
+}
+
+.mod-container .add-room a{
+	background:url(../images/mod_hotel_img/add.png);
+	background-position:left center;
+	background-repeat:no-repeat;
+	padding:2px 0 0 20px;
+	margin: 5px 0 15px 0;
+	font-weight:bold;
+	display:inline-block;
+}
+
+.price-info{
+	color:#666;
+	font-size:11px
+}
+
+.list-features ul{
+	font-weight:normal;
+	color:#06C;
+	line-height:18px;
+	margin:20px 0 0 10px;
+	list-style:circle;
+}
+
+.products-list.travelnow-list{
+	overflow:visible;
+}
+
+.travelnow-list .list-header .header-row .header-left{
+	padding:8px 2px;
+}
+
+.body-container.travelnow-container{
+	position:relative;
+	overflow:visible;
+}
+
+.travelnow-container .promo-offer{
+	background:url(../images/mod_hotel_img/tag.png) no-repeat;
+	background-position:5px center;
+	position:absolute;
+	top:5px;
+	right:-10px;
+	padding:5px 5px 5px 25px;
+	color:#F30;
+	background-color:#FFFFEC;
+	border:1px solid #FF7200;
+	border-radius:4px 4px 0 4px;
+	-webkit-border-radius:4px 4px 0 4px;
+	-moz-border-radius:4px 4px 0 4px;
+	z-index:1;
+}
+
+.travelnow-container .corner:before {
+    border-top: 10px solid #FF7200;
+    border-bottom: medium none;
+    border-right: 10px solid transparent;
+    content: " ";
+    position: absolute;
+	top:31px;
+	z-index:0;
+    right: -10px;  
+}
+
+.promotional{
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-style: italic;
+	color: #F30;
+	font-size: 18px;
+	display: block;
+}
+
+.travelnow-container .room-chart-container .room-chart-c1{
+	vertical-align:middle;
+	padding:5px 0 5px 2px;
+}
+
+.travelnow-container .room-chart-container .room-chart-c4{
+	text-align:center;
+}
+
+.travelnow-review-count{
+	display:inline-block;
+	margin:5px 0 10px 0;
+}
+
+.travelnow-details-review{
+	margin:2px 2px 2px 15px;
+	padding: 1px 2px 1px 2px;
+	font-size:13px;
+	font-weight:bold;
+	color:#0896FF;
+	float:right;
+	padding-top:1px;
+	border:1px solid #0896FF;
+	background-color:#FFF;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+}
+
+.travelnow-details .products-feature{
+	width:100%;
+}
+
+.checkin{
+	background:url(../images/mod_hotel_img/checkin.png);
+	background-position:1px 5px;
+	background-repeat:no-repeat;
+	padding:2px 0 0 28px;
+}
+
+.checkout{
+	background:url(../images/mod_hotel_img/checkout.png);
+	background-position:1px 5px;
+	background-repeat:no-repeat;
+	padding:2px 0 0 28px;
+}
+
+.floor{
+	background:url(../images/mod_hotel_img/floor.png);
+	background-position:1px 5px;
+	background-repeat:no-repeat;
+	padding:3px 0 0 28px;
+}
+
+.room{
+	background:url(../images/mod_hotel_img/room.png);
+	background-position:1px 5px;
+	background-repeat:no-repeat;
+	padding:3px 0 0 28px;
+}
+
+.payable{
+	font-size:17px;
+	color:#090;
+}
+
+.non-refundable{
+	font-size:13px;
+	color:#F00;
+}
+
+.travelnow-tab{
+	margin-bottom:15px;
+}
+
+.check-container{
+	width:250px;
+	border:1px solid #FC0;
+	background:#FFC;
+	padding:10px;
+	line-height:18px;
+	margin: 10px 0 10px 0;
+	overflow:hidden;
+}
+
+.check-label{
+	background-color:#F90;
+	border-bottom:1px solid #FC0;
+	color:#FFF;
+	float:left;
+	width:60%;
+	line-height:22px;
+	text-indent:5px;
+	clear:both;
+	font-size:16px;
+}
+
+.check-label.last{
+	border:0;
+}
+
+.check-value{
+	background-color:#FFD93E;
+	border-bottom:1px solid #F90;
+	color:#000;
+	float:left;
+	text-align:right;
+	width:38%;
+	padding-right:5px;
+	margin-left:0px;
+	line-height:22px;
+	font-size:16px;
+}
+
+.check-value.last{
+	border:0;
+}
+
+.invoice .item-title .travelnow-title{
+	width:60%;
+	float:left;
+}
+
+.invoice .item-title .guest{
+	width:35%;
+	font-size:12px;
+	float:right;
+}
+
+.invoice .item-title .guest ul{
+	margin:0 0 0 10px;
+	padding:0 0 0 10px;
+	list-style:circle;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* ___________________________________________________________________________________
+   
+   New CSS used by Developer
+   ___________________________________________________________________________________ */
+

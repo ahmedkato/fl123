@@ -1,0 +1,150 @@
+/* ___________________________________________________________________________________
+   
+   CSS Framework for Eicra Vacationrental Script [Templates, Blocks & Product Modules] 
+   ___________________________________________________________________________________ */
+   
+
+@charset "utf-8";
+
+
+/* LAYOUT STYLES ******************************************************************** */
+
+/* Block Box Model ------------------------------------------------------------------ */
+
+.block .img-wrapper .type{
+	border-radius:0 5px 0 5px;
+	-moz-border-radius: 0 5px 0 5px;
+	-webkit-border-radius:0 5px 0 5px;
+	right:0;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Banner Search -------------------------------------------------------------------- */
+
+.block-search{
+}
+
+.block-search .col{
+	padding: 0 0 10px 12px;
+	float:right;
+}
+
+.block-search p{
+	padding: 4px 0 4px 8px;
+}
+
+.block-search a{
+	color: #FFFFFF;
+	font-weight: bold;
+	background: url(../images/arrow-white-rtl.png) no-repeat right center;
+	padding: 0 15px 0 0;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Sidebar Search ------------------------------------------------------------------- */
+
+.block-sidebar-search p{
+	clear:right;
+}
+
+.block-sidebar-search .block-content-2 select.left{
+	float:right;
+}
+
+.block-sidebar-search .block-content-2 select.right{
+	float:left;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Featured Vacationrentals --------------------------------------------------------- */
+
+.block-featured .col{
+	margin: 5px 30px 35px 0;
+	float:right;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Popular & Recent Vacationrentals (Configuration ) -------------------------------- */
+
+.block-list .block-body.popular{
+	float:right;
+}
+
+.block-list .block-body.recent{
+	float:left;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Social --------------------------------------------------------------------------- */
+
+.block-social{
+	float:left;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* ********************************************************************************** */
+
+
+/* PRODUCT MODULES ****************************************************************** */
+
+/* Product Advance Search ----------------------------------------------------------- */
+
+.mod-advance-search .ui-widget .ui-autocomplete-input{
+	float:right;
+}
+
+.mod-advance-search .ui-widget .ui-button{ 
+	margin-left: 0px;
+	margin-right: -1px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Product List --------------------------------------------------------------------- */
+
+.products-available,
+.products-not-available{
+	background-position: 99% center;
+	padding-left:0;
+	padding-right:20px;
+}
+
+.products-featured{
+	background-position:30% 40px;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* Product Details ------------------------------------------------------------------ */
+
+.mod-details .products-type{
+	float:right;
+}
+
+/* Wego API ------------------------------------------------------------------------- */
+
+.mod-wego .mod-advance-search p span{
+	text-align:right;
+}
+
+.mod-wego .products-chart .value{
+	padding: 0 5px 0 2px;
+}
+
+.mod-wego .itinerary_main_body_block_clild_body_box1{
+	text-align:right;
+}
+
+/* ---------------------------------------------------------------------------------- */
+
+/* ___________________________________________________________________________________
+   
+   New CSS used by Developer
+   ___________________________________________________________________________________ */
+

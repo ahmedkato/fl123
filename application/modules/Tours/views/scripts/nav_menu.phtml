@@ -1,0 +1,67 @@
+<?php
+$frontController = Zend_Controller_Front::getInstance();	
+$getController = $frontController->getRequest()->getControllerName();
+$getAction = $frontController->getRequest()->getActionName();
+$translator = Zend_Registry::get('translator'); 
+?>
+
+<div id="nav">
+	<div class="nav-header"><div class="nav-title"><?php echo $translator->translator('tours_menu_title'); ?></div></div>
+    <div class="nav-body">
+    	<ul>
+        	<?php if ($this->allow('update','api','Tours')) : ?>
+			<li <?php if($getAction == 'update' && strtolower($getController) == 'api'){ ?> class="tour-api selected"<?php }else{ ?>class="tour-api"<?php } ?>>
+			<a href="<?php echo $this->url(array('module' => 'Tours','controller'=>'api', 'action'=>'update'),'adminrout',true);?>" ><?php echo $translator->translator('tours_menu15'); ?></a>
+			</li>
+			<?php endif; ?>
+            
+            <?php if ($this->allow('listgrp','backendgrp','Tours')) : ?>
+			<li <?php if($getAction == 'listgrp' && strtolower($getController) == 'backendgrp'){ ?> class="tour-group selected"<?php }else{ ?>class="tour-group"<?php } ?>>
+			<a href="<?php echo $this->url(array('module' => 'Tours','controller'=>'backendgrp', 'action'=>'listgrp'),'adminrout',true);?>" ><?php echo $translator->translator('tours_menu1'); ?></a>
+			</li>
+			<?php endif; ?>
+            
+            <?php if ($this->allow('list','backend','Tours')) : ?>
+			<li <?php if($getAction == 'list' && strtolower($getController) == 'backend'){ ?> class="tour-cat selected"<?php }else{ ?>class="tour-cat"<?php } ?>>
+			<a href="<?php echo $this->url(array('module' => 'Tours','controller'=>'backend', 'action'=>'list'),'adminrout',true);?>"><?php echo $translator->translator('tours_menu2'); ?></a>
+			</li>
+			<?php endif; ?>
+            
+            <?php if ($this->allow('list','backendpro','Tours')) : ?>
+			<li <?php if($getAction == 'list' && strtolower($getController) == 'backendpro'){ ?> class="tour selected"<?php }else{ ?>class="tour"<?php } ?>>
+			<a href="<?php echo $this->url( array('module'=> 'Tours', 'controller' => 'backendpro', 'action'     => 'list' ),'adminrout',true) ?>"><?php echo $translator->translator('tours_menu3'); ?></a>
+			</li>
+			<?php endif; ?>
+            
+            <?php if ($this->allow('saved','backendpro','Tours')) : ?>
+			<li <?php if($getAction == 'saved' && strtolower($getController) == 'backendpro'){ ?> class="tour-saved selected"<?php }else{ ?>class="tour-saved"<?php } ?>>
+			<a href="<?php echo $this->url( array('module'=> 'Tours', 'controller' => 'backendpro', 'action'     => 'saved' ),'adminrout',true) ?>"><?php echo $translator->translator('tours_menu7'); ?></a>
+			</li>
+			<?php endif; ?>
+            
+			<?php if ($this->allow('list','backendtype','Tours')) : ?>
+            <li <?php if($getAction == 'list' && strtolower($getController) == 'backendtype'){ ?> class="tour-type selected"<?php }else{ ?>class="tour-type"<?php } ?>>
+			<a href="<?php echo $this->url( array('module'=> 'Tours', 'controller' => 'backendtype', 'action'     => 'list' ),'adminrout',true) ?>"><?php echo $translator->translator('tours_menu4'); ?></a>
+			</li>
+			<?php endif; ?>
+            
+            <?php if ($this->allow('list','state','Geo')) : ?>
+			<li <?php if($getAction == 'list' && strtolower($getController) == 'state'){ ?> class="tour-state selected"<?php }else{ ?>class="tour-state"<?php } ?>>
+			<a href="<?php echo $this->url( array('module'=> 'Geo', 'controller' => 'state', 'action'     => 'list' ),'adminrout',true) ?>"><?php echo $translator->translator('tours_menu5'); ?></a>
+			</li>
+			<?php endif; ?>
+            
+            <?php if ($this->allow('list','city','Geo')) : ?>
+			<li <?php if($getAction == 'list' && strtolower($getController) == 'city'){ ?> class="tour-area selected"<?php }else{ ?>class="tour-area"<?php } ?>>
+			<a href="<?php echo $this->url( array('module'=> 'Geo', 'controller' => 'city', 'action'     => 'list' ),'adminrout',true) ?>"><?php echo $translator->translator('tours_menu6'); ?></a>
+			</li>
+			<?php endif; ?>
+            
+            <?php if ($this->allow('list','backendvote','Vote')) : ?>
+			<li <?php if($getAction == 'list' && strtolower($getController) == 'backendvote'){ ?> class="vote selected last"<?php }else{ ?>class="vote last"<?php } ?>>
+			<a href="<?php echo $this->url( array('module'=> 'Vote', 'controller' => 'backendvote', 'action'     => 'list', 'group_id' => 'tours_page'  ),'adminrout',true) ?>"><?php echo $translator->translator('tours_menu8'); ?></a>
+			</li>
+			<?php endif; ?>      
+        </ul>
+	</div>
+</div>

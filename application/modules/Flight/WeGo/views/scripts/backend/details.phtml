@@ -1,0 +1,439 @@
+<script type="text/javascript">
+$(function() {
+		$("#tabs").tabs().find(".ui-tabs-nav").sortable({axis:'xy'});
+	});
+</script>
+<div id="content" style="padding-top:25px;text-align:left;">
+<?php if (!$this->allow('details')) : ?>
+<div class="grid_12 t_a_bottom">
+		<?php echo $this->translator->translator('Member_Access_deny_desc'); ?>
+	</div>
+<?php 
+	else : 
+	//print_r($this->invoice_arr);
+	$mem_db = new Members_Model_DbTable_MemberList();
+	$country_db = new Eicra_Model_DbTable_Country();
+	$mem_info = $mem_db->getMemberInfo($this->invoice_arr['user_id']);
+	$global_conf = Zend_Registry::get('global_conf');
+	$currency = new Zend_Currency($global_conf['default_locale']);
+	$currencySymbol = $currency->getSymbol();
+	$currencyShort = $currency->getShortName();
+?>
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+	  <td>
+		<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+			  <tr>
+				<td width="50%" height="58" class="title_1">
+					<div style="float:left"><img src="data/adminImages/propertyImages/property-add.gif"  height="51" /></div>
+					<div style="padding-top:16px; float:left">&nbsp;<?php echo $this->translator->translator('flight_details_invoice_page_name'); ?></div>
+				
+				</td>
+				<td width="50%"><table width="360" border="0" align="right" cellpadding="0" cellspacing="0">
+					<tr>
+					  <td width="120"></td>
+					  <td width="120"></td>
+					  <td width="120" id="topGo"><div class="extra_btn ui-widget-content-1" align="right"><a href="<?php echo $this->url( array('module' => 'Flight','controller' => 'backend', 'action'     => 'list' ), 'adminrout',    true) ?>" class="back_btn_link"><?php echo $this->translator->translator('common_back'); ?></a></div></td>
+					</tr>
+				</table></td>
+			  </tr>
+		  </table>	
+	  </td>
+	</tr>
+	<tr>
+	  <td height="4" bgcolor="#7EAD21"></td>
+	</tr>
+	<tr>
+	  <td height="4"></td>
+	</tr>
+	<tr>
+  		<td>
+			<div id="tabs" style="font-size:11px;margin:15px;">
+				<ul>
+					<li><a href="#tabs-1"><?php echo $this->translator->translator('Flight_details_client_info'); ?></a></li>
+					<li><a href="#tabs-2"><?php echo $this->translator->translator('Flight_details_invoice_info'); ?></a></li>
+				</ul>
+				<div id="tabs-1">
+					<table width="100%" cellpadding="0">
+						<tr>
+							<td width="49%">
+								<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #CCCCCC;">
+									<tr>
+									  <td class="bar_bg_1">
+										<table cellpadding="0" cellspacing="0" border="0" width="100%">
+											<tr>
+												<td style="padding-left:5px;" class="title2">
+													 <strong><?php echo $this->translator->translator('Flight_details_client_info'); ?></strong>
+												</td>
+												<td align="right" style="padding-right:5px;text-align:right;">
+													
+												</td>
+											</tr>
+										  </table>
+										</td>
+									</tr>
+									<tr>
+									  <td>&nbsp;</td>
+									</tr>
+									<tr>
+									  <td><table width="98%" border="0" align="center" cellpadding="5" cellspacing="0" style="font-size:13px; color:#000000; font-family:Arial, Helvetica, sans-serif;">
+										<tr>
+										  <td width="33%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_first_name_title'); ?></td>
+										  <td width="67%" valign="top">
+											  <?php 					  
+												echo $this->escape($mem_info['firstName']); 
+											  ?>							  </td>
+										</tr>
+										
+										<tr>
+										  <td width="33%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_last_name_title'); ?></td>
+										  <td width="67%" valign="top">
+										  <?php 					  
+												echo $this->escape($mem_info['lastName']); 
+										  ?>							  </td>
+										</tr>
+										
+										<tr>
+										  <td width="33%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_company_name_title'); ?></td>
+										  <td width="67%" valign="top">
+											<?php echo $this->escape($mem_info['companyName']); ?>							  </td>
+										</tr>													
+													
+										<tr>
+										  <td width="33%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_email_address_title'); ?></td>
+										  <td width="67%" valign="top">
+											<?php echo $this->escape($mem_info['username']); ?>							  </td>
+										</tr>	
+														
+										<tr>
+										  <td width="33%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_address_title'); ?></td>
+										  <td width="67%" valign="top">
+											<?php echo $this->escape($mem_info['address']); ?>							  </td>
+										</tr>
+													
+										<tr>
+										  <td width="33%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_postalCode_title'); ?></td>
+										  <td width="67%" valign="top">
+											<?php echo $this->escape($mem_info['postalCode']); ?>							  </td>
+										</tr>
+													
+										<tr>
+										  <td width="33%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_city_title'); ?></td>
+										  <td width="67%" valign="top">
+											<?php echo $this->escape($mem_info['city']); ?>							  </td>
+										</tr>
+														
+										<tr>
+										  <td width="33%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_state_title'); ?></td>
+										  <td width="67%" valign="top">
+											<?php echo $this->escape($mem_info['state']); ?>							  </td>
+										</tr>
+													
+										<tr>
+										  <td width="33%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_country_title'); ?></td>
+										  <td width="67%" valign="top">
+											<?php $country_info = $country_db->getInfo($mem_info['country']); echo $this->escape($country_info['value']); ?>							  </td>
+										</tr>
+										
+									  </table></td>
+									</tr>
+									
+									<tr>
+									  <td>&nbsp;</td>
+									</tr>
+								  </table>
+							</td>
+							<td width="2%">&nbsp;
+								
+							</td>
+							<td width="49%">
+								<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #CCCCCC;">
+									<tr>
+									  <td class="bar_bg_1">
+										<table cellpadding="0" cellspacing="0" border="0" width="100%">
+											<tr>
+												<td style="padding-left:5px;" class="title2">
+													 <strong><?php echo $this->translator->translator('Flight_details_client_billing_info'); ?></strong>
+												</td>
+												<td align="right" style="padding-right:5px;text-align:right;">
+													
+												</td>
+											</tr>
+										  </table>
+										</td>
+									</tr>
+									<tr>
+									  <td>&nbsp;</td>
+									</tr>
+									<tr>
+									  <td><table width="98%" border="0" align="center" cellpadding="5" cellspacing="0" style="font-size:13px; color:#000000; font-family:Arial, Helvetica, sans-serif;">
+										<tr>
+										  <td width="37%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_invoice_id_title'); ?></td>
+										  <td width="63%" valign="top">
+										  <?php echo $this->escape($this->invoice_arr['invoicenum']); ?>							  </td>
+										</tr>
+										
+										<tr>
+										  <td width="37%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_paid_title'); ?></td>
+										  <td width="63%" valign="top">
+										  <?php 					  
+												$billing_paid = ($this->invoice_arr['status'] == '1') ? $this->invoice_arr['total'] : '00.00' ; 
+												echo $currencySymbol.$billing_paid.$currencyShort;
+											  ?>							  </td>
+										</tr>
+										
+										<tr>
+										  <td width="37%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_unpaid_title'); ?></td>
+										  <td width="63%" valign="top">
+										  <?php 					  
+												$billing_unpaid = ($this->invoice_arr['status'] == '2') ? $this->invoice_arr['total'] : '00.00' ; 
+												echo $currencySymbol.$billing_unpaid.$currencyShort;
+										  ?>							  </td>
+										</tr>
+										
+										<tr>
+										  <td width="37%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_cancel_title'); ?></td>
+										  <td width="63%" valign="top">
+											<?php 
+												$billing_cancel = ($this->invoice_arr['status'] == '0') ? $this->invoice_arr['total'] : '00.00' ; 
+												echo $currencySymbol.$billing_cancel.$currencyShort;
+											 ?>							  </td>
+										</tr>													
+														
+										<tr>
+										  <td width="37%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_tax_title'); ?></td>
+										  <td width="63%" valign="top">
+											<?php echo $currencySymbol.$this->escape($this->invoice_arr['tax']).$currencyShort; ?>							  </td>
+										</tr>
+													
+										<tr>
+										  <td width="37%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_total_income_title'); ?></td>
+										  <td width="63%" valign="top">
+											<?php 
+												echo '<b>'.$currencySymbol.($billing_paid + $this->invoice_arr['tax']).$currencyShort.'</b>';
+											 ?>							  </td>
+										</tr>								
+													
+										<tr>
+										  <td width="37%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_payment_title'); ?></td>
+										  <td width="63%" valign="top">
+											<?php echo $this->escape($this->invoice_arr['payment_method']); ?>							  </td>
+										</tr>
+													
+										<tr>
+										  <td width="37%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_invoice_create_date_title'); ?></td>
+										  <td width="63%" valign="top">
+											<?php echo $this->escape($this->invoice_arr['invoice_create_date']); ?>							  </td>
+										</tr>
+														
+										<tr>
+										  <td width="37%"   valign="top" style="padding-left:5px;"><?php echo $this->translator->translator('Flight_details_client_invoice_updated_date_title'); ?></td>
+										  <td width="63%" valign="top">
+											<?php echo $this->escape($this->invoice_arr['invoice_update_date']); ?>							  </td>
+										</tr>	
+										
+									  </table></td>
+									</tr>
+									
+									<tr>
+									  <td>&nbsp;</td>
+									</tr>
+								  </table>
+							</td>
+						</tr>
+						<tr>
+							<td>&nbsp;
+								
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3">
+								<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #CCCCCC;">
+									<tr>
+									  <td class="bar_bg_1">
+										<table cellpadding="0" cellspacing="0" border="0" width="100%">
+											<tr>
+												<td style="padding-left:5px;" class="title2">
+													 <strong><?php echo $this->translator->translator('Flight_details_client_invoice_items'); ?></strong>
+												</td>
+												<td align="right" style="padding-right:5px;text-align:right;">
+													
+												</td>
+											</tr>
+										  </table>
+										</td>
+									</tr>
+									<tr>
+									  <td>&nbsp;</td>
+									</tr>
+									<tr>
+									  <td align="center">
+									  
+									  <table width="98%" border="0" cellspacing="0">
+										  <tbody>
+										  
+										<?php
+												
+													$invoiceItems_db = new Flight_Model_DbTable_InvoiceItems();
+													$invoiceItems_info = $invoiceItems_db->getInvoiceItemsInfo($this->invoice_arr['user_id'],$this->invoice_arr['id']);
+													if($this->escape($this->invoice_arr['status']) != '0')
+													{
+										?>
+											<tr>
+												<td>
+											<table width="100%" border="0" cellspacing="0">
+												<tbody>
+												<tr>
+													<td align="left"  style="border:1px solid #cccccc;border-bottom:0px;border-right:0px;padding-left:5px;"><?php echo '<b>'.$this->translator->translator("flight_invoice_id_title").'</b>: #'.$this->invoice_arr['id']; ?></td>
+													<td  align="right" style="border:1px solid #cccccc;border-bottom:0px;border-left:0px;padding-right:5px;"><?php echo '<b>'.$this->translator->translator("flight_invoice_date_title").'</b>: '.$this->invoice_arr['invoice_create_date']; ?></td>
+												  </tr>
+												<tr>
+													<td width="77%" align="center" style="border:1px solid #cccccc;border-bottom:0px;border-right:0px;"><?php echo '<b>'.$this->translator->translator("flight_invoice_desc_title").'</b>'; ?></td>
+													<td  align="center" style="border:1px solid #cccccc;border-bottom:0px;"><?php echo '<b>'.$this->translator->translator("flight_invoice_amount_title").'</b>'; ?></td>
+												  </tr>
+										<?php
+														$total_amount = 0;
+														$total_tax = 0;		
+														foreach($invoiceItems_info as $invoiceItems)
+														{
+														$item_info = Zend_Json::decode($invoiceItems['object_value']);		
+												?>			
+														<tr>
+																<td style="border:1px solid #cccccc;border-bottom:0px;border-right:0px;">
+																<table width="100%">
+																	<tr>
+																		<td><img src="data/frontImages/flight/airlines/<?php echo $item_info['airline_infos']['airlines_pic']; ?>" height="60" title="<?php echo $item_info['airline_infos']['airlines']; ?>" /></td>
+																		<td>
+																		<?php echo $item_info['FlightInfoExResult'][0]['originName'].', '.$item_info['FlightInfoExResult'][0]['originCity'].' --> '.$item_info['FlightInfoExResult'][0]['destinationName'].', '.$item_info['FlightInfoExResult'][0]['destinationCity']; ?>
+																		<br />
+																		<?php echo '<strong>'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_depart").' :</strong> '.$item_info['FlightInfoExResult'][0]['filed_departuretime']; ?>
+																		<br  />
+																		<?php echo '<strong>'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_arive").' :</strong> '.$item_info['FlightInfoExResult'][0]['estimatedarrivaltime']; ?>
+																		<br  />
+																		<?php echo '<strong>'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_class").' :</strong> '.$item_info['airline_price_info']['classType']; ?>
+																		</td>
+																	</tr>
+																</table>	
+																</td>
+																<td style="border:1px solid #cccccc;border-bottom:0px;">
+																	<table border="0" width="100%">
+																		<tr>
+																			<td width="50%"><?php echo $this->translator->translator("flight_AirlineFlightSchedules_page_table_adult").' ('.$item_info['airline_price_info']['adult_no'].')'; ?> :</td><td width="50%"><?php echo $currencySymbol.($item_info['airline_price_info']['adult_price']*$item_info['airline_price_info']['adult_no']).$currencyShortName; ?></td>
+																		</tr>
+																		<tr>
+																			<td><?php echo $this->translator->translator("flight_AirlineFlightSchedules_page_table_child").' ('.$item_info['airline_price_info']['child_no'].')'; ?> :</td><td><?php echo $currencySymbol.($item_info['airline_price_info']['child_price']*$item_info['airline_price_info']['child_no']).$currencyShortName; ?></td>
+																		</tr>
+																		<tr>
+																			<td><?php echo $this->translator->translator("flight_AirlineFlightSchedules_page_table_infant").' ('.$item_info['airline_price_info']['infant_no'].')'; ?> :</td><td><?php echo $currencySymbol.($item_info['airline_price_info']['infant_price']*$item_info['airline_price_info']['infant_no']).$currencyShortName; ?></td>
+																		</tr>
+																	</table>
+																</td>
+															  </tr>
+															  <tr>
+																<td style="border:1px solid #cccccc;border-bottom:0px;border-right:0px;"></td>
+																<td style="border:1px solid #cccccc;border-bottom:0px;">
+																	<table border="0" width="100%">
+																		<tr>
+																			<td width="50%"> <?php echo $this->translator->translator("flight_invoice_total_tax_title"); ?></td><td width="50%"><?php $total_tax += $item_info['airline_price_info']['total_tax'];  echo $currencySymbol.$item_info['airline_price_info']['total_tax'].$currencyShortName; ?></td>
+																		</tr>
+																	</table>
+																</td>
+															  </tr>
+															  <tr>
+																<td style="border:1px solid #cccccc;border-bottom:0px;border-right:0px;"></td>
+																<td style="border:1px solid #cccccc;border-bottom:0px;">
+																	<table border="0" width="100%">
+																		<tr>
+																			<td width="50%"> <?php echo $this->translator->translator("flight_invoice_sub_total_title"); ?></td><td width="50%"><?php $sub_total = $item_info['airline_price_info']['adult_price']*$item_info['airline_price_info']['adult_no']+$item_info['airline_price_info']['child_price']*$item_info['airline_price_info']['child_no']+$item_info['airline_price_info']['infant_price']*$item_info['airline_price_info']['infant_no']; echo $currencySymbol.$sub_total.$currencyShortName; $total_amount += $sub_total; ?></td>
+																		</tr>
+																	</table>
+																</td>
+															  </tr>	 
+										<?php					
+													}
+													
+													switch(strtolower($payment_info['name']))
+													{
+														case 'paypal':
+															$total_price = $total_amount+$total_tax;
+															$currency_name = ($payment_info['curency']) ? $payment_info['curency'] : $currencyShortName;
+															$payment_link = 'https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business='.$payment_info['email'].'&item_name=Invoice-'.$invoices['id'].'&item_number=1&amount='.$total_price.'&no_shipping=0&no_note=1&currency_code='.$currency_name.'&bn=PP%2dBuyNowBF&charset=UTF%2d8 target=_blank';
+														break;
+														default:
+															$total_price = $total_amount+$total_tax;
+															$currency_name = ($payment_info['curency']) ? $payment_info['curency'] : $currencyShortName;
+															$payment_link = 'https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business='.$payment_info['email'].'&item_name=Invoice-'.$invoices['id'].'&item_number=1&amount='.$total_price.'&no_shipping=0&no_note=1&currency_code='.$currency_name.'&bn=PP%2dBuyNowBF&charset=UTF%2d8 target=_blank';
+														break;
+													}
+													
+														
+										?>
+															<tr>
+															<td style="border:1px solid #cccccc;border-right:0px;padding-left:10px;font-weight:bold;"><?php if($this->escape($invoices['status']) == '1'){ echo $this->translator->translator('common_paid_language'); }else if($this->escape($invoices['status']) == '2'){ echo $this->translator->translator('common_unpaid_language'); }else if($this->escape($invoices['status']) == '0'){ echo $this->translator->translator('common_cancelled_language'); }  ?></td>
+															<td style="border:1px solid #cccccc;">
+																<table border="0" width="100%">
+																	<tr>
+																		<td width="50%"> <?php echo $this->translator->translator("flight_invoice_total_title"); ?></td><td width="50%"><?php echo $currencySymbol.($total_amount+$total_tax).$currencyShortName; ?></td>
+																	</tr>
+																</table>
+															</td>
+														  </tr>						
+														</tbody>
+												</table>
+												</td>
+											</tr>
+										<?php
+													}
+												
+										?>
+										
+										  </tbody>
+										</table>
+									  
+									  </td>
+									</tr>
+									
+									<tr>
+									  <td>&nbsp;</td>
+									</tr>
+								  </table>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div id="tabs-2">
+					<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #CCCCCC;">
+									<tr>
+									  <td class="bar_bg_1">
+										<table cellpadding="0" cellspacing="0" border="0" width="100%">
+											<tr>
+												<td style="padding-left:5px;" class="title2">
+													 <strong><?php echo $this->translator->translator('Flight_details_client_invoice_detail_preview'); ?></strong>
+												</td>
+												<td align="right" style="padding-right:5px;text-align:right;">
+													
+												</td>
+											</tr>
+										  </table>
+										</td>
+									</tr>
+									<tr>
+									  <td>&nbsp;</td>
+									</tr>
+									<tr>
+									  <td>
+									  <?php echo $this->escape($this->invoice_arr['invoice_desc']); ?>
+									  </td>
+									</tr>
+									
+									<tr>
+									  <td>&nbsp;</td>
+									</tr>
+								  </table>
+				</div>
+			</div>
+		</td>
+	</tr>
+</table>
+<?php endif; ?>
+</div>

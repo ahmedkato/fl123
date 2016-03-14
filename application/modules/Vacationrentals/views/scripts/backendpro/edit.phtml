@@ -1,0 +1,1838 @@
+<div id="container">
+<?php if (!$this->allow() || ($this->auth->getIdentity()->access_other_user_article != '1' && $this->auth->getIdentity()->user_id != $this->entry_by && $this->auth->getIdentity()->user_id != $this->vacationrentalsInfo['vacationrentals_owner'])) : ?>
+	<div class="grid_12 t_a_bottom">
+		<?php echo $this->translator->translator('Member_Access_deny_desc'); ?>
+	</div>
+<?php else : 
+$tab_base_link = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
+
+$this->proForm->setEditor($this->serverUrl().$this->baseUrl());
+$this->proForm->getEditor();
+
+echo $this->headScript()->setFile($this->baseUrl().'/js/jquery/jquery.scrollTo.js');
+
+$global_conf = Zend_Registry::get('global_conf');
+$currency = new Zend_Currency($global_conf['default_locale']);
+
+$frontController = Zend_Controller_Front::getInstance();
+$param_group_id = $frontController->getRequest()->getParam('group_id');
+
+$grp_file_type_arr = explode(',',$this->option['file_type']);
+foreach($grp_file_type_arr as $key => $value)
+{
+	$grp_file_type_arr[$key] = '*.'.$value;	
+} 
+$grp_file_format = implode(';',$grp_file_type_arr);	
+
+$image_value = $this->proForm->vacationrentals_image->getValue();
+if($image_value)
+{
+	$image_arr = explode(',',$image_value);
+	foreach($image_arr as $key=>$value)
+	{
+		$checked = ($value == $this->vacationrentals_primary_image) ? ' checked="checked" ' : '';
+		$img_type = ($value == $this->vacationrentals_primary_image) ? '<span class="main">'.$this->translator->translator('gallery_img_main', '', 'Gallery').'</span>' : '<span class="related">'.$this->translator->translator('gallery_img_related', '', 'Gallery').'</span>';
+		$class_link = ($this->auth->getIdentity()->access_file_image_manager == '1') ? 'delete_image_lnk' : 'delete_uploaded_image_link';
+		if(!empty($value))
+		{
+			$assign_image .=  '<div class="upload-img box">'.$img_type.'<br /><span><div class="thumb"><img src="data/frontImages/vacationrentals/vacationrentals_image/'.$value.'" width="30" height="20" class="bdr" /></div><br /><a href="javascript:void(0)" class="'.$class_link.'" field_name="vacationrentals_image" file_name="'.$value.'" file_path="data/frontImages/vacationrentals/vacationrentals_image" rel="'.$value.'">'.$this->translator->translator('common_delete_title').'</a><input class="radio_style" type="radio" name="vacationrentals_primary_image" id="vacationrentals_primary_image" '.$checked.' value="'.$value.'" title="'.$this->translator->translator('vacationrentals_primary_image').'" />&nbsp;</span></div>';
+		}
+	}
+}
+
+$floor_image_value = $this->proForm->feature_others_exclusive_images->getValue();
+if($floor_image_value)
+{
+	$floor_image_arr = explode(',',$floor_image_value);
+	foreach($floor_image_arr as $key=>$value)
+	{
+		$checked	= ($value == $this->feature_primary_floor_image) ? ' checked="checked" ' : '';
+		$img_type = ($value == $this->feature_primary_floor_image) ? '<span class="main">'.$this->translator->translator('gallery_img_main', '', 'Gallery').'</span>' : '<span class="related">'.$this->translator->translator('gallery_img_related', '', 'Gallery').'</span>';
+		$class_link = ($this->auth->getIdentity()->access_file_image_manager == '1') ? 'delete_image_lnk' : 'delete_uploaded_image_link';
+		if(!empty($value))
+		{
+			$assign_floor_image .=  '<div class="upload-img box">'.$img_type.'<br /><span><div class="thumb"><img src="data/frontImages/vacationrentals/other_images/'.$value.'" width="30" height="20" class="bdr" /></div><br /><a href="javascript:void(0)" class="'.$class_link.'" field_name="feature_others_exclusive_images" file_name="'.$value.'" file_path="data/frontImages/vacationrentals/other_images" rel="'.$value.'">'.$this->translator->translator('common_delete_title').'</a><input class="radio_style" type="radio" name="feature_primary_floor_image" id="feature_primary_floor_image" '.$checked.' value="'.$value.'" title="'.$this->translator->translator('vacationrentals_primary_floor_image').'" />&nbsp;</span></div>';
+		}
+	}
+}
+?>
+
+<script type="text/javascript">
+var settingObj = {
+					tab_base_link: '<?php echo $tab_base_link; ?>',
+					form_action : {
+										form_id: 'formItem',
+										hasTinyMCE: true,											
+										currency_symbol:	"<?php echo $currency->getSymbol(); ?>",
+										common_msg_field_id: 'actionMessage',
+										dialog_container_id:	'dialog_container',
+										dialog_progressbar_id:	'progressbar',
+										field_toggle_action: [
+											{
+												from_field_tag	: 'input',
+												from_field_id 	: 'billing_user_places_order_email_enable',
+												to_field_id 	: 'billing_user_places_order_email_address',
+												active_value	: 'yes',												
+											},
+											{
+												from_field_tag	: 'input',
+												from_field_id 	: 'billing_user_pay_invoice_email_enable',
+												to_field_id 	: 'billing_user_pay_invoice_email_address',
+												active_value	: 'yes',												
+											},
+											{
+												from_field_tag	: 'input',
+												from_field_id 	: 'billing_user_cancel_order_email_enable',
+												to_field_id 	: 'billing_user_cancel_order_email_address',
+												active_value	: 'yes',												
+											}
+										],										
+										extra_field_for_reset: [
+											{field_id : 'selected_file_vacationrentals_image', field_value: '<?php echo $assign_image; ?>' , field_type : 'html'},
+											{field_id : 'selected_file_feature_others_exclusive_images', field_value: '<?php echo $assign_floor_image; ?>' , field_type : 'html'},
+											{field_id : 'vacationrentals_parent', field_value: '<?php echo $this->proForm->category_id->getValue(); ?>' , field_type : 'val'},
+											{field_id : 'vacationrentals_image', field_value: '<?php echo $this->proForm->vacationrentals_image->getValue(); ?>' , field_type : 'val'},
+											{field_id : 'feature_others_exclusive_images', field_value: '<?php echo $this->proForm->feature_others_exclusive_images->getValue(); ?>' , field_type : 'val'},
+											{field_id : 'dataId', field_value: '<?php echo $this->escape($this->category_name).' ('.$this->proForm->category_id->getValue().')'; ?>' , field_type : 'html'}
+										],
+										extra_function_for_reset: function(){																																
+											$('a.back_btn_link').attr('href','<?php echo $this->url( array("module" => "Vacationrentals","controller" => "backendpro", "action"  => "list" ,"group_id" => $param_group_id), "adminrout",    true) ?>');
+											refreshKendoTreeView($('#group_id').val(), $('#'+settingObj.form_action.category_tree.category_tree_input_field_id).val(), settingObj);
+										},
+										category_tree:{
+											category_tree_id: 'categoryTree',
+											category_tree_input_field_id : 'vacationrentals_parent',
+											category_tree_input_html_id : 'dataId',
+											category_tree_dest_url: "<?php echo $this->url( array('module' => 'Vacationrentals','controller' => 'backend', 'action'     => 'parent' ), 'adminrout',    true) ?>",
+											tree_view: {
+												dragAndDrop : true,
+												template: "<label><input type=\"radio\" name=\"radio\" #= (item.id ==  $('input[name=\"category_id\"]').val())? 'checked' : '' # />#= item.text #</label>",
+												dataBound	: function(obj){
+															try
+															{														
+																var treeView = $("#"+settingObj.form_action.category_tree.category_tree_id).data('kendoTreeView');
+																var getitem = treeView.dataSource.get("<?php echo ($this->proForm->category_id->getValue()) ? $this->proForm->category_id->getValue() : '0'; ?>");
+																if(getitem)
+																{
+																	var selectitem = treeView.findByUid(getitem.uid);
+																	treeView.select(selectitem);
+																}
+															}
+															catch(e)
+															{
+																
+															}
+												},
+												dataSource :  {
+													transport: {
+															read: {
+																url: "<?php echo $this->url( array('module' => 'Vacationrentals','controller' => 'backendpro', 'action'     => 'vacationrentalsgroup' ), 'adminrout',    true) ?>",
+																dataType: "json",
+																type: "POST",
+																data : {grp_id : '<?php echo $this->proForm->group_id->getValue(); ?>', expanded : true}, // true is enable null is disable
+																complete: function(e) {																		
+																	var json_arr = $.parseJSON(e.responseText);	
+																	if(json_arr.status == 'ok')
+																	{	
+																		$.each(json_arr.TreeDataSource, function(key, arr_obj){
+																			if(arr_obj['id'] == '0')
+																			{																		
+																				<?php if($this->auth->getIdentity()->access_file_image_manager != '1'){ ?>
+																					uploadSettingsStart(json_arr);
+																				<?php } ?>	
+																				var business_type = json_arr.businessType_options;
+																				var option = '<option value=""><?php echo $this->translator->translator("vacationrentals_select_businessType"); ?></option>';
+																				if(business_type)
+																				{							
+																					$.each(business_type, function(key, arr){ var selected_code = (arr.id == $('#vacationrentals_type').val()) ? 'selected="selected"' : '' ; option += '<option value="'+arr.id+'" '+selected_code+'>'+commonStripslashes(arr.business_type)+'</option>'; });						
+																				}
+																				$('#vacationrentals_type').html(option);																			
+																			}
+																		});																			
+																	}
+																	else
+																	{
+																	   commonMsgDialog(settingObj, json.msg);
+																	   <?php if($this->auth->getIdentity()->access_file_image_manager != '1'){ ?>
+																			uploadSettingsEnd();			
+																		<?php } ?>															
+																	}
+																}
+															}
+														},
+														schema: {
+															data: 'TreeDataSource',
+															model: {
+																id : 'id',
+																text : 'text' ,
+																hasChildren: 'hasChildren'  
+															}
+														}	
+												}
+											}
+										},
+										dynamic_field_generator: {
+											has_tab	: true,
+											tab_id	: 'tabs',
+											html_input_id: 'dynamic_fields',												
+											uploader_upload_url: '<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'     => 'upload'), 'adminrout',    true) ?>',
+											uploader_remove_url: '<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'     => 'remove'), 'adminrout',    true) ?>',
+											constants: {
+													DYNAMIC_FIELD_GROUP_TITLE 		: 	'<?php echo Eicra_File_Constants::DYNAMIC_FIELD_GROUP_TITLE; ?>',
+													DYNAMIC_FIELD_GROUP_ELEMENTS	:	'<?php echo Eicra_File_Constants::DYNAMIC_FIELD_GROUP_ELEMENTS; ?>',
+													DATE							:	'<?php echo Eicra_File_Constants::DATE; ?>',
+													PRICE							:	'<?php echo Eicra_File_Constants::PRICE; ?>'
+											},
+											langueges:{
+												common_go_top_title: "<?php echo html_entity_decode($this->translator->translator('common_go_top_title'), ENT_QUOTES, 'UTF-8'); ?>",
+											},
+											after_add_function : function(){
+												//qToolTipFunctions();
+											}
+										}
+								},
+					dynamic_list_action: [
+																{
+																	list_id:'country_id',
+																	sub_list: {
+																		list_id:'state_id',
+																		list_dest_url: '<?php echo $this->url( array('module' =>'Vacationrentals','controller' => 'backendpro', 'action' => 'states' ), 'adminrout',    true) ?>',
+																		list_any_value: '<?php echo html_entity_decode($this->translator->translator("vacationrentals_select_state"), ENT_QUOTES, 'UTF-8'); ?>',
+																		list_input_value_field: 'state_id',
+																		list_input_option_field: 'state_name',
+																		list_return_field: 'states',
+																		list_loader_info : {
+																					loader_id : 'state_id_loader',
+																					loader_img : 'application/modules/Administrator/layouts/scripts/images/loader/ajax_loader.gif',
+																					on_loading : [
+																									{id : 'state_id', type:'html', loading_lang: '<?php echo html_entity_decode($this->translator->translator("common_loading_language"), ENT_QUOTES, 'UTF-8'); ?>', normal_lang: '<?php echo html_entity_decode($this->translator->translator("vacationrentals_select_state"), ENT_QUOTES, 'UTF-8'); ?>'},
+																									{id : 'area_id', type:'html', loading_lang: '<?php echo html_entity_decode($this->translator->translator("vacationrentals_select_area"), ENT_QUOTES, 'UTF-8'); ?>', normal_lang: '<?php echo html_entity_decode($this->translator->translator("vacationrentals_select_area"), ENT_QUOTES, 'UTF-8'); ?>'}
+																								]
+																			},
+																		sub_list:{
+																			list_id:'area_id',
+																			list_dest_url: '<?php echo $this->url( array('module' =>'Vacationrentals','controller' => 'backendpro', 'action' => 'areas' ), 'adminrout',    true) ?>',
+																			list_any_value: '<?php echo html_entity_decode($this->translator->translator("vacationrentals_select_area"), ENT_QUOTES, 'UTF-8'); ?>',
+																			list_input_value_field: 'city_id',
+																			list_input_option_field: 'city',
+																			list_return_field: 'cities',
+																			list_loader_info : {
+																						loader_id : 'area_id_loader',
+																						loader_img : 'application/modules/Administrator/layouts/scripts/images/loader/ajax_loader.gif',
+																						on_loading : [
+																										{id : 'area_id', type:'html', loading_lang: '<?php echo html_entity_decode($this->translator->translator("common_loading_language"), ENT_QUOTES, 'UTF-8'); ?>', normal_lang: '<?php echo html_entity_decode($this->translator->translator("vacationrentals_select_area"), ENT_QUOTES, 'UTF-8'); ?>'}
+																									]
+																				}
+																		}
+																	}
+																}
+														],
+					calendar:	{
+									calendar_include_time: true,	
+									calendar_img_link: 'application/modules/Administrator/layouts/scripts/images/common/calendar.png',
+									monthNamesShort: <?php echo $this->translator->translator("common_calender_monthNamesShort"); ?>,
+									monthNames:		<?php echo $this->translator->translator("common_calender_monthNames"); ?>,
+									dayNamesMin:		<?php echo $this->translator->translator("common_calender_dayNamesMin"); ?>,
+									buttonText:		'calendar',
+									dateFormat:		'yy-mm-dd',
+									dateTimeFormat:     "yyyy-MM-dd HH:mm:ss tt",
+									culture: "<?php echo str_ireplace('_', '-', $locale); ?>",
+									value: ''
+					},
+					messages: {
+									display				: 	'<?php echo $this->translator->translator("portfolio_pagination_messages_display", '', 'Portfolio'); ?>',
+									empty				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_empty", '', 'Portfolio'); ?>',
+									page				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_page", '', 'Portfolio'); ?>',
+									of					:	'<?php echo $this->translator->translator("portfolio_pagination_messages_of", '', 'Portfolio'); ?>',
+									itemsPerPage		:	'<?php echo $this->translator->translator("portfolio_pagination_messages_items_per_page", '', 'Portfolio'); ?>',
+									first				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_first", '', 'Portfolio'); ?>',
+									previous			:	'<?php echo $this->translator->translator("portfolio_pagination_messages_previous", '', 'Portfolio'); ?>',
+									next				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_next", '', 'Portfolio'); ?>',
+									last				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_last", '', 'Portfolio'); ?>',
+									refresh				:	'<?php echo $this->translator->translator("portfolio_pagination_messages_refresh", '', 'Portfolio'); ?>',
+									
+									common_msg_dialog_id 		:	'dialog_msg',
+									common_confirn_dialog_id	:	'dialog-confirm',
+									common_ok					:	"<?php echo html_entity_decode($this->translator->translator('common_ok'), ENT_QUOTES, 'UTF-8'); ?>",
+									common_delete_selected		:	"<?php echo html_entity_decode($this->translator->translator("common_delete_selected"), ENT_QUOTES, 'UTF-8'); ?>",
+									common_cancel				:	"<?php echo html_entity_decode($this->translator->translator("common_cancel"), ENT_QUOTES, 'UTF-8'); ?>",										
+									common_publish_title		:	"<?php echo $this->translator->translator("common_publish_title"); ?>",
+									common_unpublish_title		:	"<?php echo $this->translator->translator("common_unpublish_title"); ?>",										
+									common_publish_selected		:	"<?php echo $this->translator->translator("common_publish_selected"); ?>",
+									common_unpublish_selected	:	"<?php echo $this->translator->translator("common_unpublish_selected"); ?>",
+									common_publish_perm	 		:	"<?php echo $this->translator->translator("common_publish_perm"); ?>"
+								}
+					};
+<?php
+if($this->auth->getIdentity()->allow_to_change_ownership == '1')
+{
+?>					
+$(function() {
+	$( "#vacationrentals_owner" ).combobox();
+})
+<?php
+}
+?>
+$(function() {
+		$("#tabs").tabs().find(".ui-tabs-nav").sortable({axis:'xy'});
+	});
+$(document).ready(function() {
+	floatingbar('#floatingbar',"#button_top_bar",null);
+	commonKendoTreeGen(settingObj);
+	commonImageThumbnil();
+	deleteFiles("<?php echo $this->translator->translator('gallery_img_main', '', 'Gallery'); ?>", "<?php echo $this->translator->translator('gallery_img_related', '', 'Gallery'); ?>", "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'     => 'remove' ), 'adminrout',    true) ?>", "<?php echo $this->translator->translator('common_delete_title'); ?>");	
+	commonFieldToggle(settingObj);
+	
+	 /**********Scrolling Tools Start****************/
+	$.easing.elasout = function(x, t, b, c, d) {
+		var s=1.70158;var p=0;var a=c;
+		if (t==0) return b;  if ((t/=d)==1) return b+c;  if (!p) p=d*.3;
+		if (a < Math.abs(c)) { a=c; var s=p/4; }
+		else var s = p/(2*Math.PI) * Math.asin (c/a);
+		return a*Math.pow(2,-10*t) * Math.sin( (t*d-s)*(2*Math.PI)/p ) + c + b;
+	};
+
+	$('#toc a').click(function(){//$.scrollTo works EXACTLY the same way, but scrolls the whole screen
+		$.scrollTo( this.hash, 1500, { easing:'swing' });
+		$(this.hash).find('span.message').text( this.title );
+		return false;
+	});
+
+	$('span.top-go a').click(function(){//$.scrollTo works EXACTLY the same way, but scrolls the whole screen
+		$.scrollTo( this.hash, 1500, { easing:'swing' });
+		return false;
+	});
+	/**********Scrolling Tools END****************/
+
+	$("#upload-form").dialog({
+		autoOpen: false,
+		width: 760,
+		height: 610,
+		show: 'fade',
+		modal: true
+	});
+
+	$('a.upload_btn').click(function() {
+		var self = this;
+		var src = $("#i-upload-form").attr("src");
+		$("#i-upload-form").attr("src", 'application/modules/Administrator/layouts/scripts/images/loader/manager_loader.gif');
+		
+		var group_id = $("#group_id").val();
+		$('input[name="primary_id_field_value"]').val(group_id);
+		
+		var rel = $(self).attr('rel');		
+		var file_suffix = rel;	
+		var file_content = $('#'+file_suffix).val();
+		
+		$('input[name="file_path_field"]').val('file_path_'+rel);
+		$('input[name="file_content"]').val(file_content);		
+		$('input[name="primary_file_field"]').val(file_suffix);		
+		
+		if(group_id != null && group_id != "")
+		{
+			$("#popupForm").attr("action", "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action' => 'manager' ), 'adminrout',    true) ?>");			
+			$('#upload-form').dialog('open');
+			$('#popupForm').submit();
+		}
+		else
+		{
+			msg = "<?php echo $this->translator->translator("group_id_selected_err"); ?>";
+			commonMsgDialog(settingObj, msg);
+		}
+	});
+
+	$('a.select_file_btn').click(function() {
+
+		var currentIFrame = $('#i-upload-form');
+		var selected_files = currentIFrame.contents().find("input[name='selected_files']").val();
+		var primary_file_field = currentIFrame.contents().find("input[name='primary_file_field']").val();
+		var file_path	=	currentIFrame.contents().find("input[name='file_path']").val();
+		var selected_files_arr = (selected_files != '') ? selected_files.split(',') : new Array();	
+		if(selected_files_arr.length == '0')
+		{
+			var msg = "<?php echo $this->translator->translator("insert_selected_file_err"); ?>";				
+			commonMsgDialog(settingObj, msg);
+		}
+		else
+		{
+			var img_code = '';
+			var file_name = '';
+			for(var i=0;i < selected_files_arr.length;i++)
+			{
+				var ext = getCommonFileExtension(selected_files_arr[i]);
+				var img_path = commonFilePath(file_path, selected_files_arr[i]);
+								
+				var checked = (i == 0)? ' checked="checked" ' : '';
+				var img_type = 	(i == 0) ? "<span class='main'><?php echo $this->translator->translator('gallery_img_main', '', 'Gallery'); ?></span>" : "<span class='related'><?php echo $this->translator->translator('gallery_img_related', '', 'Gallery'); ?></span>";
+				var primary_file_field_radio =	(primary_file_field == 'vacationrentals_image') ? 'vacationrentals_primary_image'	: 'feature_primary_floor_image';						
+				var primary =  '<input class="radio_style" type="radio" name="'+primary_file_field_radio+'" id="'+primary_file_field_radio+'" '+checked+' value="'+selected_files_arr[i]+'" title="<?php echo $this->translator->translator("vacationrentals_primary_image"); ?>" />';
+				var del_link = '<a href="javascript:void(0)" class="delete_image_lnk" rel="'+selected_files_arr[i]+'"><?php echo html_entity_decode($this->translator->translator("common_delete"), ENT_QUOTES, "UTF-8"); ?></a>'+primary;
+				
+				img_code += '<div class="upload-img box">'+img_type+'<br /><span><div class="thumb"><img src="'+img_path+'" width="30" height="20" class="bdr" /></div><br />'+del_link+'&nbsp;</span></div>';
+				file_name = (i == 0)? selected_files_arr[i] : file_name+','+selected_files_arr[i];					
+			}			
+			var file_suffix = primary_file_field;		
+			$('#selected_file_'+file_suffix).html(img_code);		
+			$('#'+file_suffix).val(file_name);		
+			$("#i-upload-form").attr("src", 'application/modules/Administrator/layouts/scripts/images/loader/manager_loader.gif'); 						
+			$("#upload-form").dialog('option','hide','explode').dialog('close');				
+			deleteFiles("<?php echo $this->translator->translator('gallery_img_main', '', 'Gallery'); ?>", "<?php echo $this->translator->translator('gallery_img_related', '', 'Gallery'); ?>", "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'     => 'remove' ), 'adminrout',    true) ?>", "<?php echo $this->translator->translator('common_delete_title'); ?>");	
+			commonImageThumbnil();
+		}
+	});
+
+	$('a.close_dialog_btn').click(function() {
+		$("#i-upload-form").attr("src", 'application/modules/Administrator/layouts/scripts/images/loader/manager_loader.gif');
+		$("#i-upload-form").html('');
+		$("#upload-form").dialog('option','hide','explode').dialog('close');
+	});
+
+	$('a.reset_btn').click(function() {
+		 commonResetFormFields(settingObj);
+		 commonRemoveFormError(settingObj);
+		 commonImageThumbnil();
+		 deleteFiles("<?php echo $this->translator->translator('gallery_img_main','', 'Gallery'); ?>", "<?php echo $this->translator->translator('gallery_img_related','', 'Gallery'); ?>", "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'     => 'remove' ), 'adminrout',    true) ?>", "<?php echo $this->translator->translator('common_delete_title'); ?>");
+	});
+
+	$('a.edit_vacationrentals_btn').click(function() {
+			var formData = commonGetFormData(settingObj.form_action.form_id, settingObj.form_action.hasTinyMCE);
+			    formData.id  = '<?php echo $this->id ; ?>';
+		$.ajax({
+			url: "<?php echo $this->url( array('module' => 'Vacationrentals','controller' => 'backendpro', 'action'     => 'edit' ), 'adminrout',    true) ?>",
+			  	type: 'POST',
+			  	data: formData,
+				beforeSend: function(){
+						commonRemoveFormError(settingObj);
+						commonOpenLoaderDialog(settingObj);
+					 },
+				success: function(response){
+					//alert(response);
+					var json_arr = eval("("+response+")");
+					if(json_arr.status == 'ok')
+					{
+						$('#actionMessage').html(succMsgDesign(json_arr.msg));
+						refreshKendoTreeView($('#group_id').val(), $('#'+settingObj.form_action.category_tree.category_tree_input_field_id).val(), settingObj);
+					}
+					else if(json_arr.status == 'errV')
+					{
+						$('#actionMessage').html(errMsgDesign("<?php echo $this->translator->translator('common_err'); ?>"));
+
+						for(var i= 0; i < json_arr.msg.length; i++)
+						{
+							commonAddFormError(json_arr.msg[i].key,json_arr.msg[i].value);
+						}						
+						openFirstErrTab(json_arr.msg, 'tabs', 'tabs-');
+					}
+					else
+					{
+						$('#actionMessage').html(errMsgDesign(json_arr.msg));
+					}
+					commonCloseLoaderDialog(settingObj);
+				},
+				error: function(xhr, status, error){
+					commonCloseLoaderDialog(settingObj);
+					var msg = "Error! " + xhr.status + " " + error;
+					$('#actionMessage').html(errMsgDesign(msg));
+				}
+		});
+	});
+
+
+/***********************************Get Vacationrentals Group***************************************/
+	$('select[name="group_id"]').change(function() {		
+		var group_id = $('#group_id').val();
+		$("#"+settingObj.form_action.category_tree.category_tree_input_html_id).html('<?php echo $this->translator->translator("common_tree_root"); ?> (0)');
+		$("#"+settingObj.form_action.category_tree.category_tree_input_field_id).val('0');
+		commonRemoveTabs(settingObj);
+		if(group_id != '')
+		{
+			settingObj.form_action.category_tree.tree_view.dataSource.transport.read.data['grp_id'] = group_id;
+			$('a.back_btn_link').attr('href','Vacationrentals/backendpro/list/group_id/'+group_id);
+			commonKendoTreeGen(settingObj);
+		}
+		else
+		{
+			<?php if($this->auth->getIdentity()->access_file_image_manager != '1'){ ?>
+				uploadSettingsEnd();			
+			<?php } ?>	
+			var option = '<option value=""><?php echo $this->translator->translator("vacationrentals_select_businessType"); ?></option>';
+			$('#vacationrentals_type').html(option);	
+			commonDestroyKendoTreeGen(settingObj);					
+			$('a.back_btn_link').attr('href','Vacationrentals/backendpro/list');
+		}		
+		$('#group_id_err').html('');		
+	});	
+
+});
+
+$(function() {
+		$("#availabe_from").datepicker({
+			showOn: 'button',
+			buttonImage: 'application/modules/Administrator/layouts/scripts/images/common/calendar.png',
+			buttonImageOnly: true,
+			showAnim: 'slide',
+			buttonText: 'Calender',
+			dateFormat:'yy-mm-dd',
+			autoSize:false,
+			showButtonPanel:false,
+			changeMonth: true,
+			changeYear: true
+		});
+		$("#available_to").datepicker({
+			showOn: 'button',
+			buttonImage: 'application/modules/Administrator/layouts/scripts/images/common/calendar.png',
+			buttonImageOnly: true,
+			showAnim: 'blind',
+			buttonText: 'Calender',
+			dateFormat:'yy-mm-dd',
+			autoSize:false,
+			showButtonPanel:false,
+			changeMonth: true,
+			changeYear: true
+		});
+		$("#available_expire_date").datepicker({
+			showOn: 'button',
+			buttonImage: 'application/modules/Administrator/layouts/scripts/images/common/calendar.png',
+			buttonImageOnly: true,
+			showAnim: 'fadeIn',
+			buttonText: 'Calender',
+			dateFormat:'yy-mm-dd',
+			autoSize:false,
+			showButtonPanel:false,
+			changeMonth: true,
+			changeYear: true
+		});
+		$("#available_activation_date").datepicker({
+			showOn: 'button',
+			buttonImage: 'application/modules/Administrator/layouts/scripts/images/common/calendar.png',
+			buttonImageOnly: true,
+			showAnim: 'fold',
+			buttonText: 'Calender',
+			dateFormat:'yy-mm-dd',
+			autoSize:false,
+			showButtonPanel:false,
+			changeMonth: true,
+			changeYear: true
+		});
+		$("img[class='ui-datepicker-trigger']").each(function(){
+			$(this).attr('style', '');
+		 });
+	});
+
+
+/***********************************************************************UPLOAD FUNCTIONS START********************************************************/
+
+function uploadSettingsStart(json_arr)
+{
+	uploadSettingsEnd();
+		
+	$('#vacationrentals_image_block').prepend('<input type="file" name="vacationrentals_image_upload" id="vacationrentals_image_upload" />');	
+	var thumb_setting_param = json_arr.param_fields;
+	thumb_setting_param['file_path_field'] = 'file_path_vacationrentals_image';	
+	var thumb_setting_info = getSettingInfo(json_arr.group_info, thumb_setting_param);							
+	dynamicUploader('vacationrentals_image_upload', 'vacationrentals_image', thumb_setting_info, languageArray(), "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'     => 'upload'), 'adminrout',    true) ?>", "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'     => 'remove'), 'adminrout',    true) ?>", true);
+	
+	$('#feature_others_exclusive_images_block').prepend('<input type="file" name="feature_others_exclusive_images_upload" id="feature_others_exclusive_images_upload" />');	
+	var file_setting_param = json_arr.param_fields;		
+	thumb_setting_param['file_path_field'] = 'file_path_feature_others_exclusive_images';	
+	var file_setting_info = getSettingInfo(json_arr.group_info, file_setting_param);							
+	dynamicUploader('feature_others_exclusive_images_upload', 'feature_others_exclusive_images', file_setting_info, languageArray(), "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'     => 'upload'), 'adminrout',    true) ?>", "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'     => 'remove'), 'adminrout',    true) ?>", true);
+	
+	$('#vacationrentals_image_err').html("");
+	$('#feature_others_exclusive_images_err').html("");
+}
+
+function uploadSettingsEnd()
+{	
+	$('#vacationrentals_image_upload').parents('div.k-upload').remove();	
+	$('#feature_others_exclusive_images_upload').parents('div.k-upload').remove();	
+	$('#vacationrentals_image_err').html("<?php echo $this->translator->translator("group_id_selected_err"); ?>");
+	$('#feature_others_exclusive_images_err').html("<?php echo $this->translator->translator("group_id_selected_err"); ?>");
+}
+
+function languageArray()
+{
+	var language_array = [];
+	language_array['portfolio_upload_dy_text_select'] 					= "<?php echo html_entity_decode($this->translator->translator("portfolio_upload_dy_text_select", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>";
+	language_array['portfolio_upload_text_cancel'] 						= "<?php echo html_entity_decode($this->translator->translator("portfolio_upload_text_cancel", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>";
+	language_array['portfolio_upload_text_dropFilesHere'] 				= "<?php echo html_entity_decode($this->translator->translator("portfolio_upload_text_dropFilesHere", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>";
+	language_array['portfolio_upload_text_remove'] 						= "<?php echo html_entity_decode($this->translator->translator("portfolio_upload_text_remove", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>";
+	language_array['portfolio_upload_text_retry'] 						= "<?php echo html_entity_decode($this->translator->translator("portfolio_upload_text_retry", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>";
+	language_array['portfolio_upload_text_statusFailed'] 				= "<?php echo html_entity_decode($this->translator->translator("portfolio_upload_text_statusFailed", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>";
+	language_array['portfolio_upload_text_statusUploaded'] 				= "<?php echo html_entity_decode($this->translator->translator("portfolio_upload_text_statusUploaded", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>";
+	language_array['portfolio_upload_text_statusUploading'] 			= "<?php echo html_entity_decode($this->translator->translator("portfolio_upload_text_statusUploading", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>";
+	language_array['portfolio_upload_text_uploadSelectedFiles'] 		= "<?php echo html_entity_decode($this->translator->translator("portfolio_upload_text_uploadSelectedFiles", '', 'Portfolio'), ENT_QUOTES, 'UTF-8'); ?>";
+	language_array['portfolio_file_extension_dy_support'] 				= "<?php echo $this->translator->translator("portfolio_file_extension_dy_support", '', 'Portfolio'); ?>";
+	language_array['portfolio_file_no_ext_dy_support'] 					= "<?php echo $this->translator->translator("portfolio_file_no_ext_dy_support", '', 'Portfolio'); ?>";
+	language_array['portfolio_file_extension_dy_not_supportable_ext1'] 	= "<?php echo $this->translator->translator("portfolio_file_extension_dy_not_supportable_ext1", '', 'Portfolio'); ?>";
+	language_array['portfolio_file_extension_dy_not_supportable_ext2']  = "<?php echo $this->translator->translator("portfolio_file_extension_dy_not_supportable_ext2", '', 'Portfolio'); ?>";
+	language_array['portfolio_file_size_dy_support'] 					= "<?php echo $this->translator->translator("portfolio_file_size_dy_support", '', 'Portfolio'); ?>";
+	language_array['portfolio_file_upload_err'] 						= "<?php echo $this->translator->translator("portfolio_file_upload_err", '', 'Portfolio'); ?>";
+	return language_array;
+}
+
+
+function successFileDecoretion(fileObj, serverData, upload_field, upload_value_field)
+{
+		var extension = fileObj.extension;
+		var ext = extension.replace('.','');	
+		
+		var img_path = commonFilePath(serverData.file_path, fileObj.name);
+				
+		var img_code = '<div class="thumb"><img src="'+img_path+'" title="'+fileObj.name+'" width="30" height="20" /></div>';		 
+		var down_link = (!isImage(fileObj)) ? '<br /><a href="'+serverData.file_path+'/'+fileObj.name+'"><?php echo $this->translator->translator("common_download", "", "Projects"); ?></a>' : '';
+		
+		var checked = '';
+		var primary = '&nbsp;&nbsp;&nbsp;';	
+		var block = 'selected_file_'+upload_value_field;
+		var img_type = '';	
+		var primary_file_field_radio = '';		
+		switch(upload_value_field)
+		{
+			case 'vacationrentals_image':	
+					checked = ($('#'+upload_value_field).val() == '') ? ' checked="checked" ' : '';	
+					primary_file_field_radio =	 'vacationrentals_primary_image';						
+					img_type = 	($('#'+upload_value_field).val() == '') ? "<span class='main'><?php echo $this->translator->translator('gallery_img_main', '', 'Gallery'); ?></span><br />" : "<span class='related'><?php echo $this->translator->translator('gallery_img_related', '', 'Gallery'); ?></span><br />";				
+					primary = '<input class="radio_style" type="radio" name="'+primary_file_field_radio+'" id="'+primary_file_field_radio+'" '+checked+' value="'+fileObj.name+'" title="<?php echo $this->translator->translator("vacationrentals_primary_image"); ?>" />';
+				break;
+			case 'feature_others_exclusive_images':
+					checked = ($('#'+upload_value_field).val() == '') ? ' checked="checked" ' : '';		
+					primary_file_field_radio =	'feature_primary_floor_image';	
+					img_type = 	($('#'+upload_value_field).val() == '') ? "<span class='main'><?php echo $this->translator->translator('gallery_img_main', '', 'Gallery'); ?></span><br />" : "<span class='related'><?php echo $this->translator->translator('gallery_img_related', '', 'Gallery'); ?></span><br />";		
+					primary = '<input class="radio_style" type="radio" name="'+primary_file_field_radio+'" id="'+primary_file_field_radio+'" '+checked+' value="'+fileObj.name+'" title="<?php echo $this->translator->translator("vacationrentals_primary_floor_image"); ?>" />';
+				break;
+		}
+		
+		var del_link = '<a href="javascript:void(0)" class="delete_uploaded_image_link" field_name="'+upload_value_field+'" file_name="'+fileObj.name+'" file_path="'+serverData.file_path+'"><?php echo $this->translator->translator("common_delete_title"); ?></a>'+primary +  down_link;
+		
+		if(serverData.multi)
+		{		
+			$('#'+block).append('<div class="upload-img box">'+img_type+'<span>'+img_code+'<br />&nbsp;'+del_link+'&nbsp;</span></div>');				 
+			var file_val = ($('#'+upload_value_field).val() == '') ? fileObj.name :  $('#'+upload_value_field).val()+','+fileObj.name;	
+		}
+		else
+		{
+			$('#'+block).html('<div class="upload-img box">'+img_type+'<span>'+img_code+'<br />&nbsp;'+del_link+'&nbsp;</span></div>');				 
+			var file_val = fileObj.name;
+		}
+		$('#'+upload_value_field).val(file_val);
+		deleteFiles("<?php echo $this->translator->translator('gallery_img_main', '', 'Gallery'); ?>", "<?php echo $this->translator->translator('gallery_img_related', '', 'Gallery'); ?>", "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'     => 'remove' ), 'adminrout',    true) ?>", "<?php echo $this->translator->translator('common_delete_title'); ?>");	
+		commonImageThumbnil();	
+}
+
+function onComplete(e) {
+			
+}
+
+function onCancel(e) {
+	
+}
+
+function onProgress(e) {
+					
+}
+
+/***********************************************************************UPLOAD FUNCTIONS END********************************************************/
+
+</script>
+
+
+<div id="button_top_bar"></div>
+
+<div class="title-container">
+	<div class="vacationrentals-edit"><h1><?php echo $this->translator->translator('vacationrentals_page_edit_page_name'); ?></h1></div>
+    
+    <div class="button-container">
+        <span class="button ui-widget-content-1"><a href="<?php echo $this->url( array('module' => 'Vacationrentals','controller' => 'Backendpro', 'action'     => 'list'  ,'group_id' => $param_group_id), 'adminrout',    true) ?>" class="back_btn_link"><span class="icon back"><?php echo $this->translator->translator('common_back'); ?></span></a></span>
+        <span class="button ui-widget-content-1"><a href="javascript:  void(0);" class="reset_btn"><span class="icon reset"><?php echo $this->translator->translator('common_reset'); ?></span></a></span>
+        <span class="button ui-widget-content-1"><a href="javascript: void(0);" class="edit_vacationrentals_btn"><span class="icon save"><?php echo $this->translator->translator('vacationrentals_page_edit_page_save'); ?></span></a></span>
+    </div>
+</div>
+
+<div class="content-container" id="topGo">
+	<div id="sidebar-inner">
+    	<div id="nav">
+    		<div class="nav-header"><div class="nav-title"><?php echo $this->translator->translator('vacationrentals_tree'); ?></div></div>
+    		<div id="categoryTree" class="nav-body treebody">
+           		
+            </div>
+       	</div>
+    </div>
+    
+    <div id="content-inner">
+    	<div id="actionMessage"></div>
+        <form name="formItem" id="formItem" method="post" >
+        	<div id="generalInfo">
+            	<div id="tabs">
+                	<ul>
+                        <li><a href="<?php echo $tab_base_link; ?>#tabs-1"><?php echo $this->translator->translator('vacationrentals_general_info'); ?></a></li>
+                        <li><a href="<?php echo $tab_base_link; ?>#tabs-2"><?php echo $this->translator->translator('vacationrentals_page_page_image'); ?></a></li>
+                        <li><a href="<?php echo $tab_base_link; ?>#tabs-3"><?php echo $this->translator->translator('vacationrentals_page_amenities'); ?></a></li>
+                        <li><a href="<?php echo $tab_base_link; ?>#tabs-4"><?php echo $this->translator->translator('vacationrentals_page_feature'); ?></a></li>
+                        <li><a href="<?php echo $tab_base_link; ?>#tabs-5"><?php echo $this->translator->translator('vacationrentals_page_page_Other'); ?></a></li>
+                        <li><a href="<?php echo $tab_base_link; ?>#tabs-6"><?php echo $this->translator->translator('vacationrentals_page_page_invoice_billing'); ?></a></li>
+                        <?php
+                            $staticGroupsObj = $this->proForm->getDisplayGroups();
+                            
+                            if($staticGroupsObj)
+                            {
+                                $tabs = 7;
+                                foreach($staticGroupsObj as $staticGroup)
+                                {
+                                    echo '<li><a href="'.$tab_base_link.'#tabs-'.$tabs.'">'.$this->translator->translator($staticGroup->getAttrib('title')).'</a></li>';
+                                    $tabs++;
+                                }
+                            }
+                        ?>
+                    </ul>
+                    
+                    <div id="tabs-1">
+                    	<fieldset class="fieldset">
+                		<legend class="legend"><?php echo $this->translator->translator('vacationrentals_page_page_info'); ?></legend>
+                        <span class="top-go right-float"><a href="#topGo"><img src="application/modules/Administrator/layouts/scripts/images/tools/top.png" border="0" alt="<?php echo $this->translator->translator('common_go_top_title'); ?>" title="<?php echo $this->translator->translator('common_go_top_title'); ?>" /></a></span>
+                       	<div class="form">
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->vacationrentals_name->getLabel();  if($this->proForm->vacationrentals_name->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <?php echo $this->proForm->vacationrentals_name; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->vacationrentals_name->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="vacationrentals_name_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->vacationrentals_title->getLabel();  if($this->proForm->vacationrentals_title->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <?php echo $this->proForm->vacationrentals_title; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->vacationrentals_title->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="vacationrentals_title_err"></div>
+                                </div>
+                            </div>
+                            
+                            <?php
+							if($this->auth->getIdentity()->allow_to_change_ownership == '1')
+								{
+							?>
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->vacationrentals_owner->getLabel();  if($this->proForm->vacationrentals_owner->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <span class="ui-widget"><?php echo $this->proForm->vacationrentals_owner;  ?></span>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->vacationrentals_owner->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="vacationrentals_owner_err"></div>
+                                </div>
+                            </div>
+                            <?php
+								}
+							?>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->group_id->getLabel();  if($this->proForm->group_id->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                   	<div class="left-float"><?php echo $this->proForm->group_id; ?></div><span id="group_id_loader"></span>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->group_id->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="group_id_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->vacationrentals_type->getLabel();  if($this->proForm->vacationrentals_type->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <?php echo $this->proForm->vacationrentals_type; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->vacationrentals_type->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="vacationrentals_type_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->category_id->getLabel(); ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <span id="dataId"><?php echo $this->escape($this->category_name)." (".$this->proForm->category_id->getValue().")"; ?></span> <?php echo $this->proForm->category_id; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->category_id->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->vacationrentals_desc->getLabel();  if($this->proForm->vacationrentals_desc->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                    
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->vacationrentals_desc; ?></div>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->vacationrentals_desc->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                 	<span id="loaderLink1"><a href="javascript:void(0);" onClick="loadTinyMCE('vacationrentals_desc',1);"><img src="application/modules/Administrator/layouts/scripts/images/common/editors.gif" border="0" title="<?php echo $this->translator->translator('common_editor_open'); ?>" alt="<?php echo $this->translator->translator('common_editor_open'); ?>" /></a></span>
+                                    <div class="input-errors" id="vacationrentals_desc_err"></div>
+                                </div>	
+                            </div>
+                      	</div>
+                        </fieldset>
+                        
+                        <fieldset class="fieldset">
+                		<legend class="legend"><?php echo $this->translator->translator('vacationrentals_page_page_payment'); ?></legend>
+                        <span class="top-go right-float"><a href="#topGo"><img src="application/modules/Administrator/layouts/scripts/images/tools/top.png" border="0" alt="<?php echo $this->translator->translator('common_go_top_title'); ?>" title="<?php echo $this->translator->translator('common_go_top_title'); ?>" /></a></span>
+                       	<div class="form">
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->vacationrentals_price->getLabel();  if($this->proForm->vacationrentals_price->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <?php echo $this->proForm->vacationrentals_price.'&nbsp;'.$currency->getSymbol(); ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->vacationrentals_price->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="vacationrentals_price_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->payment_desc->getLabel();  if($this->proForm->payment_desc->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->payment_desc; ?></div>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->payment_desc->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <span id="loaderLink5"><a href="javascript:void(0);" onClick="loadTinyMCE('payment_desc',5);"><img src="application/modules/Administrator/layouts/scripts/images/common/editors.gif" border="0" title="<?php echo $this->translator->translator('common_editor_open'); ?>" alt="<?php echo $this->translator->translator('common_editor_open'); ?>" /></a></span>
+                                    <div class="input-errors" id="payment_desc_err"></div>
+                                </div>
+                            </div>
+                      	</div>
+                        </fieldset>
+                        
+                        <fieldset class="fieldset last">
+                		<legend class="legend"><?php echo $this->translator->translator('vacationrentals_page_address_info'); ?></legend>
+                        <span class="top-go right-float"><a href="#topGo"><img src="application/modules/Administrator/layouts/scripts/images/tools/top.png" border="0" alt="<?php echo $this->translator->translator('common_go_top_title'); ?>" title="<?php echo $this->translator->translator('common_go_top_title'); ?>" /></a></span>
+                       	<div class="form">
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->country_id->getLabel();  if($this->proForm->country_id->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <?php echo $this->proForm->country_id; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->country_id->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="country_id_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->state_id->getLabel();  if($this->proForm->state_id->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->state_id; ?></div><span id="state_id_loader"></span>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->state_id->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="state_id_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->area_id->getLabel();  if($this->proForm->area_id->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->area_id; ?></div><span id="area_id_loader"></span>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->area_id->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="area_id_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->post_code->getLabel();  if($this->proForm->post_code->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <?php echo $this->proForm->post_code; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->post_code->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="post_code_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->house_name->getLabel();  if($this->proForm->house_name->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <?php echo $this->proForm->house_name; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->house_name->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="house_name_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->house_no->getLabel();  if($this->proForm->house_no->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <?php echo $this->proForm->house_no; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->house_no->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors"  id="house_no_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->stars->getLabel();  if($this->proForm->stars->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <?php echo $this->proForm->stars; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->stars->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="stars_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->location_type->getLabel();  if($this->proForm->location_type->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <?php echo $this->proForm->location_type; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->location_type->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="location_type_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->accommodates->getLabel();  if($this->proForm->accommodates->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <?php echo $this->proForm->accommodates; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->accommodates->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="accommodates_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->property_size->getLabel();  if($this->proForm->property_size->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <?php echo $this->proForm->property_size; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->property_size->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="property_size_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->vacationrentals_address->getLabel();  if($this->proForm->vacationrentals_address->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                    
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->vacationrentals_address; ?></div>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->vacationrentals_address->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                 	<span id="loaderLink2"><a href="javascript:void(0);" onClick="loadTinyMCE('vacationrentals_address',2);"><img src="application/modules/Administrator/layouts/scripts/images/common/editors.gif" border="0" title="<?php echo $this->translator->translator('common_editor_open'); ?>" alt="<?php echo $this->translator->translator('common_editor_open'); ?>" /></a></span>
+                                    <div class="input-errors" id="vacationrentals_address_err"></div>
+                                </div>	
+                            </div>
+                     	</div>
+                        </fieldset>
+					</div>                    
+                    
+                    <div id="tabs-2">
+                    	<fieldset class="fieldset">
+                		<legend class="legend"><?php echo $this->translator->translator('vacationrentals_page_page_image'); ?></legend>
+                        <span class="top-go right-float"><a href="#topGo"><img src="application/modules/Administrator/layouts/scripts/images/tools/top.png" border="0" alt="<?php echo $this->translator->translator('common_go_top_title'); ?>" title="<?php echo $this->translator->translator('common_go_top_title'); ?>" /></a></span>
+                       	<div class="form">
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->vacationrentals_image->getLabel();  if($this->proForm->vacationrentals_image->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php	
+										if($this->auth->getIdentity()->access_file_image_manager == '1')
+										{
+									?>
+                                    <div class="upload-img">
+                                        <span class="button  ui-widget-content-1"><a href="javascript:  void(0);" class="upload_btn" rel="vacationrentals_image"><span class="icon upload"><?php echo $this->translator->translator('common_upload'); ?></span></a></span>
+                                    	<div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->vacationrentals_image->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+									</div>
+                                    
+                                    <?php echo $this->proForm->vacationrentals_image; ?>               
+									<div class="input-errors" id="vacationrentals_image_err"></div><div class="input-errors" id="vacationrentals_primary_image_err"></div>
+                                    <?php
+										}
+										else
+										{
+									?>
+                                    <script type="text/javascript">
+									$(function(){
+										/**************************FILE UPLOAD START******************************/																					
+										dynamicUploader("vacationrentals_image_upload", "vacationrentals_image", <?php echo $this->primary_settings_json_info; ?>, languageArray(), "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'     => 'upload'), 'adminrout',    true) ?>", "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'  => 'remove'), 'adminrout',    true) ?>", true);
+										/**************************FILE UPLOAD END*********************************/
+									});
+									</script>
+									<div class="upload-img">
+                                    	<div id="vacationrentals_image_block"><input type="file" name="vacationrentals_image_upload" id="vacationrentals_image_upload" /><?php echo $this->proForm->vacationrentals_image; ?></div>
+                                    </div>
+									<div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->vacationrentals_image->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="vacationrentals_image_err"></div><div class="input-errors" id="vacationrentals_primary_image_err"></div>
+									<?php
+										}
+									?>                      
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    &nbsp;
+                                </div>
+                    
+                                <div class="field">
+                                    <span id="selected_file_vacationrentals_image"><?php echo $assign_image; ?></span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_others_exclusive_images->getLabel();  if($this->proForm->feature_others_exclusive_images->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php	
+										if($this->auth->getIdentity()->access_file_image_manager == '1')
+										{
+									?>
+                                    <div class="upload-img">
+                                        <span class="button  ui-widget-content-1"><a href="javascript:  void(0);" class="upload_btn" rel="feature_others_exclusive_images"><span class="icon upload"><?php echo $this->translator->translator('common_upload'); ?></span></a></span>
+                                    	<div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_others_exclusive_images->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    </div>
+                                    <?php echo $this->proForm->feature_others_exclusive_images; ?>
+                                    <div class="input-errors" id="feature_others_exclusive_images_err"></div><div class="input-errors" id="feature_primary_floor_image"></div>
+                                    <?php
+										}
+										else
+										{
+									?>
+                                    <script type="text/javascript">
+									$(function(){
+										/**************************FILE UPLOAD START******************************/																					
+										dynamicUploader("feature_others_exclusive_images_upload", "feature_others_exclusive_images", <?php echo $this->secondary_settings_json_info; ?>, languageArray(), "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'     => 'upload'), 'adminrout',    true) ?>", "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'  => 'remove'), 'adminrout',    true) ?>", true);
+										/**************************FILE UPLOAD END*********************************/
+									});
+									</script>
+                                    <div class="upload-img">
+                                    	<div id="feature_others_exclusive_images_block"><input type="file" name="feature_others_exclusive_images_upload" id="feature_others_exclusive_images_upload" /><?php echo $this->proForm->feature_others_exclusive_images; ?></div>
+                                    </div>
+									<div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_others_exclusive_images->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="feature_others_exclusive_images_err"></div><div class="input-errors" id="feature_primary_floor_image"></div>
+                                	<?php
+										}
+									?>
+                             	</div>
+                        	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    &nbsp;
+                                </div>
+                    
+                                <div class="field">&nbsp;
+                                    <span id="selected_file_feature_others_exclusive_images"><?php echo $assign_floor_image; ?></span>
+                                </div>
+                            </div>
+                     	</div>
+                        </fieldset>
+                        
+                        <fieldset class="fieldset">
+                		<legend class="legend"><?php echo $this->translator->translator('vacationrentals_product_page_related_items'); ?></legend>
+                        <span class="top-go right-float"><a href="#topGo"><img src="application/modules/Administrator/layouts/scripts/images/tools/top.png" border="0" alt="<?php echo $this->translator->translator('common_go_top_title'); ?>" title="<?php echo $this->translator->translator('common_go_top_title'); ?>" /></a></span>
+                       	<div class="form">
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->related_items->getLabel();  if($this->proForm->related_items->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php  echo $this->proForm->related_items; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->related_items->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="related_items_err"></div>
+                               	</div>
+                         	</div>
+                     	</div>
+                        </fieldset>
+                        
+                        <fieldset class="fieldset last">
+                		<legend class="legend"><?php echo $this->translator->translator('vacationrentals_page_page_meta'); ?></legend>
+                        <span class="top-go right-float"><a href="#topGo"><img src="application/modules/Administrator/layouts/scripts/images/tools/top.png" border="0" alt="<?php echo $this->translator->translator('common_go_top_title'); ?>" title="<?php echo $this->translator->translator('common_go_top_title'); ?>" /></a></span>
+                       	<div class="form">
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->meta_title->getLabel();  if($this->proForm->meta_title->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->meta_title; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->meta_title->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="meta_title_err"></div>
+                               	</div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->meta_keywords->getLabel();  if($this->proForm->meta_keywords->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->meta_keywords; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->meta_keywords->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="meta_keywords_err"></div>
+                               	</div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->meta_desc->getLabel();  if($this->proForm->meta_desc->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->meta_desc; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->meta_desc->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <div class="input-errors" id="meta_desc_err"></div>
+                               	</div>
+                         	</div>
+                     	</div>
+                        </fieldset>
+                    </div>
+                    
+                    <div id="tabs-3">
+                    	<fieldset class="fieldset last">
+                		<legend class="legend"><?php echo $this->translator->translator('vacationrentals_page_feature_amenities'); ?></legend>
+                        <span class="top-go right-float"><a href="#topGo"><img src="application/modules/Administrator/layouts/scripts/images/tools/top.png" border="0" alt="<?php echo $this->translator->translator('common_go_top_title'); ?>" title="<?php echo $this->translator->translator('common_go_top_title'); ?>" /></a></span>
+                       	<div class="form">
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_amenities->getLabel();  if($this->proForm->feature_amenities->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                	<div class="vacationrental-features"><?php  echo $this->proForm->feature_amenities;  ?></div>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_amenities->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_amenities_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <hr />
+                                </div>
+                    		
+                                <div class="field">
+                                	<hr />
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_other_facilities->getLabel();  if($this->proForm->feature_other_facilities->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                	<div class="vacationrental-features"><?php  echo $this->proForm->feature_other_facilities;  ?></div>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_other_facilities->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_other_facilities_err"></div>
+                                </div>
+                         	</div>
+                      	</div>
+						</fieldset>
+                    </div>
+                    
+                    <div id="tabs-4">
+                    	<fieldset class="fieldset">
+                		<legend class="legend"><?php echo $this->translator->translator('vacationrentals_page_sec_feature'); ?></legend>
+                        <span class="top-go right-float"><a href="#topGo"><img src="application/modules/Administrator/layouts/scripts/images/tools/top.png" border="0" alt="<?php echo $this->translator->translator('common_go_top_title'); ?>" title="<?php echo $this->translator->translator('common_go_top_title'); ?>" /></a></span>
+                       	<div class="form">
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_room_no->getLabel();  if($this->proForm->feature_room_no->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->feature_room_no; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_room_no->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_room_no_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_bedroom->getLabel();  if($this->proForm->feature_bedroom->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->feature_bedroom; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_bedroom->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_bedroom_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_bathroom->getLabel();  if($this->proForm->feature_bathroom->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->feature_bathroom; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_bathroom->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_bathroom_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->minimum_stay_nights->getLabel();  if($this->proForm->minimum_stay_nights->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->minimum_stay_nights; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->minimum_stay_nights->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="minimum_stay_nights_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->number_of_sleeps->getLabel();  if($this->proForm->number_of_sleeps->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->number_of_sleeps; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->number_of_sleeps->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="number_of_sleeps_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->gusts_allowed->getLabel();  if($this->proForm->gusts_allowed->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->gusts_allowed; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->gusts_allowed->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_gusts_allowed_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_garden->getLabel();  if($this->proForm->feature_garden->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->feature_garden; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_garden->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_garden_err"></div>
+                                </div>
+                         	</div>
+                            
+                           	<div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_conservatory->getLabel();  if($this->proForm->feature_conservatory->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->feature_conservatory; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_conservatory->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_conservatory_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_garage->getLabel();  if($this->proForm->feature_garage->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->feature_garage; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_garage->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_garage_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_distance_from_airport->getLabel();  if($this->proForm->feature_distance_from_airport->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->feature_distance_from_airport; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_distance_from_airport->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_distance_from_airport_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_distance_from_rail->getLabel();  if($this->proForm->feature_distance_from_rail->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->feature_distance_from_rail; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_distance_from_rail->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_distance_from_rail_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_distance_from_market->getLabel();  if($this->proForm->feature_distance_from_market->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->feature_distance_from_market; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_distance_from_market->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_distance_from_market_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_distance_from_city->getLabel();  if($this->proForm->feature_distance_from_city->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->feature_distance_from_city; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_distance_from_city->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_distance_from_city_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->entertainments->getLabel();  if($this->proForm->entertainments->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->entertainments; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->entertainments->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="entertainments_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_reception->getLabel();  if($this->proForm->feature_reception->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->feature_reception; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_reception->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_reception_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_kitchen->getLabel();  if($this->proForm->feature_kitchen->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->feature_kitchen; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_kitchen->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="feature_kitchen_err"></div>
+                                </div>
+                         	</div>
+                       	</div>
+                        </fieldset>
+                        
+                        <fieldset class="fieldset last">
+                		<legend class="legend"><?php echo $this->translator->translator('vacationrentals_page_page_brochure'); ?></legend>
+                        <span class="top-go right-float"><a href="#topGo"><img src="application/modules/Administrator/layouts/scripts/images/tools/top.png" border="0" alt="<?php echo $this->translator->translator('common_go_top_title'); ?>" title="<?php echo $this->translator->translator('common_go_top_title'); ?>" /></a></span>
+                       	<div class="form">
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->brochure_title->getLabel();  if($this->proForm->brochure_title->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->brochure_title; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->brochure_title->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="brochure_title_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->brochure_desc->getLabel();  if($this->proForm->brochure_desc->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->brochure_desc; ?></div>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->brochure_desc->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <span id="loaderLink6"><a href="javascript:void(0);" onClick="loadTinyMCE('brochure_desc',6);"><img src="application/modules/Administrator/layouts/scripts/images/common/editors.gif"  border="0" title="<?php echo $this->translator->translator('common_editor_open'); ?>" alt="<?php echo $this->translator->translator('common_editor_open'); ?>" /></a></span>
+                                    <div class="input-errors" id="brochure_desc_err"></div>
+                                </div>
+                            </div>
+                      	</div>
+                        </fieldset>
+                    </div>
+                    
+                    <div id="tabs-5">
+                    	<fieldset class="fieldset">
+                		<legend class="legend"><?php echo $this->translator->translator('vacationrentals_page_page_available'); ?></legend>
+                        <span class="top-go right-float"><a href="#topGo"><img src="application/modules/Administrator/layouts/scripts/images/tools/top.png" border="0" alt="<?php echo $this->translator->translator('common_go_top_title'); ?>" title="<?php echo $this->translator->translator('common_go_top_title'); ?>" /></a></span>
+                       	<div class="form">
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->availabe_from->getLabel();  if($this->proForm->availabe_from->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->availabe_from; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->availabe_from->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="availabe_from_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->available_to->getLabel();  if($this->proForm->available_to->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->available_to; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->available_to->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="available_to_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->available_expire_date->getLabel();  if($this->proForm->available_expire_date->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->available_expire_date; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->available_expire_date->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="available_expire_date_err"></div>
+                                </div>
+                         	</div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->available_activation_date->getLabel();  if($this->proForm->available_activation_date->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                	<?php echo $this->proForm->available_activation_date; ?>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->available_activation_date->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                  	<div class="input-errors" id="available_activation_date_err"></div>
+                                </div>
+                         	</div>
+                      	</div>
+                        </fieldset>
+                        
+                        <fieldset class="fieldset last">
+                		<legend class="legend"><?php echo $this->translator->translator('vacationrentals_page_page_meter'); ?></legend>
+                        <span class="top-go right-float"><a href="#topGo"><img src="application/modules/Administrator/layouts/scripts/images/tools/top.png" border="0" alt="<?php echo $this->translator->translator('common_go_top_title'); ?>" title="<?php echo $this->translator->translator('common_go_top_title'); ?>" /></a></span>
+                       	<div class="form">
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_google_map->getLabel();  if($this->proForm->feature_google_map->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->feature_google_map; ?></div>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_google_map->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <span id="loaderLink3"><a href="javascript:void(0);" onClick="loadTinyMCE('feature_google_map',3);"><img src="application/modules/Administrator/layouts/scripts/images/common/editors.gif" border="0" title="<?php echo $this->translator->translator('common_editor_open'); ?>" alt="<?php echo $this->translator->translator('common_editor_open'); ?>" /></a></span>
+                                    <div class="input-errors" id="feature_google_map_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->feature_additional->getLabel();  if($this->proForm->feature_additional->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->feature_additional; ?></div>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->feature_additional->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+									<span id="loaderLink4"><a href="javascript:void(0);" onClick="loadTinyMCE('feature_additional',4);"><img src="application/modules/Administrator/layouts/scripts/images/common/editors.gif" border="0" title="<?php echo $this->translator->translator('common_editor_open'); ?>" alt="<?php echo $this->translator->translator('common_editor_open'); ?>" /></a></span>
+                                    <div class="input-errors" id="feature_additional_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->rentals_policy->getLabel();  if($this->proForm->rentals_policy->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                                
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->rentals_policy; ?></div>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->rentals_policy->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+									<span id="loaderLink8"><a href="javascript:void(0);" onClick="loadTinyMCE('rentals_policy',8);"><img src="application/modules/Administrator/layouts/scripts/images/common/editors.gif" border="0" title="<?php echo $this->translator->translator('common_editor_open'); ?>" alt="<?php echo $this->translator->translator('common_editor_open'); ?>" /></a></span>
+                                    <div class="input-errors" id="rentals_policy_err"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->trams_and_condition->getLabel();  if($this->proForm->trams_and_condition->isRequired()){ ?><span class="required">*</span><?php }?>
+                                </div>
+                                
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->trams_and_condition; ?></div>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->trams_and_condition->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+									<span id="loaderLink7"><a href="javascript:void(0);" onClick="loadTinyMCE('trams_and_condition',7);"><img src="application/modules/Administrator/layouts/scripts/images/common/editors.gif" border="0" title="<?php echo $this->translator->translator('common_editor_open'); ?>" alt="<?php echo $this->translator->translator('common_editor_open'); ?>" /></a></span>
+                                    <div class="input-errors" id="trams_and_condition_err"></div>
+                                </div>
+                            </div> 
+                     	</div>
+                        </fieldset>
+                    </div>
+                    
+                    <div id="tabs-6">
+                    	<fieldset class="fieldset last">
+                		<legend class="legend"><?php echo $this->translator->translator('vacationrentals_page_invoice_billing_info'); ?></legend>
+                        <span class="top-go right-float"><a href="#topGo"><img src="application/modules/Administrator/layouts/scripts/images/tools/top.png" border="0" alt="<?php echo $this->translator->translator('common_go_top_title'); ?>" title="<?php echo $this->translator->translator('common_go_top_title'); ?>" /></a></span>
+                       	<div class="form">
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->billing_user_places_order_email_enable->getLabel();  if($this->proForm->billing_user_places_order_email_enable->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                    
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->billing_user_places_order_email_enable; ?></div>
+                                    <?php if($this->proForm->billing_user_places_order_email_enable->getAttrib('title')){ ?><div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->billing_user_places_order_email_enable->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div><?php } ?>
+                                    <div class="input-errors" id="billing_user_places_order_email_enable_err"></div>
+                                </div>	
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->billing_user_places_order_email_address->getLabel();  if($this->proForm->billing_user_places_order_email_address->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                    
+                                <div class="field">
+                                    <div class="left-float"><?php 
+										if($this->proForm->billing_user_places_order_email_enable->getValue() == 'yes')
+										{
+											$this->proForm->billing_user_places_order_email_address->setAttrib('disabled', null);
+										}
+										else
+										{
+											$this->proForm->billing_user_places_order_email_address->setAttrib('disabled', 'disabled');
+										}
+										echo $this->proForm->billing_user_places_order_email_address; ?></div>
+                                    <?php if($this->proForm->billing_user_places_order_email_address->getAttrib('title')){ ?><div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->billing_user_places_order_email_address->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div><?php } ?>
+                                    <div class="input-errors" id="billing_user_places_order_email_address_err"></div>
+                                </div>	
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->billing_user_pay_invoice_email_enable->getLabel();  if($this->proForm->billing_user_pay_invoice_email_enable->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                    
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->billing_user_pay_invoice_email_enable; ?></div>
+                                    <?php if($this->proForm->billing_user_pay_invoice_email_enable->getAttrib('title')){ ?><div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->billing_user_pay_invoice_email_enable->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div><?php } ?>
+                                    <div class="input-errors" id="billing_user_pay_invoice_email_enable_err"></div>
+                                </div>	
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->billing_user_pay_invoice_email_address->getLabel();  if($this->proForm->billing_user_pay_invoice_email_address->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                    
+                                <div class="field">
+                                    <div class="left-float"><?php 
+										if($this->proForm->billing_user_pay_invoice_email_enable->getValue() == 'yes')
+										{
+											$this->proForm->billing_user_pay_invoice_email_address->setAttrib('disabled', null);
+										}
+										else
+										{
+											$this->proForm->billing_user_pay_invoice_email_address->setAttrib('disabled', 'disabled');
+										}
+										echo $this->proForm->billing_user_pay_invoice_email_address; ?></div>
+                                    <?php if($this->proForm->billing_user_pay_invoice_email_address->getAttrib('title')){ ?><div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->billing_user_pay_invoice_email_address->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div><?php } ?>
+                                    <div class="input-errors" id="billing_user_pay_invoice_email_address_err"></div>
+                                </div>	
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->billing_user_cancel_order_email_enable->getLabel();  if($this->proForm->billing_user_cancel_order_email_enable->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                    
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->billing_user_cancel_order_email_enable; ?></div>
+                                    <?php if($this->proForm->billing_user_cancel_order_email_enable->getAttrib('title')){ ?><div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->billing_user_cancel_order_email_enable->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div><?php } ?>
+                                    <div class="input-errors" id="billing_user_cancel_order_email_enable_err"></div>
+                                </div>	
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->billing_user_cancel_order_email_address->getLabel();  if($this->proForm->billing_user_cancel_order_email_address->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                    
+                                <div class="field">
+                                    <div class="left-float"><?php  
+										if($this->proForm->billing_user_cancel_order_email_enable->getValue() == 'yes')
+										{
+											$this->proForm->billing_user_cancel_order_email_address->setAttrib('disabled', null);
+										}
+										else
+										{
+											$this->proForm->billing_user_cancel_order_email_address->setAttrib('disabled', 'disabled');
+										}
+										echo $this->proForm->billing_user_cancel_order_email_address; ?></div>
+                                    <?php if($this->proForm->billing_user_cancel_order_email_address->getAttrib('title')){ ?><div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->billing_user_cancel_order_email_address->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div><?php } ?>
+                                    <div class="input-errors" id="billing_user_cancel_order_email_address_err"></div>
+                                </div>	
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->billing_order_payment_email_enable->getLabel();  if($this->proForm->billing_order_payment_email_enable->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                    
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->billing_order_payment_email_enable; ?></div>
+                                    <?php if($this->proForm->billing_order_payment_email_enable->getAttrib('title')){ ?><div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->billing_order_payment_email_enable->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div><?php } ?>
+                                    <div class="input-errors" id="billing_order_payment_email_enable_err"></div>
+                                </div>	
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="label">
+                                    <?php echo $this->proForm->billing_item_desc->getLabel();  if($this->proForm->billing_item_desc->isRequired()){ ?><span class="required">*</span><?php } ?>
+                                </div>
+                    
+                                <div class="field">
+                                    <div class="left-float"><?php echo $this->proForm->billing_item_desc; ?></div>
+                                    <div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($this->proForm->billing_item_desc->getAttrib('title')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div>
+                                    <span id="loaderLink17"><a href="javascript:void(0);" onClick="loadTinyMCE('billing_item_desc',17);"><img src="application/modules/Administrator/layouts/scripts/images/common/editors.gif" border="0" title="<?php echo $this->translator->translator('common_editor_open'); ?>" alt="<?php echo $this->translator->translator('common_editor_open'); ?>" /></a></span>
+                                    <div class="input-errors" id="billing_item_desc_err"></div>
+                                </div>	
+                            </div>
+                     	</div>
+                        </fieldset>
+                    </div>
+                    
+                    <?php
+					if(!empty($staticGroupsObj))
+					{
+						$tab = 7;
+						foreach($staticGroupsObj as $staticGroup)
+						{
+							$elementsObj = $staticGroup->getElements();
+					?>                   
+                    <div id="tabs-<?php echo $tab; ?>">
+                      <fieldset class="fieldset">
+                          <legend class="legend"><?php echo $this->translator->translator($staticGroup->getAttrib('title')); ?></legend>
+                          <span class="top-go right-float"><a href="#topGo"><img src="application/modules/Administrator/layouts/scripts/images/tools/top.png" border="0" alt="<?php echo $this->translator->translator('common_go_top_title'); ?>" title="<?php echo $this->translator->translator('common_go_top_title'); ?>" /></a></span>
+                          <div class="form">
+                          <?php	
+                              $new_file_info = new Portfolio_Controller_Helper_File();															
+                              foreach($elementsObj as $element)
+                              {
+                                  if($element->getAttrib('admin') == '1')
+                                  {	
+                                      $e_name_arr = explode('_',$element->getName());																				
+                                      $sumbol = (in_array(Eicra_File_Constants::PRICE,$e_name_arr,true)) ? '&nbsp;'.$currency->getSymbol() : '';	
+                                      switch($element->getType())
+                                      {
+                                          case 'Zend_Form_Element_File':
+                                                      
+                                                      $image_file_arr = explode(',',$this->vacationrentalsInfo[$element->getName()]);	
+                                                                                                  
+                                                  ?>
+                                                  
+                                                  <div class="form-row">
+                                                      <div class="label <?php echo $this->escape($this->form_info['label_class']); ?>" style="<?php echo $this->escape($this->form_info['label_style']); ?>">
+                                                          <?php echo $element->getLabel(); if($element->isRequired() ){ ?><span class="required <?php echo $this->escape($this->form_info['required']); ?>" style="<?php echo $this->escape($this->form_info['star_style']); ?>">*</span><?php } ?>
+                                                      </div>
+                                          
+                                                      <div class="field">
+                                                          <script type="text/javascript">
+                                                          $(function(){
+                                                              /**************************FILE UPLOAD START******************************/																					
+                                                              dynamicUploader("<?php echo $element->getName().'_upload'; ?>", "<?php echo $element->getName(); ?>", <?php echo $this->settings_json_info; ?>, languageArray(), "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'     => 'upload'), 'adminrout',    true) ?>", "<?php echo $this->url( array('module' => 'Portfolio','controller' => 'frontend', 'action'     => 'remove'), 'adminrout',    true) ?>", true);
+                                                              /**************************FILE UPLOAD END*********************************/
+                                                          });
+                                                          </script>
+                                                          <div class="upload"><input type="file" name="<?php echo $element->getName(); ?>_upload" id="<?php echo $element->getName(); ?>_upload" /><input type="hidden" name="<?php echo $element->getName(); ?>" id="<?php echo $element->getName(); ?>" class="<?php echo $element->getName(); ?>_class empty_class" value="<?php echo $this->vacationrentalsInfo[$element->getName()]; ?>" /></div>
+                                                          <?php if($element->getAttrib('info')){ ?><div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($element->getAttrib('info')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div><?php } ?>
+                                                          
+                                                          <div class="input-errors" id="<?php echo $element->getName().'_err'; ?>"></div>									
+                                                      </div>
+                                                  </div>
+                                                  
+                                                  <div class="form-row">
+                                                      <div class="label"></div>
+                                                      <div class="field">	
+                                                          <span id="selected_file_<?php echo $element->getName(); ?>">
+                                                              <?php
+                                                                  $dynamic_image_view = '';
+                                                                  if(!empty($image_file_arr[0]))
+                                                                  {													
+                                                                      foreach($image_file_arr as $key => $value)
+                                                                      {	
+                                                                          $show_file_path  =		$new_file_info->getFilePath($value, $this->settings_info);										
+                                                                          $img_code =  '<div class="thumb"><img src="'.$show_file_path.'" title="'.$value.'" width="30" height="20" /></div>';
+                                                                          $down_link = (!$new_file_info->isImage($value)) ? '<br /><a href="'.$this->settings_info[$this->settings_info['file_path_field']].'/'.$value.'">'.$this->translator->translator("common_download", "", "Projects").'</a>' : '';
+                                                                          $del_link	=	'<a href="javascript:void(0)" class="delete_uploaded_image_link" field_name="'.$element->getName().'" file_name="'.$value.'" file_path="'.$this->settings_info[$this->settings_info['file_path_field']].'">'.$this->translator->translator("common_delete_title").'</a>';
+                                                                          $dynamic_image_view .= '<div class="upload-img box"><span>'.$img_code.'<br />&nbsp;&nbsp;'.$del_link.'&nbsp;&nbsp;&nbsp;</span></div>';
+                                                                      }															
+                                                                  }
+                                                                  echo $dynamic_image_view;
+                                                              ?>
+                                                          </span>
+                                                      </div>
+                                                  </div>
+                                                  <?php	
+                                      
+                                              break;
+                                          case 'Zend_Form_Element_MultiCheckbox':
+                                          case 'Zend_Form_Element_Radio':
+                                                  
+                                              ?>
+                                                      <div class="form-row">
+                                                          <div class="label <?php echo $this->escape($this->form_info['label_class']); ?>" style="<?php echo $this->escape($this->form_info['label_style']); ?>">
+                                                              <?php echo $element->getLabel(); if($element->isRequired() ){ ?><span class="required <?php echo $this->escape($this->form_info['star_class']); ?>" style="<?php echo $this->escape($this->form_info['star_style']); ?>">*</span><?php } ?>
+                                                          </div>
+                                              
+                                                          <div class="field">
+                                                              <div class="autos-features"><?php  echo $element; ?></div>
+                                                              <?php if($element->getAttrib('info')){ ?><div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($element->getAttrib('info')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div><?php } ?>
+                                                              <div class="input-errors" id="<?php echo $element->getName().'_err'; ?>"></div>
+                                                          </div>
+                                                      </div>
+                                              <?php	
+                                                  
+                                              break;
+                                          default:
+                                                                                                              
+                                              ?>
+                                              
+                                              <div class="form-row">
+                                                  <div class="label <?php echo $this->escape($this->form_info['label_class']); ?>" style="<?php echo $this->escape($this->form_info['label_style']); ?>" >
+                                                      <?php echo $element->getLabel(); if($element->isRequired() ){ ?><span class="required <?php echo $this->escape($this->form_info['star_class']); ?>" style="<?php echo $this->escape($this->form_info['star_style']); ?>">*</span><?php } ?>
+                                                  </div>
+                                      
+                                                  <div class="field">
+                                                      <?php 										
+                                                              $id_f = $element->getAttrib('id');
+                                                              $id_arr = explode('_',$id_f);
+                                                              if(in_array(Eicra_File_Constants::DATE,$id_arr))
+                                                              {
+                                                              ?>
+                                                              <script type="text/javascript">
+                                                                  $(function() {
+                                                                      settingObj.calendar.value = <?php if($element->getValue()){ ?> new Date('<?php echo date("Y", strtotime(preg_replace('/PM|AM/', '', $element->getValue()))); ?>', '<?php echo (date("m", strtotime(preg_replace('/PM|AM/', '', $element->getValue()))) - 1); ?>', '<?php echo date("d", strtotime(preg_replace('/PM|AM/', '', $element->getValue()))); ?>', '<?php echo date("H", strtotime(preg_replace('/PM|AM/', '', $element->getValue()))); ?>', '<?php echo date("i", strtotime(preg_replace('/PM|AM/', '', $element->getValue()))); ?>', '<?php echo date("s", strtotime(preg_replace('/PM|AM/', '', $element->getValue()))); ?>') <?php } else{ echo "''"; } ?>;	
+																	  commonCalendar('<?php echo $id_f; ?>', settingObj, settingObj.calendar.calendar_include_time);
+                                                                  });
+                                                              </script>
+                                                              <?php
+                                                              }
+                                                              if($element->getType() == 'Zend_Form_Element_MultiCheckbox')
+                                                              {
+                                                                  echo '<div class="upload">'.$element.$sumbol.'</div>';
+                                                              }
+                                                              else
+                                                              {
+                                                                  echo $element.$sumbol;
+                                                              }															
+                                                      ?>
+                                                  
+                                                      <?php if($element->getAttrib('info')){ ?><div class="ui-widget ui-helper-clearfix info"><div class="ui-widget-header ui-corner-all ui-state-default" title="<?php echo $this->escape($element->getAttrib('info')); ?>"><p><span class="ui-icon ui-icon-info"></span></p></div></div><?php } ?>	
+                                                      <div class="input-errors" id="<?php echo $element->getName().'_err'; ?>"></div>
+                                                  </div>
+                                              </div>
+                                              
+                                              <?php
+                                                          
+                                              break;										
+                                      }
+                                  }
+                              }
+                          ?>
+                          </div>
+                      </fieldset>
+                   	</div>                    
+                    <?php
+							$tab++;
+						 }
+					 }
+					?>
+                    
+                </div>
+			</div>
+		</form>
+	</div>
+    
+    <div class="button-container">
+        <span class="button ui-widget-content-1"><a href="<?php echo $this->url( array('module' => 'Vacationrentals','controller' => 'Backendpro', 'action'     => 'list'  ,'group_id' => $param_group_id), 'adminrout',    true) ?>" class="back_btn_link"><span class="icon back"><?php echo $this->translator->translator('common_back'); ?></span></a></span>
+        <span class="button ui-widget-content-1"><a href="javascript:  void(0);" class="reset_btn"><span class="icon reset"><?php echo $this->translator->translator('common_reset'); ?></span></a></span>
+        <span class="button ui-widget-content-1"><a href="javascript: void(0);" class="edit_vacationrentals_btn"><span class="icon save"><?php echo $this->translator->translator('vacationrentals_page_edit_page_save'); ?></span></a></span>
+    </div>                    
+</div>
+
+<div id="floatingbar">
+	<h1><?php echo $this->translator->translator('vacationrentals_page_edit_page_name'); ?></h1>
+    
+    <div class="button-container">
+        <span class="button ui-widget-content-1"><a href="<?php echo $this->url( array('module' => 'Vacationrentals','controller' => 'Backendpro', 'action'     => 'list'  ,'group_id' => $param_group_id), 'adminrout',    true) ?>" class="back_btn_link"><span class="icon back"><?php echo $this->translator->translator('common_back'); ?></span></a></span>
+        <span class="button ui-widget-content-1"><a href="javascript:  void(0);" class="reset_btn"><span class="icon reset"><?php echo $this->translator->translator('common_reset'); ?></span></a></span>
+        <span class="button ui-widget-content-1"><a href="javascript: void(0);" class="edit_vacationrentals_btn"><span class="icon save"><?php echo $this->translator->translator('vacationrentals_page_edit_page_save'); ?></span></a></span>
+    </div>
+</div>
+<?php endif; ?>
+
+<div id="dialog_msg" title="<?php echo $this->translator->translator('common_dialog_msg',$this->translator->translator('vacationrentals_page_edit_page_name')); ?>">
+</div>
+<div id="dialog_container" style="display:none" title="<?php echo $this->translator->translator('common_processing_language'); ?>">
+	<div id="progressbar" ></div>
+</div>
+<div id="upload-form" title="<?php echo $this->translator->translator('vacationrentals_page_page_dialog'); ?>">
+	<div>
+    	<form id="popupForm" target="i-upload-form" method="post" action="" >
+            <input type="hidden" name="table_name" value="vacationrentals_group"/>
+            <input type="hidden" name="primary_id_field" value="id"/>
+            <input type="hidden" name="primary_id_field_value" value=""/>   
+            <input type="hidden" name="primary_file_field" value=""/> 
+           	<input type="hidden" name="file_content"  value=""/>       
+            <input type="hidden" name="file_path_field" value=""/>
+            <input type="hidden" name="file_extension_field" value="file_type"/>
+            <input type="hidden" name="file_max_size_field" value="file_size_max"/>
+    	</form>
+    	<iframe id="i-upload-form" name="i-upload-form" src="application/modules/Administrator/layouts/scripts/images/loader/manager_loader.gif"  class="iframe-img-upload"></iframe>
+    </div>        
+    <div class="button-container">
+        <span class="button ui-widget-content-1"><a href="javascript:void(0);" class="select_file_btn"><span class="icon insert"><?php echo $this->translator->translator('vacationrentals_page_page_insert'); ?></span></a></span>
+        <span class="button ui-widget-content-1"><a href="javascript:void(0);" class="close_dialog_btn"><span class="icon close"><?php echo $this->translator->translator('common_close'); ?></span></a></span>
+    </div>
+</div>
+</div>

@@ -1,0 +1,666 @@
+<?php
+if(!empty($this->group_datas['meta_keywords'])) { $this->headMeta()->setName('keywords',$this->group_datas['meta_keywords']);}
+if(!empty($this->group_datas['meta_desc'])) { $this->headMeta()->setName('description',$this->group_datas['meta_desc']); }
+if(!empty($this->group_datas['vacationrentals_name'])) { $this->headTitle()->headTitle($this->group_datas['vacationrentals_name'],'SET')->setSeparator(' - ')->headTitle($this->group_datas['meta_title']); }else{ echo $this->headTitle()->headTitle($this->translator->translator('vacationrentals_front_page_advanced_search'),'SET'); }
+
+echo $this->headScript()->setFile($this->baseUrl().'/js/jquery/table-sorter/jquery.dataTables.js');
+echo $this->headScript()->setFile($this->baseUrl().'/vendor/scripts/jtruncate/jquery.jtruncate.pack.js');
+echo $this->headLink()->setStylesheet($this->baseUrl().'/css/jqueryCSS/table-sorter/pagination_table.css');
+$version = Zend_Registry::get('version');
+$front_template = Zend_Registry::get('front_template');
+
+$global_conf = Zend_Registry::get('global_conf');
+$group_db = new Vacationrentals_Model_DbTable_VacationrentalsGroup();
+$business_type_db = new Vacationrentals_Model_DbTable_BusinessType();
+$cat_Info = new Vacationrentals_Model_DbTable_Category();
+$mem_db = new Members_Model_DbTable_MemberList();
+$state_db = new Vacationrentals_Model_DbTable_State();
+$area_db = new Vacationrentals_Model_DbTable_Area();
+$country_db = new Vacationrentals_Model_DbTable_Country();
+$vacationrentals_db = new Vacationrentals_Model_DbTable_Vacationrentals();
+$review_helper = new Review_View_Helper_Review();
+$maximum_stars_digit = $this->translator->translator('maximum_stars_digit');
+// 1ist param options are : like, inline, plus_minus, horizontal, triangle
+$vote = new Vote_Controller_Helper_ShowVoteButton('inline','vacationrentals_page' );
+
+
+function vacationrentals_truncate($phrase,$start_words, $max_words)
+{
+   $phrase_array = explode(' ',$phrase);
+   if(count($phrase_array) > $max_words && $max_words > 0)
+	  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+   return $phrase;
+}
+?>
+<script type="text/javascript">
+$(function() {
+	$( "#vacationrentals_owner" ).combobox();	
+	autoSuggestion('vacationrentals_name', "<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'searchname' ), 'adminrout',    true) ?>", {'vacationrentals_name': ''}, ['vacationrentals_primary_image', 'vacationrentals_image', 'vacationrentals_name', 'vacationrentals_name', 'owner_name','vacationrentals_postcode' ,'vacationrentals_room', 'vacationrentals_location'], 'data/frontImages/vacationrentals/vacationrentals_image', 2);	
+	autoSuggestion('post_code', "<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'searchname' ), 'adminrout',    true) ?>", {'post_code': ''}, ['vacationrentals_primary_image', 'vacationrentals_image', 'vacationrentals_name', 'post_code', 'owner_name','vacationrentals_postcode' ,'vacationrentals_room', 'vacationrentals_location'], 'data/frontImages/vacationrentals/vacationrentals_image', 2);	
+	autoSuggestion('vacationrentals_price', "<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'searchname' ), 'adminrout',    true) ?>", {'vacationrentals_price': ''}, ['vacationrentals_primary_image', 'vacationrentals_image', 'vacationrentals_name', 'price', 'owner_name','vacationrentals_postcode', 'vacationrentals_price' ,'vacationrentals_room', 'vacationrentals_location'], 'data/frontImages/vacationrentals/vacationrentals_image', 2);	
+});
+
+$(document).ready(function() {
+
+		calender('time_date');
+		text_truncate();
+		/****************************Sorting Table Start*********************/
+		var oTable = $("#sortTable").dataTable({
+					"bPaginate": true,
+					"aLengthMenu" : [ 10, 25, 50, 100 ],
+					"sPaginationType": "full_numbers",
+					"bDestroy":true,
+					"bLengthChange": true,
+					"bSearchable": true,
+					"bFilter": false,
+					"bSort": false,
+					"bInfo": false,
+					"bAutoWidth": true,
+					"bProcessing": false,
+					"bSortClasses": true,
+					"bStateSave": false,
+					"bServerSide": false,
+					"aaSorting": [[ 0, "asc" ]],				
+					"aoColumnDefs": [ 
+						{ "bSortable": false, "bSortClasses": false,  "aTargets": [ 0 ] }
+					],
+					"oLanguage" : { "sSearch": "<?php echo $this->translator->translator('jquery_filter'); ?>" }
+				});			
+				
+		/****************************Sorting Table End*********************/
+		
+		function getFormData()
+		{
+			var fieldObj = {};
+			var filename = '';
+			var filevalue = '';
+			$.each($('#formSearch').serializeArray(), function(i, field) {	
+				if(field.name.match(/\[\]$/))
+				{
+					var filearr = field.name.split('[]');
+					filename = filearr[0];
+					filevalue = $('#'+filename).val();
+				}
+				else
+				{
+					filename 	= 	field.name;
+					filevalue 	= 	field.value;
+				}			
+				fieldObj[filename] =  filevalue;			
+			});
+			return fieldObj;
+		}
+		
+		$('#country_id_H').change(function() {	
+			if($('#country_id_H option:selected').val() == 'any' || $('#country_id_H option:selected').val() =='')
+			{
+				$('#area_id_H').html('<option value="any"><?php echo $this->translator->translator("vacationrentals_select_area"); ?></option>');	
+				$('#state_id_H').html('<option value="any"><?php echo $this->translator->translator("vacationrentals_select_state"); ?></option>');
+			}
+			else
+			{	
+				$.ajax({
+					  url: "<?php echo $this->url( array('module' =>'Vacationrentals','controller' => 'frontend', 'action'     => 'states' ), 'adminrout',    true) ?>",
+					  type: 'POST',
+					  data: { id: $('#country_id_H option:selected').val() },
+					  beforeSend: function(){						
+								$('#state_id_H').html('<option value="any"><?php echo $this->translator->translator("common_loading_language"); ?></option>');
+								$('#area_id_H').html('<option value="any"><?php echo $this->translator->translator("vacationrentals_select_area"); ?></option>');			
+								$('#state_id_H_err').html('<img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/loader/mod-loader.gif" width="15" border="0" />');	
+							 },
+					  success: function(response){
+						//alert(response);
+						var json_arr = eval("("+response+")");
+						var option = '<option value="any"><?php echo $this->translator->translator("vacationrentals_select_state"); ?></option>';				
+						if(json_arr.status == 'ok')
+						{
+							for(var i = 0;i<json_arr.states.length;i++)
+							{
+								option += '<option value="'+json_arr.states[i].state_id+'" >'+stripslashes(json_arr.states[i].state_name)+'</option>';
+							}
+							$('#state_id_H').html(option);
+						}
+						else
+						{
+							$('#state_id_H').html('<option value="any">'+json_arr.msg+'</option>');
+						}
+						$('#state_id_H_err').html('');
+					  }
+				});
+			}
+		});
+		
+		$('#state_id_H').change(function() {		
+					
+			if($('#state_id_H option:selected').val() == 'any' || $('#state_id_H option:selected').val() == '')
+			{
+				$('#area_id_H').html('<option value="any"><?php echo $this->translator->translator("vacationrentals_select_area"); ?></option>');
+			}
+			else
+			{
+				$.ajax({
+					  url: "<?php echo $this->url( array('module' => 'Vacationrentals', 'controller' => 'frontend', 'action'     => 'areas' ), 'adminrout',    true) ?>",
+					  type: 'POST',
+					  data: { id: $('#state_id_H option:selected').val() },
+					  beforeSend: function(){						
+							$('#area_id_H').html('<option value="any"><?php echo $this->translator->translator("common_loading_language"); ?></option>');
+							$('#area_id_H_err').html('<img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/loader/mod-loader.gif" width="15" border="0" />');	
+							},
+					  success: function(response){
+						//alert(response);
+						var json_arr = eval("("+response+")");
+						var option = '<option value="any"><?php echo $this->translator->translator("vacationrentals_select_area"); ?></option>';				
+						if(json_arr.status == 'ok')
+						{
+							for(var i = 0;i<json_arr.cities.length;i++)
+							{
+								option += '<option value="'+json_arr.cities[i].city_id+'" >'+stripslashes(json_arr.cities[i].city)+'</option>';
+							}
+							$('#area_id_H').html(option);
+						}
+						else
+						{
+							$('#area_id_H').html('<option value="any">'+json_arr.msg+'</option>');
+						}
+						$('#area_id_H_err').html('');
+					  }
+				});
+			}
+		});	
+			
+		$('input.search_btn').click(function(){
+			var self = this;
+			$('#formSearch').submit();
+		});
+});
+function text_truncate()
+{
+	$('span.jTruncate').jTruncate({  
+		length:  70,  
+		minTrail: 0,  
+		moreText: "[<?php echo html_entity_decode($this->translator->translator('common_see_all'), ENT_QUOTES, "UTF-8"); ?>]",  
+		lessText: "[<?php echo html_entity_decode($this->translator->translator('common_hide'), ENT_QUOTES, "UTF-8"); ?>]",  
+		ellipsisText: "",  
+		moreAni: "fast",  
+		lessAni: 2000  
+	});
+}
+function stripslashes(str) 
+{
+	str=str.replace(/\\'/g,'\'');
+	str=str.replace(/\\"/g,'"');
+	str=str.replace(/\\0/g,'\0');
+	str=str.replace(/\\\\/g,'\\');
+	return str;
+}
+
+function calender(id)
+{
+	$("#"+id).datepicker({
+		showOn: 'button',
+		buttonImage: 'application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/mod_vacation_img/calendar.png',
+		buttonImageOnly: true,
+		monthNamesShort:<?php echo $this->translator->translator("common_calender_monthNamesShort"); ?>,
+		monthNames:<?php echo $this->translator->translator("common_calender_monthNames"); ?>,
+		dayNamesMin:<?php echo $this->translator->translator("common_calender_dayNamesMin"); ?>,
+		showAnim: 'slide',
+		buttonText: 'Calender',
+		dateFormat:'yy-mm-dd',
+		autoSize:false,
+		showButtonPanel:false,
+		changeMonth: true,
+		changeYear: true
+	});
+	$("img[class='ui-datepicker-trigger']").each(function(){ 
+			$(this).attr('style', '');
+		 });
+}
+</script>
+<?php 
+$allow_obj = new Vacationrentals_View_Helper_Allow();
+if (!$allow_obj->allowRule('items',null,null,$this->group_datas['role_id'])) : ?>
+	<?php echo $this->translator->translator('Member_Access_deny_desc'); ?>
+<?php else : 
+
+?>
+
+<div class="mod">
+	<div class="search-icon">
+        <h1><?php echo $this->translator->translator('vacationrentals_front_page_advanced_search'); ?></h1>
+    </div>   
+    
+    <div class="social">
+      	<!-- AddThis Button BEGIN -->
+        <div class="addthis_toolbox addthis_default_style">
+        <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+        <a class="addthis_button_tweet"></a>
+        <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+        <a class="addthis_counter addthis_pill_style"></a>
+        </div>
+        <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4e89660c7edb029a"></script>
+    	<!-- AddThis Button END -->
+    </div>
+
+	<div class="clear"></div>
+    
+    <div class="mod-container mod-advance-search">
+    	<form id="formSearch" name="formSearch" method="post" action="<?php echo $this->url( array('module' => 'Vacationrentals', 'controller' => 'search', 'action'     => 'items' ), 'Vacationrentals-Search',    true) ?>">
+        	<div class="col clear">
+            	<p class="location"><?php echo $this->translator->translator('vacationrentals_list_page_search_name'); ?></p>
+                <input type="text" name="vacationrentals_name_LIKE" id="vacationrentals_name" value="<?php if($this->postValue['vacationrentals_name_LIKE']){ echo $this->postValue['vacationrentals_name_LIKE']; }else{ echo $this->translator->translator("common_any_language"); } ?>" class="big"/>
+            </div>
+            
+            <div class="col">
+            	<p><?php echo $this->translator->translator('vacationrentals_list_page_search_group'); ?></p>
+                <select name="group_id_=" id="group_id">					 	
+					<?php
+                    $group_list = $group_db->getGroupInfo();
+                        foreach($group_list as $key => $value)
+                        {
+                            $selected = ($this->postValue['group_id_='] == $key) ? 'selected=""selected' : '';
+                    ?>
+                        <option value="<?php echo $key; ?>" <?php echo $selected; ?>><?php echo $this->escape($value); ?></option>
+                    <?php	
+                        }
+                    ?>
+               	</select>
+            </div>
+            
+            <div class="col">
+                <p><?php echo $this->translator->translator('vacationrentals_list_page_search_price'); ?></p>
+                <input type="text"  name="vacationrentals_price_=" id="vacationrentals_price" value="<?php if($this->postValue['vacationrentals_price_=']){ echo $this->postValue['vacationrentals_price_=']; }else{ echo $this->translator->translator("common_any_language"); } ?>"/>
+                <span class="mod-title"><?php echo $this->currency->getSymbol(); ?></span>
+                <input type="hidden" name="active_=" id="active" value="1" />
+            </div>
+            
+            <div class="col clear">
+                <p><?php echo $this->translator->translator('vacationrentals_list_page_search_pro_type'); ?></p>
+                <?php
+                $type_info = $business_type_db->getOptions($this->group_datas['id']);
+                ?>
+                <select name="vacationrentals_type_=" id="vacationrentals_type" class="small">
+                <option value="any"><?php echo $this->translator->translator('common_any_language'); ?></option>
+                <?php
+                    
+                    foreach($type_info as $info)
+                    {
+                        $selected = ($this->postValue['vacationrentals_type_='] == $info['id']) ? ' selected="selected" ' : '';
+                ?>
+                    <option value="<?php echo $info['id']; ?>"<?php echo $selected; ?>><?php echo $this->escape($info['business_type']); ?></option>
+                <?php
+                    }
+                ?>
+                </select>
+            </div>
+            
+            <div class="col">
+            	<p><?php echo $this->translator->translator('vacationrentals_list_page_search_category'); ?></p>
+                <?php
+					$cat_data = $cat_Info->getOptions($this->group_datas['id']);
+				?>
+				<select name="category_id_=" id="category_id">
+				<option value="any"><?php echo $this->translator->translator('common_any_language'); ?></option>
+				<?php
+					
+					foreach($cat_data as $info)
+					{
+						$selected = ($this->postValue['category_id_='] == $info['id']) ? ' selected="selected" ' : '';
+				?>
+					<option value="<?php echo $info['id']; ?>"<?php echo $selected; ?>><?php echo $this->escape($info['category_name']); ?></option>
+				<?php
+					}
+				?>
+				</select>
+            </div>
+            
+            <div class="col">
+            	<p><?php echo $this->translator->translator('vacationrentals_list_page_search_price_min'); ?></p>
+                <?php
+					$min_price_arr = $vacationrentals_db->getPrice('ASC');
+				?>
+				<select name="vacationrentals_price_>=" id="vacationrentals_price_>=" class="small">
+					<option value="any"><?php echo $this->translator->translator('common_any_language'); ?></option>
+					<?php
+					
+					foreach($min_price_arr as $key=>$value)
+					{
+						if(!empty($value['vacationrentals_price']))
+						{
+							$selected = ($this->postValue['vacationrentals_price_>='] == $this->price($value['vacationrentals_price'])) ? ' selected="selected" ' : '';								
+					?>
+						<option value="<?php echo $this->price($value['vacationrentals_price']); ?>"<?php echo $selected; ?>><?php echo $this->price($this->escape($value['vacationrentals_price'])).' '.$this->currency->getSymbol(); ?></option>
+					<?php
+							}
+						}
+					?>
+				</select>
+           	</div>
+                
+            <div class="col">
+                <p><?php echo $this->translator->translator('vacationrentals_list_page_search_price_max'); ?></p>
+                <?php
+                    $max_price_arr = $vacationrentals_db->getPrice('DESC');
+                ?>
+                <select name="vacationrentals_price_<=" id="vacationrentals_price" class="small">
+                    <option value="any"><?php echo $this->translator->translator('common_any_language'); ?></option>
+                    <?php
+                    
+                    foreach($max_price_arr as $key=>$value)
+                    {
+                        if(!empty($value['vacationrentals_price']))
+                        {
+                            $selected = ($this->postValue['vacationrentals_price_<='] == $this->price($value['vacationrentals_price'])) ? ' selected="selected" ' : '';
+                    ?>
+                        <option value="<?php echo $this->price($value['vacationrentals_price']); ?>"<?php echo $selected; ?>><?php echo $this->price($this->escape($value['vacationrentals_price'])).' '.$this->currency->getSymbol(); ?></option>
+                    <?php
+                            }
+                        }
+                    ?>
+                </select>
+            </div>
+            <div class="col">
+            	<p><?php echo $this->translator->translator('vacationrentals_list_page_search_postcode'); ?></p>
+                <input type="text" name="post_code_=" id="post_code" value="<?php if($this->postValue['post_code_=']){ echo $this->postValue['post_code_=']; }else{ echo $this->translator->translator("common_any_language"); } ?>" class="small"/>
+            </div>
+            
+            <div class="col">
+            <p><?php echo $this->translator->translator('vacationrentals_list_page_search_country'); ?></p>
+                <?php						
+					$country_data = $country_db->getCountryInfo();
+					$selected_country_id = (empty($this->postValue['country_id_='])) ? $global_conf['default_country'] : $this->postValue['country_id_='];
+				?>
+				<select name="country_id_=" id="country_id_H" class="country_id country">
+				<option value="any"><?php echo $this->translator->translator('common_any_language'); ?></option>
+				<?php
+					
+					foreach($country_data as $key=>$value)
+					{
+						$selected = ($selected_country_id == $key) ? ' selected="selected" ' : '';
+				?>
+					<option value="<?php echo $key; ?>"<?php echo $selected; ?>><?php echo $this->escape($value); ?></option>
+				<?php
+					}
+				?>
+				</select> 
+            </div>
+            
+            <div class="col">
+            	<p><?php echo $this->translator->translator('vacationrentals_list_page_search_state'); ?></p>
+                <select name="state_id_=" id="state_id_H" class="state_id state">
+                    <option value="any"><?php echo $this->translator->translator('vacationrentals_select_state'); ?></option>	
+                    <?php
+                    $state_info = $state_db->getAllStateInfo($selected_country_id);
+                    foreach($state_info as $key=>$value)
+                    {
+                        $selected = ($value['state_id'] == $this->postValue['state_id_=']) ? ' selected="selected" ' : '';
+                        echo '<option value="'.$this->escape($value['state_id']).'"'.$selected.'>'.$this->escape($value['state_name']).'</option>';
+                    }
+                  ?>																		
+                </select>
+                <span id="state_id_H_err"></span>
+            </div>
+            
+            <div class="col">
+            	<p><?php echo $this->translator->translator('vacationrentals_list_page_search_area'); ?></p>
+                <select name="area_id_=" id="area_id_H" class="area_id area">
+                	<option value="any"><?php echo $this->translator->translator('vacationrentals_select_area'); ?></option>
+                </select>
+                <span id="area_id_H_err"></span>
+            </div>
+            
+            <div class="col clear">
+            	<p><?php echo $this->translator->translator('vacationrentals_list_page_search_owner'); ?></p>
+                <?php
+					$mem_data = $mem_db->getAllMembers();
+				?>
+				<span class="ui-widget">
+                    <select name="vacationrentals_owner_=" id="vacationrentals_owner">
+                    <option value="any"><?php echo $this->translator->translator('common_any_language'); ?></option>
+                    <?php						
+                        foreach($mem_data as $key=>$value)
+                        {
+                            $selected = ($this->postValue['vacationrentals_owner_='] == $key) ? ' selected="selected" ' : '';
+                    ?>
+                        <option value="<?php echo $key; ?>"<?php echo $selected; ?>><?php echo $this->escape($value); ?></option>
+                    <?php
+                        }
+                    ?>
+                    </select>
+                </span>
+            </div>
+            
+            <div class="col">
+              <p><?php echo $this->translator->translator('vacationrentals_list_page_search_room'); ?></p>
+                <select name="feature_bedroom_=" id="feature_bedroom_=" class="middle">
+                <option value=""><?php echo $this->translator->translator('vacationrentals_block_advanced_search_label_bed_rooms','','Vacationrentals'); ?></option>
+                <?php
+                        $bedrooms = $vacationrentals_db->getNumberOfBedsRooms();
+                        foreach($bedrooms as $key=>$value)
+                        {
+                            if(!empty($value['feature_bedroom']))
+                            {
+                            $selected = ($this->postValue['feature_bedroom_='] == $value['feature_bedroom']) ? ' selected="selected" ' : '';
+                    ?>
+                        <option value="<?php echo $value['feature_bedroom']; ?>"<?php echo $selected; ?>><?php echo $value['feature_bedroom']; ?></option>
+                    <?php
+                            }
+                        }
+                    ?>
+              </select>             
+            </div>
+            
+            <div class="col">
+            	<p><?php echo $this->translator->translator('vacationrentals_list_page_search_bathroom'); ?></p>
+				<select name="feature_bathroom_=" id="feature_bathroom_=" class="middle">
+                    <option value=""><?php echo $this->translator->translator('vacationrentals_block_advanced_search_label_bath_rooms','','Vacationrentals'); ?></option>
+                    <?php
+                            $bathrooms = $vacationrentals_db->getNumberOfBathRooms();
+                            foreach($bathrooms as $key=>$value)
+                            {
+                                if(!empty($value['feature_bathroom']))
+                                {
+                                $selected = ($this->postValue['feature_bathroom_='] == $value['feature_bathroom']) ? ' selected="selected" ' : '';
+                        ?>
+                            <option value="<?php echo $value['feature_bathroom']; ?>"<?php echo $selected; ?>><?php echo $value['feature_bathroom']; ?></option>
+                        <?php
+                                }
+                            }
+                        ?>
+                </select>
+            </div>
+            
+         	<div class="clear btn-container">
+				<input type="button" name="Submit" class="search_btn" value="<?php echo $this->translator->translator('vacationrentals_front_page_search_button'); ?>" />
+          	</div>
+        </form>
+  	</div>
+    <?php
+	  if($this->errorMessage)
+	  {
+	?>
+    	<?php if($this->errorMessage){	echo '<div class="infoMess">'.$this->errorMessage.'&nbsp;</div>';	} ?>
+    <?php
+	  }
+	  if($this->view_datas)
+	  {
+	?>
+   	<table id="sortTable" width="100%" border="0" align="center" cellpadding="0" cellspacing="0" >
+                    <tbody>
+                      <?php
+						foreach($this->view_datas as $entry)
+						{
+							$vacationrentals_image_val_arr = explode(',',$entry['vacationrentals_image']);
+							$vacationrentals_image_no = count($vacationrentals_image_val_arr);
+							if($this->escape($entry['vacationrentals_primary_image']))
+							{ 
+								$thumb_image = 'data/frontImages/vacationrentals/vacationrentals_image/'.$this->escape($entry['vacationrentals_primary_image']); 
+							}
+							else
+							{ 
+								if($this->escape($entry['vacationrentals_image']))
+								{							
+									$thumb_image = 'data/frontImages/vacationrentals/vacationrentals_image/'.$this->escape($vacationrentals_image_val_arr[0]); 
+								}
+								else
+								{
+									$thumb_image = 'application/layouts/scripts/'.$front_template['theme_folder'].'/images/mod_vacation_img/no_image.png'; 
+								}		
+							}
+							if($this->group_datas['file_thumb_width'] && ($this->group_datas['file_thumb_resize_func'] == 'resizeToWidth' || $this->group_datas['file_thumb_resize_func'] == 'resize'))
+							{ 
+								$width = 'width="'.$this->escape($this->group_datas['file_thumb_width']).'"'; 
+							}
+							else
+							{
+								$width = '';
+							} 
+							if($this->group_datas['file_thumb_height'] && ($this->group_datas['file_thumb_resize_func'] == 'resizeToHeight' || $this->group_datas['file_thumb_resize_func'] == 'resize'))
+							{ 
+								$height = 'height="'.$this->escape($this->group_datas['file_thumb_height']).'"'; 
+							} 
+							else
+							{
+								$height = '';
+							}
+							
+							$featured_class = ($entry['featured'] == '1') ? 'products-featured' : '';
+		
+							?>
+                              <tr>
+                                <td>
+                                	<div class="products-list">
+                                   		<!-- list Header Start -->
+                                        <div class="list-header">
+                                        	<div class="header-row">
+                                                <div class="header-left">
+                                                    <span class="title-small"><?php echo vacationrentals_truncate($this->escape($entry['vacationrentals_name']), 0, 7); ?></span><br />
+                                                    <span class="info">
+                                                    <?php if(!empty($entry['feature_room_no'])){ echo (int)$this->escape($entry['feature_room_no']).' '.$this->translator->translator('vacationrentals_front_page_room').', ';} if(!empty($entry['feature_bathroom'])){ echo (int)$this->escape($entry['feature_bathroom']).' '.$this->translator->translator('vacationrentals_front_page_bathroom'); } ?>
+                                                    </span>  
+                                                </div>
+                                            
+                                                <div class="header-middle">
+                                                    <span class="products-mark"><?php $business_type_info = $business_type_db->getBusinessTypeInfo($entry['vacationrentals_type']); echo $this->translator->translator('vacationrentals_front_page_vacationrentals_type'); ?></span>&nbsp;<span class="products-type"><?php echo $this->escape($business_type_info['business_type']); ?></span>
+                                                </div>
+                                            
+                                                <div class="header-right">                                                
+                                                    <?php 
+                                                        if(!empty($this->group_datas['review_id'])){ 
+                                                        $review_no = $review_helper->getNumOfReviews($entry['id'], $this->escape($this->group_datas['review_id']));
+                                                    ?><span class="products-write-review"><a href="<?php echo $this->url( array('module' => 'Review','controller' => 'frontend', 'action'     => 'write', 'group_id' => $this->escape($this->group_datas['review_id']), Eicra_File_Constants::ITEM_ID => $entry['id'] ), 'Review-Write/:group_id/:item_id',    true); ?>"><?php echo $this->translator->translator('common_write_review'); ?></a></span> &nbsp; <span class="products-review-count"><a href="<?php echo $this->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->escape($entry['vacationrentals_title']),'tab' => 8 ),'Vacationrentals-details/:vacationrentals_title/:tab',true); ?>"><?php echo $this->translator->translator('common_review_no',htmlentities($review_no)); ?></a></span> <?php } ?>
+                                                </div>
+                                        	</div>
+                                        </div>
+                                        <!-- list Header End -->
+                                        
+                                        <!-- list Body Start --> 
+                                        <div class="body-container <?php echo $featured_class; ?>">
+                                             <div class="left-content">
+                                                    <div class="img-wrapper">
+                                                    	<a href="<?php echo $this->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->escape($entry['vacationrentals_title']) ),'Vacationrentals-details/:vacationrentals_title',true); ?>" class="preview" link="<?php echo $thumb_image; ?>" title="<?php echo $this->escape($entry['vacationrentals_name']); ?>" width="500"><img src="<?php echo $thumb_image; ?>" border="0" <?php echo $width; ?> <?php echo $height; ?> class="thumb"/></a>
+                                                        <div class="photo-count-container">
+                                                            <div class="photo-count">
+                                                                <a href="<?php echo $this->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->escape($entry['vacationrentals_title']),'tab' => 1 ),'Vacationrentals-details/:vacationrentals_title/:tab',true); ?>" title="<?php echo $this->translator->translator('vacationrentals_front_page_vacationrentals_click_view_listing'); ?>"><?php echo $this->translator->translator('vacationrentals_front_page_vacationrentals_photo_no',$vacationrentals_image_no); ?></a>
+                                                            </div>
+                                                        </div>                                            
+                                                    </div>
+                                                    
+                                                    <h2>
+                                                    	<a href="<?php echo $this->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->escape($entry['vacationrentals_title']) ),'Vacationrentals-details/:vacationrentals_title',true); ?>" class="preview" link="" title="<?php echo $this->escape($entry['vacationrentals_name']); ?>"><?php echo vacationrentals_truncate($this->escape($entry['vacationrentals_name']), 0, 5); ?></a>
+                                                    </h2>
+                                                    
+                                                    <div class="products-stars">
+													<?php
+													   $hotel_stars = (int) $entry['stars'];											 
+														for($i = 1; $i < $maximum_stars_digit ; $i++)
+														{
+															$print_stars = ($i <= $hotel_stars)  ? "<img src='application/layouts/scripts/".$front_template['theme_folder']."/images/mod_vacation_img/star-active.png' border='0' />" : "<img src='application/layouts/scripts/".$front_template['theme_folder']."/images/mod_vacation_img/star-inactive.png' border='0'/>";
+															
+															echo $print_stars.'&nbsp;';
+														}
+													?>
+                                                    </div>
+                                                    
+                                                    <div class="products-desc">
+                                                        <p><?php echo $this->translator->translator('vacationrentals_front_page_vacationrentals_location'); ?></p> <?php $states = $state_db->getStateInfo($entry['state_id']); $areas = $area_db->getAreaInfo($entry['area_id']); echo $this->escape($areas['city']).', '.$this->escape($states['state_name']).', '.$this->escape($entry['post_code']).'.'; ?><br />
+                                                        <p><?php echo $this->translator->translator('vacationrentals_front_page_vacationrentals_country'); ?></p> <?php $countries = $country_db->getCountryName($entry['country_id']); echo $this->escape($countries['value']); ?><br />
+            
+                                                        <p><?php echo $this->translator->translator('vacationrentals_front_page_vacationrentals_desc'); ?></p>
+                                                        <span class="jTruncate"><?php echo strip_tags($entry['vacationrentals_desc']); ?></span>
+                                                    </div>
+                                             </div>
+                                             
+                                             <div class="right-content">
+                                             	<span class="products-price"><?php  if(!empty($entry['vacationrentals_price'])){ echo $this->translator->translator('vacationrentals_front_page_price').$this->currency->getSymbol().''.$this->price($this->escape($entry['vacationrentals_price'])); } ?></span>
+                                                <ul class="products-options">	
+                                                    <li class="availability"><a href="<?php echo $this->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->escape($entry['vacationrentals_title']),'tab' => 4 ),'Vacationrentals-details/:vacationrentals_title/:tab',true); ?>" title="Check Calendar for reservation"><?php echo $this->translator->translator('vacationrentals_front_page_label_check-availability'); ?></a></li>
+                                                    <?php 
+                                                        $feature_facilities_arr = explode(',', $entry['feature_amenities']); 
+                                                        if (in_array ('Smoking Allowed' , $feature_facilities_arr)){
+                                                    ?>	
+                                                    <li class="smoking"><?php echo $this->translator->translator('vacationrentals_front_page_list_allow_smoking'); ?></li>
+                                                    <?php }?>
+                                                    
+                                                    <?php 
+                                                        if (in_array ('Swimming Pool' , $feature_facilities_arr)){
+                                                    ?>	
+                                                    
+                                                    <li class="swimming"><?php echo $this->translator->translator('vacationrentals_front_page_list_swwimming_pool_availability'); ?></li>
+            
+                                                    <?php }
+                                                        if (in_array ('Pets Allowed' , $feature_facilities_arr)){
+                                                    ?>
+                                                    
+                                                    <li class="pet"><?php echo $this->translator->translator('vacationrentals_front_page_list_pet_allow'); ?></li>
+            
+                                                    <?php
+                                                        } 
+                                                        if (in_array ('Hot Tub Available' , $feature_facilities_arr)){
+                                                    ?>
+                                                    
+                                                    <li class="tub"><?php echo $this->translator->translator('vacationrentals_front_page_list_hot_tub_availability'); ?></li>
+                                                    <?php } ?>
+                                                </ul>
+                                                
+                                                <div class="products-vote">
+                                                    <p><?php echo $this->translator->translator('vacationrentals_front_page_label_voting'); ?></p>
+                                                    <span><?php  $vote->showButton($entry['id'] , $this->escape($entry['vacationrentals_name'])); ?></span>
+                                                </div>                              
+                                             </div>
+                                        </div>
+                                        <!-- list Body End -->
+                                        
+                                        <!-- list footer start -->
+                                        <div class="list-footer">
+                                            <div class="footer-left">
+                                                <a href="<?php echo $this->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->escape($entry['vacationrentals_title']),'tab' => 0 ),'Vacationrentals-details/:vacationrentals_title/:tab',true); ?>"><?php echo $this->translator->translator('vacationrentals_front_page_vacationrentals_summary_booking'); ?></a> | 
+                                                <a href="<?php echo $this->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->escape($entry['vacationrentals_title']),'tab' => 3 ),'Vacationrentals-details/:vacationrentals_title/:tab',true); ?>"><?php echo $this->translator->translator('vacationrentals_front_page_amenities'); ?></a>  | 
+                                                <a href="<?php echo $this->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->escape($entry['vacationrentals_title']),'tab' => 1 ),'Vacationrentals-details/:vacationrentals_title/:tab',true); ?>"><?php echo $this->translator->translator('vacationrentals_front_page_vacationrentals_photo'); ?></a> |
+                                                <a href="<?php echo $this->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->escape($entry['vacationrentals_title']),'tab' => 7 ),'Vacationrentals-details/:vacationrentals_title/:tab',true); ?>"><?php echo ucfirst(strtolower($this->translator->translator('vacationrentals_front_page_vacationrentals_map'))); ?></a>  | 
+                                                <a href="<?php echo $this->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->escape($entry['vacationrentals_title']),'tab' => 5 ),'Vacationrentals-details/:vacationrentals_title/:tab',true); ?>"><?php echo $this->translator->translator('vacationrentals_front_page_vacationrentals_facilities_features'); ?></a>
+                                            </div>
+                                        
+                                            <div class="footer-right">
+                                                <?php
+												if($global_conf['payment_system'] == 'On'){
+												?> 
+                                                <span class="products-book-btn"><a href="<?php echo $this->url(array('module' => 'Vacationrentals','controller' =>'book', 'action' => 'booking','vacationrentals_title' => $this->escape($entry['vacationrentals_title']) ),'Book-Vacationrentals/:vacationrentals_title',true); ?>"><?php echo $this->translator->translator('vacationrentals_front_page_vacationrentals_book'); ?></a></span>
+                                                <?php } ?>
+                                                <span class="products-details-btn"><a href="<?php echo $this->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->escape($entry['vacationrentals_title']) ),'Vacationrentals-details/:vacationrentals_title',true); ?>"><?php echo $this->translator->translator('vacationrentals_front_page_vacationrentals_more'); ?></a></span>
+                                            </div>
+                                        </div>
+                                        <!-- list footer end -->
+                                	</div>
+                                </td>
+                              </tr>
+                      <?php
+                        }
+                      ?>
+        
+                    </tbody>
+                </table>
+          <?php
+            }	
+          ?>
+</div>
+<?php endif; ?>

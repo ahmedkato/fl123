@@ -1,0 +1,44 @@
+<?php
+class holiday_header_count
+{	
+	protected	$_translator;
+	protected	$_front_template;
+	protected	$_view;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_view =	$view;				
+		$this->_translator = Zend_Registry::get('translator');
+		
+	}
+	public function class_body()
+	{
+		$hotels_helper = new Hotels_View_Helper_HotelsGroup();
+		$num_hotels = $hotels_helper->getNumOfProduct(1);
+		
+		$flight_db = new Flight_Model_DbTable_Flight(); 
+		$num_flights = $flight_db->getNumOfProduct();
+		
+		$vacationrentals_db = new Vacationrentals_Model_DbTable_Vacationrentals();
+		$num_vacationrentals	= $vacationrentals_db->getNumOfProduct();
+		
+		$tours_db = new Tours_Model_DbTable_Tours();
+		$num_tours= $tours_db->getNumOfProduct();
+?>
+		<div class="block-count">
+        	<?php echo $this->_translator->translator('flight_block_header_num', $num_flights, '', $this->_front_template['theme_folder']).' '.$this->_translator->translator('hotels_block_header_num', $num_hotels, '', $this->_front_template['theme_folder']).' '.$this->_translator->translator('vacationrentals_block_header_num', $num_vacationrentals, '', $this->_front_template['theme_folder']).' '.$this->_translator->translator('tours_block_header_num', $num_tours, '', $this->_front_template['theme_folder']); ?>
+        </div>
+<?php
+	}
+}
+try
+{
+	$holiday_header_count_class = new holiday_header_count($this);
+	$holiday_header_count_class->class_body();
+}
+catch(Exception $e)
+{
+	echo $e->getMessage();
+}
+?>   

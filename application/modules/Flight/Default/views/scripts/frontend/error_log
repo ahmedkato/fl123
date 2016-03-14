@@ -1,0 +1,8 @@
+[05-Aug-2013 11:42:48 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Aug-2013 11:42:48 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/frontend/airlineflightschedules.phtml on line 2
+[05-Aug-2013 14:13:15 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Aug-2013 14:13:15 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/frontend/flightdetails.phtml on line 2
+[05-Aug-2013 14:53:13 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Aug-2013 14:53:13 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/frontend/home.phtml on line 2
+[05-Aug-2013 16:13:11 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Aug-2013 16:13:11 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/modules/Flight/Default/views/scripts/frontend/itinerarylist.phtml on line 2

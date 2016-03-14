@@ -1,0 +1,6 @@
+[26-Jul-2013 04:03:34 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 04:03:34 Europe/Berlin] PHP Fatal error:  Class 'Zend_Application_Module_Bootstrap' not found in /home/wwwhotei/public_html/application/modules/Invoice/Bootstrap.php on line 0
+[03-Aug-2013 07:26:14 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 07:26:15 Europe/Berlin] PHP Fatal error:  Class 'Zend_Application_Module_Bootstrap' not found in /home/wwwhotei/public_html/application/modules/Invoice/Bootstrap.php on line 0
+[23-Aug-2013 17:06:55 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[23-Aug-2013 17:06:55 Europe/Berlin] PHP Fatal error:  Class 'Zend_Application_Module_Bootstrap' not found in /home/wwwhotei/public_html/application/modules/Invoice/Bootstrap.php on line 0

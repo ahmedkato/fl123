@@ -1,0 +1,1413 @@
+<?php  echo $this->doctype('XHTML1_TRANSITIONAL'); $front_template = Zend_Registry::get('front_template'); $is_frontend = new Eicra_Model_DbTable_Frontend(); ?> 
+
+<html> 
+
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+ <base href="<?php echo $this->serverUrl().$this->baseUrl(); ?>/" /> 
+  
+<?php
+
+$version = Zend_Registry::get('version');  
+echo $this->headScript()->setFile($this->baseUrl().'/js/jquery/jui-'.$version->getJQueryVersion().'/'.Zend_Registry::get('jtheme').'/jquery-'.$version->getJQueryVersion().'.min.js');
+echo $this->headLink()->setStylesheet('application/layouts/scripts/'.$front_template['theme_folder'].'/css/style_sheet.css');
+echo $this->headLink()->setStylesheet('application/layouts/scripts/'.$front_template['theme_folder'].'/css/vacation-rentals.css'); 
+echo $this->headScript()->setFile($this->baseUrl().'/js/jquery/jui-'.$version->getJQueryVersion().'/'.Zend_Registry::get('jtheme').'/jquery-ui-'.$version->getJQueryUIVersion().'.custom.min.js');
+echo $this->headLink()->setStylesheet($this->baseUrl().'/js/jquery/jui-'.$version->getJQueryVersion().'/'.Zend_Registry::get('jtheme').'/jquery-ui-'.$version->getJQueryUIVersion().'.custom.css');
+echo $this->headLink()->setStylesheet('application/layouts/scripts/'.$front_template['theme_folder'].'/css/hotels.css'); 
+
+
+$meta_Title = $this->vacationrentals_Form->meta_title->getValue();
+$meta_keywords = $this->vacationrentals_Form->meta_keywords->getValue();
+$meta_description = $this->vacationrentals_Form->meta_desc->getValue();
+$property_name = $this->vacationrentals_Form->vacationrentals_name->getValue();
+
+if(!empty($property_name)) { $this->headTitle()->headTitle($this->escape($property_name),'SET')->setSeparator(' - ')->headTitle($meta_Title); }
+if(!empty($meta_keywords)){ $this->headMeta()->setName('keywords',$meta_keywords); }
+if(!empty($meta_description)) { $this->headMeta()->setName('description',$meta_description); }
+
+
+function isnot_int($vacationrentals_owner)
+{
+	$r = true;			
+	if(is_numeric($vacationrentals_owner))
+	{ 
+		if(is_int((int)$vacationrentals_owner))
+		{
+			$r = false;
+		}				
+	}
+	return $r;
+}
+
+$auth = Zend_Auth::getInstance ();
+$hasIdentity = $auth->hasIdentity ();
+
+$feature_facilities_arr = explode(',', $this->view_datas['feature_amenities']); 
+$item_id = $this->vacationrentals_Form->id->getValue();
+$group_id = $this->vacationrentals_Form->group_id->getValue();
+$nextVacationrentals = $this->vacationrentals_database->getNextVacationrentals($item_id,$group_id, null);
+$prevVacationrentals = $this->vacationrentals_database->getPrevVacationrentals($item_id,$group_id, null);
+$country_id = $this->vacationrentals_Form->country_id->getValue();
+$state_id = $this->vacationrentals_Form->state_id->getValue();
+$area_id = $this->vacationrentals_Form->area_id->getValue();
+$display_related_item_limit = 10 ;
+$color_sign = ' ';
+$maximum_stars_digit = 6;
+
+
+if($area_id)
+{												
+	try
+	{
+		$area_db = new Vacationrentals_Model_DbTable_Area();
+		$area_info = $area_db->getAreaInfo($area_id);		
+	}
+	catch(Exception $e)
+	{
+		echo $e->getMessage() ;
+	}
+}
+if($state_id)
+{
+	try
+	{
+		$state_db = new Vacationrentals_Model_DbTable_State();
+		$state_info = $state_db->getStateInfo($state_id);
+	}
+	catch(Exception $e)
+	{
+		echo $e->getMessage() ;
+	}
+}
+if($country_id)
+{
+	try
+	{
+		$country_db = new Vacationrentals_Model_DbTable_Country();
+		$country_info = $country_db->getCountryName($country_id);
+	}
+	catch(Exception $e)
+	{
+		echo $e->getMessage() ;
+	}
+} 
+?>
+
+
+
+<style type="text/css">	
+	.ui-button { margin-left: -1px; }
+	.ui-button-icon-only .ui-button-text { padding: 2px; } 
+
+	 
+	#post_code { width: 10em; }
+	#vacationrentals_price { width: 7em; }
+	#vacationrentals_name { width: 26em; }
+	
+	  #gallery {
+				padding: 10px 5px 5px 5px;
+				background: #F3F3F3;
+			  }
+			  .ad-gallery .ad-image-wrapper {
+					
+					height: 300px;
+
+				  }
+				.ad-gallery .ad-thumbs .ad-thumb-list {
+					padding-left:2px;
+										
+				  }
+			  #descriptions {
+				position: relative;
+				height: 50px;
+				background: #EEE;
+				margin-top: 10px;
+				width: 400px;
+				padding: 0px;
+				overflow: hidden;
+			  }
+				#descriptions .ad-image-description {
+				  position: absolute;
+				}
+				  #descriptions .ad-image-description .ad-description-title {
+					display: block;
+				  }
+
+
+</style>
+
+</head>
+<body onLoad="javascript:print();">
+
+<div class="main-container">
+	<div class="main">
+		<div class="inner-page-container"> 
+			<div class="innter-page-content" style="width:100%;"> 
+
+					<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+					  
+					  <tr>
+						<td height="45" align="center" valign="bottom"><span  class="hotel-book-btn"><a href="javascript:print();"  ><?php echo $this->translator->translator('common_print'); ?></a></span>
+						</td>
+					  </tr>
+					  
+					  
+					  <tr>
+						<td>
+							<?php
+											$vacationrentals_image_val_arr = explode(',',$this->vacationrentals_Form->vacationrentals_image->getValue());
+											if($this->escape($this->vacationrentals_Form->vacationrentals_primary_image->getValue()))
+											{ 
+												$thumb_image = 'data/frontImages/vacationrentals/vacationrentals_image/'.$this->escape($this->vacationrentals_Form->vacationrentals_primary_image->getValue()); 
+											}
+											else
+											{ 
+												if($this->escape($this->vacationrentals_Form->vacationrentals_image->getValue()))
+												{								
+													$thumb_image = 'data/frontImages/vacationrentals/vacationrentals_image/'.$this->escape($vacationrentals_image_val_arr[0]); 
+												}
+												else
+												{
+													$thumb_image = 'data/frontImages/vacationrentals/design_images/no_image.jpg'; 
+												}		
+											}
+											if($this->group_datas['img_big_width'] && ($this->group_datas['img_big_resize_func'] == 'resizeToWidth' || $this->group_datas['img_big_resize_func'] == 'resize' ))
+											{ 
+												$width = 'width="'.$this->escape($this->group_datas['img_big_width']).'"'; 
+											}
+											else
+											{
+												$width = '';
+											} 
+											if($this->group_datas['img_big_height'] && ( $this->group_datas['img_big_resize_func'] == 'resizeToHeight' || $this->group_datas['img_big_resize_func'] == 'resize' ))
+											{ 
+												$height = 'height="'.$this->escape($this->group_datas['img_big_height']).'"'; 
+											} 
+											else
+											{
+												$height = '';
+											}
+										?>
+						
+						</td>
+					  </tr>
+					  <tr>
+						<td></td>
+					  </tr>
+					  
+					  
+					  
+					  <tr>
+						<td>&nbsp;</td>
+					  </tr>
+					 
+					  
+					  <tr>
+						<td><table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">      
+						  <tr>
+							<td>
+								<div id="tabs">
+								
+									<div style="border:1px solid #CCCCCC; padding:5px;font-size:12px;" id="tabs-0">
+									  <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" style="font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#333333;">
+											<tr>
+												<td>
+													<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#F9F9F9" style="border:1px solid #CCCCCC;">
+														<tr>
+														  <td height="40" align="left" class="topbar_1 vacation-rentals-title-2" style="border-bottom:1px solid #E2E2E2;padding-left:15px;"><span class="vacation-rentals-title-3"><?php echo $this->escape($this->vacationrentals_Form->vacationrentals_name->getValue()); ?></span></td>
+														</tr>
+														<tr>
+														  <td style="padding:5px;"><table width="100%" border="0" align="center" cellpadding="4" cellspacing="0" style="font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#333333; text-align:justify;">
+															 
+															  <tr>
+																<td><?php echo stripslashes($this->vacationrentals_Form->vacationrentals_desc->getValue()); ?>
+																
+																</td>
+															  </tr>
+														  </table></td>
+														</tr>
+													  </table>
+												</td>
+											  </tr>
+									  </table>
+									</div>
+									
+									<br />
+									<br />
+									
+									<div style="border:1px solid #CCCCCC; padding:5px;font-size:12px;" id="tabs-1">
+									  <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" style="font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#333333;">
+										
+										<tr>
+										  <td width="56%" valign="top"><table width="96%" border="0" cellspacing="0" cellpadding="5">
+											
+											<tr>
+											  <td width="56%" class="vacation-rentals-title-2"><?php echo $this->translator->translator('vacationrentals_front_page_Title_detail'); ?></td>
+											  <td width="44%">&nbsp;</td>
+											</tr>
+											<?php 
+												$_vacationrentals_price = $this->escape($this->vacationrentals_Form->vacationrentals_price->getValue()); 
+												if (!empty($_vacationrentals_price)) {	
+											 ?>
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->vacationrentals_price->getAttrib('font_end_label'); ?></td>
+											  <td><?php echo $_vacationrentals_price  ?></td>
+											</tr>
+											<?php 
+												}
+												$_vacationrentals_name = $this->escape($this->vacationrentals_Form->vacationrentals_name->getValue()); 
+												if (!empty($_vacationrentals_name)) {								
+											?>
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->vacationrentals_name->getAttrib('font_end_label'); ?></td>
+											  <td><?php echo $_vacationrentals_name; ?></td>
+											</tr>
+											<?php 
+												}
+												$_house_name = $this->escape($this->vacationrentals_Form->house_name->getValue()); 
+												if (!empty($_house_name)) {								
+											?>
+											
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->house_name->getAttrib('font_end_label'); ?></td>
+											  <td><?php echo $_house_name; ?></td>
+											</tr>
+											<?php 
+												}
+												$_location_type = $this->escape($this->vacationrentals_Form->location_type->getValue()); 
+												if (!empty($_location_type)) {								
+											?>
+											
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->location_type->getAttrib('font_end_label');  ?></td>
+											  <td><?php echo $_location_type; ?></td>
+											</tr>
+					
+											<?php 
+												}
+												$_feature_bedroom = $this->escape($this->vacationrentals_Form->feature_bedroom->getValue()); 
+												if (!empty($_feature_bedroom)) {								
+											?>
+					
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->feature_bedroom->getAttrib('font_end_label');  ?></td>
+											  <td><?php echo $_feature_bedroom; ?></td>
+											</tr>
+											<?php 
+												}
+												$_feature_bathroom = $this->escape($this->vacationrentals_Form->feature_bathroom->getValue()); 
+												if (!empty($_feature_bathroom)) {								
+											?>
+					
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->feature_bathroom->getAttrib('font_end_label');  ?></td>
+											  <td><?php echo $_feature_bathroom; ?></td>
+											</tr>
+											
+											<?php 
+												}
+												$_accommodates = $this->escape($this->vacationrentals_Form->accommodates->getValue()); 
+												if (!empty($_accommodates)) {								
+											?>
+											
+											
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->accommodates->getAttrib('font_end_label');  ?></td>
+											  <td><?php echo $_accommodates; ?></td>
+											</tr>
+											<?php 
+												}
+												$_property_size = $this->escape($this->vacationrentals_Form->property_size->getValue()); 
+												if (!empty($_property_size)) {								
+											?>
+											
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->property_size->getAttrib('font_end_label');  ?></td>
+											  <td><?php echo $_property_size; ?></td>
+											</tr>
+											
+											<?php 
+												}
+												$_feature_reception = $this->escape($this->vacationrentals_Form->feature_reception->getValue()); 
+												if (!empty($_feature_reception)) {								
+											?>
+											
+											
+											<tr>
+											  <td><?php echo  $this->vacationrentals_Form->feature_reception->getAttrib('font_end_label'); ?></td>
+											  <td><?php echo  $_feature_reception ; ?></td>
+											</tr>
+											<?php 
+												}
+												$_feature_kitchen = $this->escape($this->vacationrentals_Form->feature_kitchen->getValue()); 
+												if (!empty($_feature_kitchen)) {								
+											?>
+											
+											
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->feature_kitchen->getAttrib('font_end_label');  ?></td>
+											  <td><?php echo $_feature_kitchen; ?></td>
+											</tr>
+											<?php 
+												}
+												$_feature_garden = $this->escape($this->vacationrentals_Form->feature_garden->getValue()); 
+												if (!empty($_feature_garden)) {								
+											?>
+											
+											
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->feature_garden->getAttrib('font_end_label');  ?></td>
+											  <td><?php echo $_feature_garden; ?></td>
+											</tr>
+											<?php 
+												}
+												$_feature_conservatory = $this->escape($this->vacationrentals_Form->feature_conservatory->getValue()); 
+												if (!empty($_feature_conservatory)) {								
+											?>
+											
+											
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->feature_conservatory->getAttrib('font_end_label');  ?></td>
+											  <td><?php echo $_feature_conservatory; ?></td>
+											</tr>
+											<?php 
+												}
+												$_feature_garage = $this->escape($this->vacationrentals_Form->feature_garage->getValue()); 
+												if (!empty($_feature_garage)) {								
+											?>
+					
+					
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->feature_garage->getAttrib('font_end_label');  ?></td>
+											  <td><?php echo $_feature_garage; ?></td>
+											</tr>
+											<?php 
+												}
+												$_entertainments = $this->escape($this->vacationrentals_Form->entertainments->getValue()); 
+												if (!empty($_entertainments)) {								
+											?>
+											
+											
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->entertainments->getAttrib('font_end_label');  ?></td>
+											  <td><?php echo $_entertainments; ?></td>
+											</tr>
+											<?php 
+												}
+												$_gusts_allowed = $this->escape($this->vacationrentals_Form->gusts_allowed->getValue()); 
+												if (!empty($_gusts_allowed)) {								
+											?>
+											
+											
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->gusts_allowed->getAttrib('font_end_label');  ?></td>
+											  <td><?php echo $_gusts_allowed; ?></td>
+											</tr>
+											<?php 
+												}
+												$_number_of_sleeps = $this->escape($this->vacationrentals_Form->number_of_sleeps->getValue()); 
+												if (!empty($_number_of_sleeps)) {								
+											?>
+											
+											
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->number_of_sleeps->getAttrib('font_end_label');  ?></td>
+											  <td><?php echo $_number_of_sleeps; ?></td>
+											</tr>	
+											
+											<?php 
+												}
+											?>
+																
+										  </table></td>
+										  <td width="44%" valign="top"><table width="100%" border="0" align="right" cellpadding="0" cellspacing="0">
+											<tr>
+											  <td><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#F9F9F9" style="border:1px solid #CCCCCC;">
+												<tr>
+												  <td height="40" align="center" class="topbar_1 vacation-rentals-title-2" style="border-bottom:1px solid #E2E2E2;"><?php echo $this->translator->translator('vacationrentals_front_page_Title_summary'); ?></td>
+												</tr>
+												<tr>
+												  <td style="padding:5px;"><table width="100%" border="0" align="center" cellpadding="3" cellspacing="0">
+													<tr>
+													  <td width="23%"><?php echo $this->vacationrentals_Form->post_code->getAttrib('font_end_label') ;  ?></td>
+													  <td width="26%"><?php echo $this->vacationrentals_Form->post_code->getValue()?></td>
+													  <td width="37%"><?php echo $this->vacationrentals_Form->feature_room_no->getAttrib('font_end_label');  ?></td>
+													  <td width="14%"><?php echo (int)$this->escape($this->vacationrentals_Form->feature_room_no->getValue()); ?></td>
+													</tr>
+													<tr>
+													  <td><?php echo $this->vacationrentals_Form->area_id->getAttrib('font_end_label') ?></td>
+													  <td><?php echo $this->escape( $area_info['city']); ?></td>
+													  <td><?php echo $this->vacationrentals_Form->feature_bathroom->getAttrib('font_end_label') ; ?></td>
+													  <td><?php echo $this->escape( $this->vacationrentals_Form->feature_bathroom->getValue() ); ?></td>
+													</tr>
+													<tr>
+													  <td><?php echo $this->vacationrentals_Form->state_id->getAttrib('font_end_label');  ?></td>
+													  <td><?php echo $this->escape( $state_info['state_name']); ?></td>
+													  <td><?php echo $this->vacationrentals_Form->feature_bedroom->getAttrib('font_end_label'); ?></td>
+													  <td><?php echo $this->escape($this->vacationrentals_Form->feature_bedroom->getValue()); ?></td>
+													</tr>
+					
+													<tr>
+													  <td><?php echo $this->vacationrentals_Form->country_id->getAttrib('font_end_label');  ?></td>
+													  <td><?php echo $this->escape($country_info['value']); ?></td>
+													  <td><?php echo $this->vacationrentals_Form->minimum_stay_nights->getAttrib('font_end_label');  ?></td>
+													  <td><?php echo $this->escape($this->vacationrentals_Form->minimum_stay_nights->getValue()); ?></td>
+													</tr>
+					
+													
+												  </table></td>
+												</tr>
+												
+											  </table></td>
+											</tr>
+											<tr>
+											  <td>&nbsp;</td>
+											</tr>
+											<tr>
+											  <td>&nbsp;</td>
+											</tr>
+											<?php
+												//Checking Membership Package Option
+												$packages = new Members_Controller_Helper_Packages();
+												$general_db = new Members_Model_DbTable_General();
+												$forms_db = new Members_Model_DbTable_Forms();
+												$mem_info = $this->agent_list->getMemberInfo($this->view_datas['entry_by']);	
+												$module = $this->module;
+												$controller = $this->controller;
+												$action = $this->action;
+												if($packages->checkFormAvailable('Default Info'))
+												{
+													$default_form_id  = $forms_db->getFormId('Default Info');
+													$default_form_info['form_id'] = 	$default_form_id[0]['id'];
+													$default_general_info = $general_db->getAllValues($default_form_id[0]['id']);												
+													$dynamic_valu_db = new Members_Model_DbTable_FieldsValue();	
+													$default_form_info	=	$dynamic_valu_db->getFieldsValueInfo($default_form_info,$default_general_info[0]['id']);
+												}
+												else
+												{
+													$default_form_info = null;
+												}
+												if($packages->isPackageFrontend($mem_info['user_id'],$mem_info['role_id']))
+												{								
+													if($packages->isPackageFrontendField($module,$controller,$action,$mem_info['user_id'],$mem_info['role_id']))
+													{
+														$package_no = $packages->getPackageFrontendFieldValue($module,$controller,$action,$mem_info['user_id'],$mem_info['role_id']);				
+													}
+													else
+													{
+														$package_no = 'Off';
+													}
+												}
+												else
+												{
+													$package_no = 'On';
+												}
+											if($package_no == 'On')
+											{		
+											?>
+											<tr>
+											  <td><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#F9F9F9" style="border:1px solid #CCCCCC;">
+												<tr>
+												  <td height="40" align="center" class="topbar_1 vacation-rentals-title-2" style="border-bottom:1px solid #E2E2E2;"><?php echo $this->translator->translator('vacationrentals_front_page_Title_realtor'); ?></td>
+												</tr>
+												<tr>
+												  <td><table width="100%" border="0" align="center" cellpadding="3" cellspacing="0">
+													  <tr class="vacation-rentals-title-4">
+														<td width="30%"><?php echo $this->translator->translator('vacationrentals_front_page_label_presented'); ?></td>
+														<td width="70%">
+														<?php
+														if($this->escape($this->view_datas['vacationrentals_owner']))
+														{
+															$this->agent_list = new Members_Model_DbTable_MemberList();
+															$owner_info = (isnot_int($this->view_datas['vacationrentals_owner'])) ? $this->escape($this->view_datas['vacationrentals_owner']) : $this->agent_list->getMemberInfo($this->escape($this->view_datas['vacationrentals_owner']));
+															$owner_name = (is_array($owner_info)) ? $owner_info['title'].' '.$owner_info['firstName'].' '.$owner_info['lastName'] : $owner_info;	
+															echo $this->escape($owner_name);
+															$mem_user_id = (is_array($owner_info)) ? $owner_info['user_id'] : $mem_info['user_id'];
+															$mem_role_id = (is_array($owner_info)) ? $owner_info['role_id'] : $mem_info['role_id'];
+															if(is_array($owner_info))
+															{
+																$role_db = new Members_Model_DbTable_Role();
+																$role_info = $role_db->getRoleInfo($owner_info['role_id']);
+																$owner_info['form_id'] = 	$role_info['form_id'];
+																$dynamic_valu_db = new Members_Model_DbTable_FieldsValue();	
+																$owner_info	=	$dynamic_valu_db->getFieldsValueInfo($owner_info,$owner_info['user_id']);
+																foreach($owner_info as $key=>$value)
+																{
+																	$field_name_arr = explode('_',$key);
+																	if(in_array('package',$field_name_arr))
+																	{
+																		$package_info = $packages->getFormAllDatas($value);
+																	}
+																}
+															}
+															else
+															{
+																$mem_user_id = $mem_info['user_id'];
+																$mem_role_id = $mem_info['role_id'];
+																$role_db = new Members_Model_DbTable_Role();
+																$role_info = $role_db->getRoleInfo($mem_role_id);
+																$mem_info['form_id'] = 	$role_info['form_id'];
+																$dynamic_valu_db = new Members_Model_DbTable_FieldsValue();	
+																$mem_info	=	$dynamic_valu_db->getFieldsValueInfo($mem_info,$mem_user_id);
+																foreach($mem_info as $key=>$value)
+																{
+																	$field_name_arr = explode('_',$key);
+																	if(in_array('package',$field_name_arr))
+																	{
+																		$package_info = $packages->getFormAllDatas($value);
+																	}
+																}
+															}
+														}
+														else
+														{
+															$mem_user_id = $mem_info['user_id'];
+															$mem_role_id = $mem_info['role_id'];
+															$role_db = new Members_Model_DbTable_Role();
+															$role_info = $role_db->getRoleInfo($mem_role_id);
+															$mem_info['form_id'] = 	$role_info['form_id'];
+															$dynamic_valu_db = new Members_Model_DbTable_FieldsValue();	
+															$mem_info	=	$dynamic_valu_db->getFieldsValueInfo($mem_info,$mem_user_id);
+															foreach($mem_info as $key=>$value)
+															{
+																$field_name_arr = explode('_',$key);
+																if(in_array('package',$field_name_arr))
+																{
+																	$package_info = $packages->getFormAllDatas($value);
+																}
+															}
+														}
+														?>
+														</td>
+														</tr>
+													  <tr>
+														<td>
+														<?php
+															if(is_array($owner_info))
+															{
+																if($owner_info['member_photo'])
+																{
+																	$owner_forms_info = $forms_db->getFormsInfo($role_info['form_id']);
+																	$member_photo_path = $owner_forms_info['attach_file_path'];
+																	$member_photo = $member_photo_path.'/'.$owner_info['member_photo'];
+																	$member_photo_width = 'width="'.$default_form_info['member_photo_width_default'].'"';
+																	$member_photo_height = 'height="'.$default_form_info['member_photo_height_default'].'"';
+																}
+																else
+																{												
+																		if(!empty($default_form_info))
+																		{
+																				$member_photo = $this->serverUrl().$this->baseUrl().'/'. $default_form_id[0]['attach_file_path'].'/'.$default_form_info['member_photo_default'];
+																				$member_photo_width = 'width="'.$default_form_info['member_photo_width_default'].'"';
+																				$member_photo_height = 'height="'.$default_form_info['member_photo_height_default'].'"';
+																		}
+																		else
+																		{
+																				$member_photo = 'data/frontImages/vacationrentals/design_images/no_user_image.gif';
+																				$member_photo_width = 'width="75"';
+																				$member_photo_height = 'height="87"';
+																		}
+																}
+															}
+															else
+															{
+																if(!empty($default_form_info))
+																{
+																		$member_photo = $this->serverUrl().$this->baseUrl().'/'. $default_form_id[0]['attach_file_path'].'/'.$default_form_info['member_photo_default'];
+																		$member_photo_width = 'width="'.$default_form_info['member_photo_width_default'].'"';
+																		$member_photo_height = 'height="'.$default_form_info['member_photo_height_default'].'"';
+																}
+																else
+																{
+																		$member_photo = 'data/frontImages/vacationrentals/design_images/no_user_image.gif';
+																		$member_photo_width = 'width="75"';
+																		$member_photo_height = 'height="87"';
+																}
+															}
+																									
+														?>
+														<img src="<?php echo $member_photo; ?>" <?php echo $member_photo_width.' '.$member_photo_height; ?> style="border:1px solid #CCCCCC;"/>
+														</td>
+														<td valign="top">									
+															<table width="100%" border="0" cellspacing="0" cellpadding="3">
+															  <tr>
+																<td colspan="2" valign="top"><?php echo $this->translator->translator('vacationrentals_front_page_label_company'); ?></td>
+																<td width="45%" valign="top" rowspan="3">
+																<?php												
+																	if($packages->isPackageFrontendField($module,$controller,$action.'_pic',$mem_user_id,$mem_role_id))
+																	{		
+																		$package_pic_info = $packages->getPackageFrontendFieldDetailsValue($module,$controller,$action.'_pic',$mem_user_id,$mem_role_id);				
+																		if(!empty($package_pic_info))
+																		{
+																			$forms_info = $forms_db->getFormsInfo($package_pic_info['form_id']);
+																			if(!empty($package_pic_info['field_value']))
+																			{
+																				$package_pic = $this->serverUrl().$this->baseUrl().'/'. $forms_info['attach_file_path'].'/'.$package_pic_info['field_value'];
+																				$package_pic_width = $packages->getPackageFrontendFieldValue($module,$controller,$action.'_pic_width',$mem_user_id,$mem_role_id);
+																				$package_pic_height = $packages->getPackageFrontendFieldValue($module,$controller,$action.'_pic_height',$mem_user_id,$mem_role_id);
+																				$package_pic_width_field = ($package_pic_width) ? 'width="'.$package_pic_width.'"' : '';
+																				$package_pic_height_field = ($package_pic_width) ? 'height="'.$package_pic_height.'"' : '';
+																			}
+																			else
+																			{
+																				$package_pic = $this->serverUrl().$this->baseUrl().'/'. $default_form_id[0]['attach_file_path'].'/'.$default_form_info['vacationrentals_frontend_details_pic_default'];
+																				$package_pic_width_field = (!empty($default_form_info['vacationrentals_frontend_details_pic_width_default'])) ? 'width="'.$default_form_info['vacationrentals_frontend_details_pic_width_default'].'"' : '';
+																				$package_pic_height_field = (!empty($default_form_info['vacationrentals_frontend_details_pic_height_default'])) ? 'height="'.$default_form_info['vacationrentals_frontend_details_pic_height_default'].'"' : '';
+																			}
+																		}
+																		else
+																		{
+																			$package_pic = $this->serverUrl().$this->baseUrl().'/'. $default_form_id[0]['attach_file_path'].'/'.$default_form_info['vacationrentals_frontend_details_pic_default'];
+																			$package_pic_width_field = (!empty($default_form_info['vacationrentals_frontend_details_pic_width_default'])) ? 'width="'.$default_form_info['vacationrentals_frontend_details_pic_width_default'].'"' : '';
+																			$package_pic_height_field = (!empty($default_form_info['vacationrentals_frontend_details_pic_height_default'])) ? 'height="'.$default_form_info['vacationrentals_frontend_details_pic_height_default'].'"' : '';
+																		}
+																	}
+																	else
+																	{
+																		$package_pic = $this->serverUrl().$this->baseUrl().'/'. $default_form_id[0]['attach_file_path'].'/'.$default_form_info['vacationrentals_frontend_details_pic_default'];
+																		$package_pic_width_field = (!empty($default_form_info['vacationrentals_frontend_details_pic_width_default'])) ? 'width="'.$default_form_info['vacationrentals_frontend_details_pic_width_default'].'"' : '';
+																		$package_pic_height_field = (!empty($default_form_info['vacationrentals_frontend_details_pic_height_default'])) ? 'height="'.$default_form_info['vacationrentals_frontend_details_pic_height_default'].'"' : '';
+																	}
+																	if($package_pic)
+																	{
+																?>
+																<img src="<?php echo $package_pic; ?>" <?php echo $package_pic_width_field.' '.$package_pic_height_field; ?> style="border:1px solid #CCCCCC;"/>
+																<?php
+																	}
+																?>											
+																</td>
+															  </tr>
+															  <tr>
+																<td colspan="2" valign="top"><?php if(is_array($owner_info)){ echo $this->escape($owner_info['companyName']); } ?></td>
+																
+															  </tr>
+															  <tr>
+																<td colspan="2" valign="top"><?php if(($package_info[0]['field_value'])){ echo $this->translator->translator('common_package_name_title'); } ?></td>
+															  </tr>
+															  <tr>
+																<td colspan="3" valign="top" class="box_link_URL"><?php echo $this->escape($package_info[0]['field_value']); ?></td>
+															  </tr>
+															</table>
+														</td>
+														</tr>
+													  <tr>
+														<td>&nbsp;</td>
+														<td>&nbsp;</td>
+														</tr>
+													<?php
+														if($packages->isPackageFrontendField($module,$controller,$action.'_contact_directly',$mem_user_id,$mem_role_id))
+														{
+															$contact_directly = $packages->getPackageFrontendFieldValue($module,$controller,$action.'_contact_directly',$mem_user_id,$mem_role_id);				
+														}
+														else
+														{
+															$contact_directly = 'No';
+														}
+														if($contact_directly == 'Yes')
+														{
+													 ?>
+													  <tr>
+														<td  valign="top"><?php echo $this->translator->translator('vacationrentals_front_page_label_phone'); ?></td>
+														<td width="70%" valign="top"><?php echo $this->escape($this->view_datas['house_phone']); ?></td>
+													  </tr>
+													  <tr>
+														<td  valign="top"><?php echo $this->translator->translator('vacationrentals_front_page_label_fax'); ?></td>
+														<td valign="top"><?php echo $this->escape($this->view_datas['house_fax']); ?></td>
+													  </tr>
+													  <tr>
+														<td width="30%" valign="top"><?php echo $this->translator->translator('vacationrentals_front_page_label_email'); ?></td>
+														<td>
+															<table width="100%" border="0" cellpadding="0" cellspacing="0">
+															 <tr>
+																<td width="16%" align="center" valign="top"><img src="data/frontImages/vacationrentals/design_images/email.gif" width="21" height="18" /></td>
+																<td valign="top" class="box_link"><a href="<?php if(is_array($owner_info)){ echo 'mailto:'.$this->escape($owner_info['username']); }else{ echo 'mailto:'.$this->escape($this->view_datas['house_email']) ;} ?>"><?php echo $this->translator->translator('vacationrentals_front_page_label_email_lang'); ?></a></td>
+															 </tr>
+															</table>
+														</td>
+													  </tr>
+													  <tr>
+														<td  valign="top"><?php echo $this->translator->translator('vacationrentals_front_page_label_web'); ?></td>
+														<td  valign="top" class="box_link_URL"><a href="<?php if(is_array($owner_info)){ echo 'http://'.$this->escape($owner_info['website']); } ?>" target="_blank"><?php if(is_array($owner_info)){ echo $this->escape($owner_info['website']); } ?></a></td>
+													  </tr>
+													  <tr>
+														<td><?php echo $this->translator->translator('vacationrentals_front_page_label_contact'); ?></td>
+														<td>
+															<?php echo $this->translator->translator('vacationrentals_front_page_label_house_no'); ?> <?php echo $this->escape($this->view_datas['house_no']); ?><br />
+															<?php echo $this->translator->translator('vacationrentals_front_page_label_city'); 
+																if($area_id)
+																{												
+																	echo " ".$this->escape($area_info['city']);
+																}
+															?><br />
+															<?php echo $this->translator->translator('vacationrentals_front_page_label_state'); 
+																if($state_id)
+																{
+																	echo " ".$this->escape($state_info['state_name']);
+																}
+															?><br />
+															<?php echo $this->translator->translator('vacationrentals_front_page_label_country'); 
+																if($country_id)
+																{
+																	echo " ".$this->escape($country_info['value']);
+																}
+															?><br />
+															<?php echo $this->translator->translator('vacationrentals_front_page_label_postcode'); 
+																echo " ".$this->escape($this->view_datas['post_code']);	
+															?>								
+														</td>
+													  </tr>
+													  <?php
+														}
+													  ?>
+													  <tr>
+														<td colspan="2" style="border-bottom:1px solid #CCCCCC;">&nbsp;</td>
+														</tr>
+														<tr>
+															<td colspan="2">
+																<?php
+																if($packages->isPackageFrontendField($module,$controller,$action.'_certified',$mem_user_id,$mem_role_id))
+																{
+																	$allow_certified = $packages->getPackageFrontendFieldValue($module,$controller,$action.'_certified',$mem_user_id,$mem_role_id);				
+																}
+																else
+																{
+																	$allow_certified = 'No';
+																}
+																if($packages->isPackageFrontendField($module,$controller,$action.'_allow_logo',$mem_user_id,$mem_role_id))
+																{
+																	$allow_logo = $packages->getPackageFrontendFieldValue($module,$controller,$action.'_allow_logo',$mem_user_id,$mem_role_id);				
+																}
+																else
+																{
+																	$allow_logo = 'No';
+																}
+																?>
+																<table width="100%" cellpadding="0" cellspacing="0">
+																  <tr class="vacationrentals_details_title_9">
+																	<td height="30" ><?php if($allow_logo == 'Yes') { echo $this->translator->translator('vacationrentals_front_page_label_company_logo'); } ?></td>
+																	<td><?php if($allow_certified == 'Yes'){ echo $this->translator->translator('vacationrentals_front_page_label_verified'); } ?></td>
+																  </tr>
+																  
+																  <tr>
+																	<td>
+																	<?php
+																		
+																		if($allow_logo == 'Yes')
+																		{									
+																			if(is_array($owner_info))
+																			{
+																				if($owner_info['company_logo'])
+																				{
+																					$company_logo_path = $owner_forms_info['attach_file_path'];
+																					$company_logo = $member_photo_path.'/'.$owner_info['company_logo'];
+																					$company_logo_width = ($default_form_info['company_logo_width_default']) ? 'width="'.$default_form_info['company_logo_width_default'].'"' : '';
+																					$company_logo_height = ($default_form_info['company_logo_height_default']) ? 'height="'.$default_form_info['company_logo_height_default'].'"' : '';
+																				}
+																				else
+																				{
+																					if(!empty($default_form_info))
+																					{
+																						$company_logo = $this->serverUrl().$this->baseUrl().'/'. $default_form_id[0]['attach_file_path'].'/'.$default_form_info['company_logo_default'];
+																						$company_logo_width = ($default_form_info['company_logo_width_default']) ? 'width="'.$default_form_info['company_logo_width_default'].'"' : '';
+																						$company_logo_height = ($default_form_info['company_logo_height_default']) ? 'height="'.$default_form_info['company_logo_height_default'].'"' : '';
+																					}
+																					else
+																					{
+																						$company_logo = 'data/frontImages/vacationrentals/design_images/no_company_logo.gif';
+																						$company_logo_width = 'width="80"';
+																						$company_logo_height = 'height="60"';
+																					}
+																				}
+																			}
+																			else
+																			{
+																				if(!empty($default_form_info))
+																				{
+																					$company_logo = $this->serverUrl().$this->baseUrl().'/'. $default_form_id[0]['attach_file_path'].'/'.$default_form_info['company_logo_default'];
+																					$company_logo_width = ($default_form_info['company_logo_width_default']) ? 'width="'.$default_form_info['company_logo_width_default'].'"' : '';
+																					$company_logo_height = ($default_form_info['company_logo_height_default']) ? 'height="'.$default_form_info['company_logo_height_default'].'"' : '';
+																				}
+																				else
+																				{
+																					$company_logo = 'data/frontImages/vacationrentals/design_images/no_company_logo.gif';
+																					$company_logo_width = 'width="80"';
+																					$company_logo_height = 'height="60"';
+																				}
+																			}
+																	?>
+																	<img src="<?php echo $company_logo; ?>" <?php echo $company_logo_width.' '.$company_logo_height; ?> style="border:1px solid #CCCCCC;"/>
+																	<?php
+																		}
+																	?>
+																	</td>
+																	<td>
+																		<?php														
+																			if($allow_certified == 'Yes')
+																			{
+																				if($packages->isPackageFrontendField($module,$controller,$action.'_pic_certi',$mem_user_id,$mem_role_id))
+																				{
+																					$package_pic_certi_info = $packages->getPackageFrontendFieldDetailsValue($module,$controller,$action.'_pic_certi',$mem_user_id,$mem_role_id);				
+																					if(!empty($package_pic_certi_info))
+																					{
+																						$forms_info = $forms_db->getFormsInfo($package_pic_certi_info['form_id']);
+																						if(!empty($package_pic_certi_info['field_value']))
+																						{
+																							$package_pic_certi = $this->serverUrl().$this->baseUrl().'/'. $forms_info['attach_file_path'].'/'.$package_pic_certi_info['field_value'];
+																							$package_pic_certi_width = $packages->getPackageFrontendFieldValue($module,$controller,$action.'_pic_certi_width',$mem_user_id,$mem_role_id);
+																							$package_pic_certi_height = $packages->getPackageFrontendFieldValue($module,$controller,$action.'_pic_certi_height',$mem_user_id,$mem_role_id);
+																							$package_pic_certi_width_field = ($package_pic_certi_width) ? 'width="'.$package_pic_certi_width.'"' : '';
+																							$package_pic_certi_height_field = ($package_pic_certi_height) ? 'height="'.$package_pic_certi_height.'"' : '';
+																						}
+																						else
+																						{
+																							$package_pic_certi = $this->serverUrl().$this->baseUrl().'/'. $default_form_id[0]['attach_file_path'].'/'.$default_form_info['vacationrentals_frontend_details_pic_certi_default'];
+																							$package_pic_certi_width_field = ($default_form_info['vacationrentals_frontend_details_pic_certi_width_default']) ? 'width="'.$default_form_info['vacationrentals_frontend_details_pic_certi_width_default'].'"' : '';
+																							$package_pic_certi_height_field = ($default_form_info['vacationrentals_frontend_details_pic_certi_height_default']) ? 'height="'.$default_form_info['vacationrentals_frontend_details_pic_certi_height_default'].'"' : '';
+																						}
+																					}
+																					else
+																					{
+																						$package_pic_certi = $this->serverUrl().$this->baseUrl().'/'. $default_form_id[0]['attach_file_path'].'/'.$default_form_info['vacationrentals_frontend_details_pic_certi_default'];
+																						$package_pic_certi_width_field = ($default_form_info['vacationrentals_frontend_details_pic_certi_width_default']) ? 'width="'.$default_form_info['vacationrentals_frontend_details_pic_certi_width_default'].'"' : '';
+																						$package_pic_certi_height_field = ($default_form_info['vacationrentals_frontend_details_pic_certi_height_default']) ? 'height="'.$default_form_info['vacationrentals_frontend_details_pic_certi_height_default'].'"' : '';
+																					}
+																				}
+																				else
+																				{
+																					$package_pic_certi = null;
+																				}
+																				if($package_pic_certi)
+																				{
+																		?>
+																					<img src="<?php echo $package_pic_certi; ?>" <?php echo $package_pic_certi_width_field.' '.$package_pic_certi_height_field; ?> style="border:1px solid #CCCCCC;"/>
+																		<?php
+																				}
+																			}
+																		?>
+																	</td>
+																  </tr>
+																 </table>
+															</td>
+													  </tr>
+													 
+													  
+												  </table></td>
+												</tr>
+											  </table></td>
+											</tr>
+											<?php
+											}
+											?>
+										  </table></td>
+										</tr>
+										
+									  </table>
+									</div>
+									
+									<br />
+									<br />
+									
+									<div style="border:1px solid #CCCCCC; padding:5px;font-size:12px;" id="tabs-2">
+									  <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+										<tr>
+											<td>&nbsp;</td>
+										</tr>
+										<tr>
+										  <td class="vacation-rentals-title-2"><?php echo $this->translator->translator('vacationrentals_front_page_Title_images'); ?></td>
+										</tr>
+										<tr>
+										  <td>&nbsp;</td>
+										</tr>
+										<tr>
+										  <td>
+											<table width="100%" cellpadding="0" cellspacing="0">
+												<tr>
+													<?php
+														if($this->group_datas['file_thumb_width'] && ($this->group_datas['file_thumb_resize_func'] != 'resizeToHeight' || $this->group_datas['file_thumb_resize_func'] != 'resize' ))
+														{ 
+															$width_img = 'width="'.$this->escape($this->group_datas['file_thumb_width']).'"'; 
+														}
+														else
+														{
+															$width_img = '';
+														} 
+														if($this->group_datas['file_thumb_height'] && ( $this->group_datas['file_thumb_resize_func'] != 'resizeToWidth' || $this->group_datas['file_thumb_resize_func'] != 'resize' ))
+														{ 
+															$height_img = 'height="'.$this->escape($this->group_datas['file_thumb_height']).'"'; 
+														} 
+														else
+														{
+															$height_img = '';
+														}
+														$img_arr = explode(',',$this->vacationrentals_Form->vacationrentals_image->getValue());
+														$i = 1;
+														foreach($img_arr as $key => $value)
+														{
+													?>
+													<td style="padding:1px;">
+														<a href="javascript:void(0);" class="change_img"><img src="data/frontImages/vacationrentals/vacationrentals_image/<?php echo $value; ?>" <?php echo $width_img.' '.$height_img; ?> border="0" style="border:1px solid #CCCCCC; padding:4px;"/></a>
+													</td>
+													<?php
+															if($i % $this->group_datas['file_col_num'] == 0){ echo '</tr><tr>'; }
+															$i++;
+														}
+													?>
+												</tr>
+											</table>
+										  </td>
+										</tr>
+										<tr>
+										  <td>&nbsp;</td>
+										</tr>
+									  </table>
+									</div>
+									
+									<br />
+									<br />
+									
+									<div style="border:1px solid #CCCCCC; padding:5px;font-size:12px;" id="tabs-3">
+									  <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+										<tr>
+											<td>&nbsp;</td>
+										</tr>
+										<tr>
+										  <td class="vacation-rentals-title-2"><?php echo $this->translator->translator('vacationrentals_front_page_Title_floorplan'); ?></td>
+										</tr>
+										<tr>
+										  <td>&nbsp;</td>
+										</tr>
+										<tr>
+										  <td><table width="100%" cellpadding="0" cellspacing="0">
+												<tr>
+													<?php
+														if($this->group_datas['file_thumb_width'] && ($this->group_datas['file_thumb_resize_func'] != 'resizeToHeight' || $this->group_datas['file_thumb_resize_func'] != 'resize' ))
+														{ 
+															$width_img = 'width="'.$this->escape($this->group_datas['file_thumb_width']).'"'; 
+														}
+														else
+														{
+															$width_img = '';
+														} 
+														if($this->group_datas['file_thumb_height'] && ( $this->group_datas['file_thumb_resize_func'] != 'resizeToWidth' || $this->group_datas['file_thumb_resize_func'] != 'resize' ))
+														{ 
+															$height_img = 'height="'.$this->escape($this->group_datas['file_thumb_height']).'"'; 
+														} 
+														else
+														{
+															$height_img = '';
+														}
+														if($this->vacationrentals_Form->feature_others_exclusive_images->getValue())
+														{
+															$img_froor_arr = explode(',',$this->vacationrentals_Form->feature_others_exclusive_images->getValue());
+															$i = 1;
+															foreach($img_froor_arr as $key => $value)
+															{
+														?>
+														<td style="padding:1px;">
+															<a href="javascript:void(0);" class="change_img"><img src="data/frontImages/vacationrentals/other_images/<?php echo $value; ?>" <?php echo $width_img.' '.$height_img; ?> border="0" style="border:1px solid #CCCCCC; padding:4px;"/></a>
+														</td>
+														<?php
+																if($i % $this->group_datas['file_col_num'] == 0){ echo '</tr><tr>'; }
+																$i++;
+															}
+														}
+													?>
+												</tr>
+											</table></td>
+										</tr>
+										<tr>
+										  <td>&nbsp;</td>
+										</tr>
+									  </table>
+									</div>
+					
+									<br />
+									<br />
+					
+									<div style="border:1px solid #CCCCCC; padding:5px;font-size:12px;" id="tabs-4">
+									  <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+										<tr>
+										  <td width="56%" valign="top">
+											<table width="96%" border="0" cellspacing="0" cellpadding="5">						
+												<tr>
+												  <td width="43%" class="details_tab_header"><?php echo $this->translator->translator('vacationrentals_front_page_Title_payment_amenities'); ?></td>
+												  </tr>
+												
+												<tr>
+												  <td><?php 
+															 
+														foreach($feature_facilities_arr as $key=>$value)
+														{
+															echo '<div style="float:left;text-align:left;width:200px;">'.$this->escape($value).'</div>';
+														}						  
+												  ?></td>
+												  </tr>						
+											</table>
+										  </td>
+										</tr>
+										
+										<tr>
+										  <td width="56%" valign="top">
+											<table width="96%" border="0" cellspacing="0" cellpadding="5">						
+												<tr>
+												  <td width="43%" class="details_tab_header"><?php echo $this->translator->translator('vacationrentals_front_page_Title_additional_features'); ?></td>
+												  </tr>
+												
+												<tr>
+												  <td><?php 
+															$feature_sports_recreations_arr = explode(',', $this->view_datas['feature_other_facilities']); 
+															foreach($feature_sports_recreations_arr as $key=>$value)
+															{
+																echo '<div style="float:left;text-align:left;width:200px;">'.$this->escape($value).'</div>';
+															}						  
+												  ?></td>
+												</tr>						
+											</table>
+										  </td>
+										</tr>
+										
+									  </table>
+									</div>
+									
+									<br />
+									<br />		  
+									
+									<div style="border:1px solid #CCCCCC; padding:5px;font-size:12px;" id="tabs-5">
+									  <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0" style="font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#333333;">
+										<tr>
+											<td>&nbsp;</td>
+										</tr>
+										<tr>
+										  <td class="vacation-rentals-title-2"><?php echo $this->translator->translator('vacationrentals_front_page_vacationrentals_available'); ?></td>
+										</tr>
+										<tr>
+										  <td>&nbsp;</td>
+										</tr>
+										<tr>
+										  <td><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#F9F9F9" style="border:1px solid #CCCCCC;">
+											<tr>
+											  <td height="40" align="center" class="topbar_1 vacation-rentals-title-2" style="border-bottom:1px solid #E2E2E2;"><?php echo $this->translator->translator('vacationrentals_front_page_Title_available'); ?></td>
+											</tr>
+											<tr>
+											  <td style="padding:5px;"><table width="100%" border="0" align="center" cellpadding="4" cellspacing="0">
+												  <tr>
+														<td width="21%"><?php echo $this->translator->translator('vacationrentals_front_page_label_available_from'); ?></td>
+														<td width="79%"><?php echo $this->escape($this->vacationrentals_Form->availabe_from->getValue()  ); ?></td>
+												  </tr>
+												  <tr>
+														<td><?php echo $this->translator->translator('vacationrentals_front_page_label_available_to'); ?></td>
+														<td><?php echo $this->escape($this->vacationrentals_Form->available_to->getValue()); ?></td>
+												  </tr>
+														<?php 	$available_activation_date = $this->vacationrentals_Form->available_activation_date->getValue();
+														if($available_activation_date != '0000-00-00' && !empty($available_activation_date)){ ?>
+													<tr>
+														<td><?php echo $this->translator->translator('vacationrentals_front_page_label_activation'); ?></td>
+														<td><?php echo $this->escape($this->vacationrentals_Form->available_activation_date->getValue()); ?></td>
+													</tr>
+												<?php } ?>
+											  </table></td>
+											</tr>
+										  </table></td>
+										</tr>
+										<tr>
+										  <td>&nbsp;</td>
+										</tr>
+									  </table>						
+									</div>		
+									
+									<br />
+									<br />
+									
+									<div style="border:1px solid #CCCCCC; padding:5px;font-size:12px;" id="tabs-6">
+									  <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+										<tr>
+											<td>&nbsp;</td>
+										</tr>
+										<tr>
+										  <td class="vacation-rentals-title-2"><?php echo $this->translator->translator('vacationrentals_front_page_Title_brochure_feature'); ?></td>
+										</tr>
+										<tr>
+										  <td>&nbsp;</td>
+										</tr>
+											<?php 
+											
+												$_brochure_desc = $this->escape( $this->vacationrentals_Form->brochure_desc->getValue()); 
+												if (!empty($_brochure_desc)) {												
+											?>
+										
+										
+										<tr>
+										  <td><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#F9F9F9" style="border:1px solid #CCCCCC;">
+											<tr>
+											  <td height="40" align="center" class="topbar_1 vacation-rentals-title-2" style="border-bottom:1px solid #E2E2E2;"><?php echo $this->translator->translator('vacationrentals_front_page_Title_brochure'); ?></td>
+											</tr>
+											<tr>
+											  <td style="padding:5px;"><table width="100%" border="0" align="center" cellpadding="4" cellspacing="0" style="font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#333333;">
+												  <tr>
+													<td class="vacation-rentals-title-2" width="21%"><?php echo $this->escape($this->vacationrentals_Form->brochure_title->getValue());  ?></td>
+												  </tr>
+												  <tr>
+													<td width="21%"><?php echo $_brochure_desc ;  ?></td>
+												  </tr>
+											  </table></td>
+											</tr>
+										  </table></td>
+										</tr>
+										<tr>
+										  <td>&nbsp;</td>
+										</tr>
+											<?php 
+												}						
+												$_feature_additional = stripslashes($this->vacationrentals_Form->feature_additional->getValue()); 
+												if (!empty($_feature_additional)) {												
+											?>
+					
+										
+										<tr>
+										  <td><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#F9F9F9" style="border:1px solid #CCCCCC;">
+											<tr>
+											  <td height="40" align="center" class="topbar_1 vacation-rentals-title-2" style="border-bottom:1px solid #E2E2E2;"><?php echo $this->translator->translator('vacationrentals_front_page_Title_features'); ?></td>
+											</tr>
+											<tr>
+											  <td style="padding:5px;"><table width="100%" border="0" align="center" cellpadding="4" cellspacing="0">
+												  <tr>
+													<td width="21%"><?php echo  $_feature_additional; ?></td>
+												  </tr>						
+											  </table></td>
+											</tr>
+										  </table></td>
+										</tr>
+										<tr>
+										  <td>&nbsp;</td>
+										</tr>
+											<?php 
+												}
+												$_vacationrentals_address = stripslashes($this->vacationrentals_Form->vacationrentals_address->getValue()); 
+												if (!empty($_vacationrentals_address)) {												
+											?>
+										
+										
+										<tr>
+										  <td><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#F9F9F9" style="border:1px solid #CCCCCC;">
+											<tr>
+											  <td height="40" align="center" class="topbar_1 vacation-rentals-title-2" style="border-bottom:1px solid #E2E2E2;"><?php echo $this->vacationrentals_Form->vacationrentals_address->getAttrib('font_end_label'); ?> </td>
+											</tr>
+											<tr>
+											  <td style="padding:5px;"><table width="100%" border="0" align="center" cellpadding="4" cellspacing="0">
+												  <tr>
+													<td width="21%"><?php echo $_vacationrentals_address; ?></td>
+												  </tr>						
+											  </table></td>
+											</tr>
+										  </table></td>
+										</tr>
+					
+											<?php 
+												}
+											?>
+										
+										
+									  </table>
+									</div>
+									
+									<br />
+									<br />
+									
+									<div style="border:1px solid #CCCCCC; padding:5px;font-size:12px;" id="tabs-7">
+									  <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+										<tr>
+											<td>&nbsp;</td>
+										</tr>
+										<tr>
+										  <td class="vacation-rentals-title-2"><?php echo $this->translator->translator('vacationrentals_front_page_Title_payment'); ?></td>
+										</tr>
+										<tr>
+										  <td>&nbsp;</td>
+										</tr>
+															
+										<tr>
+										  <td>&nbsp;</td>
+										</tr>
+											<?php 
+												
+												$_payment_desc =  stripslashes( $this->vacationrentals_Form->payment_desc->getValue()); 
+												if (!empty($_payment_desc)) {												
+											?>
+										
+										<tr>
+										  <td><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#F9F9F9" style="border:1px solid #CCCCCC;">
+											<tr>
+											  <td height="40" align="center" class="topbar_1 vacation-rentals-title-2" style="border-bottom:1px solid #E2E2E2;"><?php echo $this->translator->translator('vacationrentals_front_page_Title_payment_process'); ?></td>
+										</tr>
+										<tr>
+											  <td style="padding:5px;"><table width="100%" border="0" align="center" cellpadding="4" cellspacing="0">
+											<tr>
+												<td width="21%"><?php echo $_payment_desc; ?></td>
+											</tr>	
+																	
+											 </table></td>
+										 </tr>
+											
+											
+										  </table></td>
+										</tr>
+										<?php }?>  
+										<tr>
+										  <td>&nbsp;</td>
+										</tr>
+									  </table>
+									</div>
+					
+					
+									<br />
+									<br />
+									
+									
+									<div style="border:1px solid #CCCCCC; padding:5px;font-size:12px;" id="tabs-8">
+									  <table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+										<tr>
+										  <td width="56%" valign="top"><table width="96%" border="0" cellspacing="0" cellpadding="5">
+											
+											<tr>
+											  <td width="43%" class="vacation-rentals-title-2"><?php echo $this->translator->translator('vacationrentals_front_page_Title_map'); ?></td>
+											</tr>
+											<?php 
+												$_feature_distance_from_airport = $this->escape($this->vacationrentals_Form->feature_distance_from_airport->getValue()); 
+												if (!empty($_feature_distance_from_airport)) {												
+											?>
+											<tr>
+												<td width="21%"><?php echo $this->vacationrentals_Form->feature_distance_from_airport->getAttrib('font_end_label');  ?></td>
+												 <td width="79%"><?php echo $_feature_distance_from_airport ; ?></td>
+											</tr>
+											<?php
+												}
+												$_feature_distance_from_rail = $this->escape($this->vacationrentals_Form->feature_distance_from_rail->getValue()); 
+												if (!empty($_feature_distance_from_rail)) {																			
+											?>
+											
+											<tr>
+												<td><?php echo $this->vacationrentals_Form->feature_distance_from_rail->getAttrib('font_end_label'); ?></td>
+												<td><?php echo $_feature_distance_from_rail; ?></td>
+											</tr>
+											<?php
+												}
+												$_feature_distance_from_market = $this->escape($this->vacationrentals_Form->feature_distance_from_market->getValue()); 
+												if (!empty($_feature_distance_from_market)) {																			
+											?>
+											
+											
+											<tr>
+												<td><?php echo $this->vacationrentals_Form->feature_distance_from_market->getAttrib('font_end_label'); ?></td>
+												<td><?php echo $_feature_distance_from_market; ?></td>
+											</tr>
+											<?php
+												}
+												$_feature_distance_from_city = $this->escape($this->vacationrentals_Form->feature_distance_from_city->getValue()); 
+												if (!empty($_feature_distance_from_city)) {																			
+											?>
+											
+											
+											<tr>
+												<td><?php echo $this->vacationrentals_Form->feature_distance_from_city->getAttrib('font_end_label'); ?></td>
+												<td><?php echo $_feature_distance_from_city; ?></td>
+											</tr>
+											<?php
+												}
+												$_feature_google_map = $this->escape($this->vacationrentals_Form->feature_google_map->getValue()); 
+												if (!empty($_feature_google_map)) {																			
+											?>
+																						
+											<tr>
+											  <td><?php echo $this->vacationrentals_Form->feature_google_map->getAttrib('font_end_label'); ?></td>
+											  <td><?php echo $_feature_google_map; ?></td>
+											</tr>
+											<?php
+												}																			
+											?>
+											
+										  </table></td>
+										</tr>
+									  </table>
+									</div>
+									
+									<br />
+									<br />
+									
+									<?php
+										if(!empty($staticGroupsObj))
+										{
+											$tab = 9;
+											foreach($staticGroupsObj as $staticGroup)
+											{
+												$elementsObj = $staticGroup->getElements();
+										?>
+										<div id="tabs-<?php echo $tab; ?>">
+											<table width="98%" border="0" align="center" cellpadding="5" cellspacing="0" style="font-size:13px; color:#000000; font-family:Arial, Helvetica, sans-serif;">
+												<?php																
+													foreach($elementsObj as $element)
+													{
+														if($element->getAttrib('frontend') == '1')
+														{	
+															if($element->getType() != 'Zend_Form_Element_File')
+															{	
+																if($element->getValue())
+																{														
+												?>	
+																<tr>
+																  <td width="24%"   valign="top" style="padding-left:5px;"><?php echo $element->getAttrib('font_end_label');  ?></td>
+																  <td width="76%" valign="top">
+																	  <?php 										
+																		$id_f = $element->getAttrib('id');
+																		$id_arr = explode('_',$id_f);	
+																		if(($element->getType() == 'Zend_Form_Element_MultiCheckbox') || ($element->getType() == 'Zend_Form_Element_Multiselect'))
+																		{	
+																			$val_arr = $element->getValue();														
+																			echo implode(', ',$val_arr);
+																		}
+																		else
+																		{													
+																			echo stripslashes($element->getValue());	
+																		}														
+																	?>														
+																  </td>
+																</tr>
+																<tr>
+																  <td width="24%" valign="top"></td>
+																  <td width="76%" valign="top"></td>
+																</tr>	
+												<?php
+																}
+															}
+														}
+													}
+												?>													
+											</table>
+										</div>
+									<?php
+											$tab++;
+										 }
+									 }
+									?>
+								</div>	
+								
+								
+								
+								
+										
+							</td>
+						  </tr>
+						</table></td>
+					  </tr>
+					  <tr>
+						<td>&nbsp;
+							
+						</td>
+					  </tr>					  
+					</table>
+			</div>
+		</div>
+	</div>	
+</div>
+</body>
+</html>

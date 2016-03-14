@@ -1,0 +1,729 @@
+<?php
+$locale = Eicra_Global_Variable::getSession()->sess_lang;
+$locale_arr = explode('_', $locale);
+$locale_direction = Eicra_Global_Variable::getSession()->site_direction;
+$style_direction = ($locale_direction == 'rtl') ? '_'.$locale_direction : '';
+
+$front_template = Zend_Registry::get('front_template');
+
+echo $this->headScript()->setFile('application/layouts/scripts/'.$front_template['theme_folder'].'/vendor/scripts/js/jquery.easytabs.js');
+
+$version = Zend_Registry::get('version'); 
+$translator = Zend_Registry::get('translator');
+$vacation_rental_group_id = 1;
+
+try
+{
+	//DB Connection
+	$conn = Zend_Registry::get('msqli_connection');
+	$conn->getConnection();
+		
+	$select = $conn->select()->from(array('api' => Zend_Registry::get('dbPrefix').'flight_api'), array('api.api_name'))->where('id = ?','1')->limit(1);
+	
+	$rs = $select->query()->fetchAll();		
+	if($rs)
+	{
+		foreach($rs as $row)
+		$flight_api = $row['api_name'];			
+	}
+}
+catch(Exception $e)
+{
+	$flight_api = 'Default';	
+}
+?>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		checkSameData_block('flight_route_departure', 'flight_route_arrival', 0);		
+		<?php if($flight_api == 'Default' || $flight_api == 'WeGo' ){ ?>
+		$("input[name='trip_type']").click(function() {
+			var val = $(this).val();
+			
+			switch(val)
+			{
+				case 'One way':
+					$('span.flight_route_arrival_date_box').css('display','none');
+					
+				 break;
+				 case 'Round':
+					$('span.flight_route_arrival_date_box').css('display','inline');					
+					
+				 break;
+			}
+		});
+		<?php } ?>
+		calender_block('check_in', 'check_out');
+		calender_block('check_out', 'check_in');
+		//$("#textExample").verticaltabs({speed: 500,slideShow: false,activeIndex: 0});
+		autoSugg_block();
+		
+		$('#country_id_B').change(function() {	
+			if($('#country_id_B option:selected').val() == 'any' || $('#country_id_B option:selected').val() =='')
+			{
+				$('#area_id_B').html('<option value="any"><?php echo $translator->translator("common_select_area",'', '', $front_template['theme_folder']); ?></option>');	
+				$('#state_id_B').html('<option value="any"><?php echo $translator->translator("common_select_state",'', '', $front_template['theme_folder']); ?></option>');
+			}
+			else
+			{	
+				$.ajax({
+					  url: "<?php echo $this->url( array('module' =>'Vacationrentals','controller' => 'frontend', 'action'     => 'states' ), 'adminrout',    true) ?>",
+					  type: 'POST',
+					  data: { id: $('#country_id_B option:selected').val() },
+					  beforeSend: function(){						
+								$('#state_id_B').html('<option value="any"><?php echo $translator->translator("common_loading_language",'', '', $front_template['theme_folder']); ?></option>');
+								$('#area_id_B').html('<option value="any"><?php echo $translator->translator("common_select_area",'', '', $front_template['theme_folder']); ?></option>');			
+								$('#state_id_err').html('<img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/loader/mod-loader.gif" width="15" border="0" />');	
+							 },
+					  success: function(response){
+						//alert(response);
+						var json_arr = eval("("+response+")");
+						var option = '<option value="any"><?php echo $translator->translator("common_select_state",'', '', $front_template['theme_folder']); ?></option>';				
+						if(json_arr.status == 'ok')
+						{
+							for(var i = 0;i<json_arr.states.length;i++)
+							{
+								option += '<option value="'+json_arr.states[i].state_id+'" >'+stripslashes_block(json_arr.states[i].state_name)+'</option>';
+							}
+							$('#state_id_B').html(option);
+						}
+						else
+						{
+							$('#state_id_B').html('<option value="any">'+json_arr.msg+'</option>');
+						}
+						$('#state_id_err').html('');
+					  }
+				});
+			}
+		});
+		
+		$('#state_id_B').change(function() {		
+					
+			if($('#state_id_B option:selected').val() == 'any' || $('#state_id_B option:selected').val() == '')
+			{
+				$('#area_id_B').html('<option value="any"><?php echo $translator->translator("common_select_area",'', '', $front_template['theme_folder']); ?></option>');
+			}
+			else
+			{
+				$.ajax({
+					  url: "<?php echo $this->url( array('module' => 'Vacationrentals', 'controller' => 'frontend', 'action'     => 'areas' ), 'adminrout',    true) ?>",
+					  type: 'POST',
+					  data: { id: $('#state_id_B option:selected').val() },
+					  beforeSend: function(){						
+							$('#area_id_B').html('<option value="any"><?php echo $translator->translator("common_loading_language",'', '', $front_template['theme_folder']); ?></option>');
+							$('#area_id_err').html('<img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/loader/mod-loader.gif" width="15" border="0" />');	
+							},
+					  success: function(response){
+						//alert(response);
+						var json_arr = eval("("+response+")");
+						var option = '<option value="any"><?php echo $translator->translator("common_select_area",'', '', $front_template['theme_folder']); ?></option>';				
+						if(json_arr.status == 'ok')
+						{
+							for(var i = 0;i<json_arr.cities.length;i++)
+							{
+								option += '<option value="'+json_arr.cities[i].city_id+'" >'+stripslashes_block(json_arr.cities[i].city)+'</option>';
+							}
+							$('#area_id_B').html(option);
+						}
+						else
+						{
+							$('#area_id_B').html('<option value="any">'+json_arr.msg+'</option>');
+						}
+						$('#area_id_err').html('');
+					  }
+				});
+			}
+		});			
+	
+	
+		$('#country_id_T').change(function() {	
+			if($('#country_id_T option:selected').val() == 'any' || $('#country_id_T option:selected').val() =='')
+			{
+				$('#area_id_T').html('<option value="any"><?php echo $translator->translator("common_select_area",'', '', $front_template['theme_folder']); ?></option>');	
+				$('#state_id_T').html('<option value="any"><?php echo $translator->translator("common_select_state",'', '', $front_template['theme_folder']); ?></option>');
+			}
+			else
+			{	
+				$.ajax({
+					  url: "<?php echo $this->url( array('module' =>'Vacationrentals','controller' => 'frontend', 'action'     => 'states' ), 'adminrout',    true) ?>",
+					  type: 'POST',
+					  data: { id: $('#country_id_T option:selected').val() },
+					  beforeSend: function(){						
+								$('#state_id_T').html('<option value="any"><?php echo $translator->translator("common_loading_language",'', '', $front_template['theme_folder']); ?></option>');
+								$('#area_id_T').html('<option value="any"><?php echo $translator->translator("common_select_area",'', '', $front_template['theme_folder']); ?></option>');			
+								$('#state_id_T_err').html('<img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/loader/mod-loader.gif" width="15" border="0" />');	
+							 },
+					  success: function(response){
+						//alert(response);
+						var json_arr = eval("("+response+")");
+						var option = '<option value="any"><?php echo $translator->translator("common_select_state",'', '', $front_template['theme_folder']); ?></option>';				
+						if(json_arr.status == 'ok')
+						{
+							for(var i = 0;i<json_arr.states.length;i++)
+							{
+								option += '<option value="'+json_arr.states[i].state_id+'" >'+stripslashes_block(json_arr.states[i].state_name)+'</option>';
+							}
+							$('#state_id_T').html(option);
+						}
+						else
+						{
+							$('#state_id_T').html('<option value="any">'+json_arr.msg+'</option>');
+						}
+						$('#state_id_T_err').html('');
+					  }
+				});
+			}
+		});
+		
+		$('#state_id_T').change(function() {		
+					
+			if($('#state_id_T option:selected').val() == 'any' || $('#state_id_T option:selected').val() == '')
+			{
+				$('#area_id_T').html('<option value="any"><?php echo $translator->translator("common_select_area",'', '', $front_template['theme_folder']); ?></option>');
+			}
+			else
+			{
+				$.ajax({
+					  url: "<?php echo $this->url( array('module' => 'Vacationrentals', 'controller' => 'frontend', 'action'     => 'areas' ), 'adminrout',    true) ?>",
+					  type: 'POST',
+					  data: { id: $('#state_id_T option:selected').val() },
+					  beforeSend: function(){						
+							$('#area_id_T').html('<option value="any"><?php echo $translator->translator("common_loading_language",'', '', $front_template['theme_folder']); ?></option>');
+							$('#area_id_T_err').html('<img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/loader/mod-loader.gif" width="15" border="0" />');	
+							},
+					  success: function(response){
+						//alert(response);
+						var json_arr = eval("("+response+")");
+						var option = '<option value="any"><?php echo $translator->translator("common_select_area",'', '', $front_template['theme_folder']); ?></option>';				
+						if(json_arr.status == 'ok')
+						{
+							for(var i = 0;i<json_arr.cities.length;i++)
+							{
+								option += '<option value="'+json_arr.cities[i].city_id+'" >'+stripslashes_block(json_arr.cities[i].city)+'</option>';
+							}
+							$('#area_id_T').html(option);
+						}
+						else
+						{
+							$('#area_id_T').html('<option value="any">'+json_arr.msg+'</option>');
+						}
+						$('#area_id_T_err').html('');
+					  }
+				});
+			}
+		});			
+	});
+	
+	function calender_block(id,second_id)
+	{
+		$("#"+id).datepicker({
+			showOn: 'button',
+			buttonImage: 'application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/calendar.png',
+			buttonImageOnly: true,		
+			monthNamesShort:<?php echo $translator->translator("common_calender_monthNamesShort",'', '', $front_template['theme_folder']); ?>,
+			monthNames:<?php echo $translator->translator("common_calender_monthNames",'', '', $front_template['theme_folder']); ?>,
+			dayNamesMin:<?php echo $translator->translator("common_calender_dayNamesMin",'', '', $front_template['theme_folder']); ?>,
+			showAnim: 'slide',
+			buttonText: 'Calender',
+			dateFormat:'yy-mm-dd',
+			autoSize:false,
+			showButtonPanel:false,
+			changeMonth: true,
+			changeYear: true,
+			onSelect: function(dateText, inst) {
+				var id_type_arr = id.split('_');
+				var true_id = 		id_type_arr[0] + id_type_arr[1];			
+				var currentTime = new Date();
+				var currentDay = (currentTime.getDate() < 10) ? '0' + currentTime.getDate() : currentTime.getDate();
+				var currentMonth = ((currentTime.getMonth() + 1) < 10) ? '0' + (currentTime.getMonth() + 1) : (currentTime.getMonth() + 1);
+				var today = currentTime.getFullYear() + '-' + currentMonth + '-' + currentDay;				
+				if(true_id == 'checkin')
+				{
+					if( (dateText != '') && ( (toTimestamp_block(dateText) >= toTimestamp_block($('#'+second_id).val())) || (toTimestamp_block(dateText) < toTimestamp_block(today)) )  )
+					{					
+						var msg = "<?php echo $translator->translator('hotels_front_page_checkin_date_err','', '', $front_template['theme_folder']); ?>";
+						openMsgDialog_block(msg);					
+						$('#'+id).val('');
+					}
+				}
+				else if(true_id == 'checkout')
+				{
+					if( (dateText != '') && ( (toTimestamp_block(dateText) <= toTimestamp_block($('#'+second_id).val())) || (toTimestamp_block(dateText) < toTimestamp_block(today)) )  )
+					{
+						var msg = "<?php echo $translator->translator('hotels_front_page_checkout_date_err','', '', $front_template['theme_folder']); ?>";
+						openMsgDialog_block(msg);
+						$('#'+id).val('');
+					}
+				}
+				
+				if(id_type_arr[2] == 'departure')
+				{				
+					if( (dateText != '') && ( (toTimestamp_block(dateText) >= toTimestamp_block($('#'+second_id).val())) || (toTimestamp_block(dateText) < toTimestamp_block(today)) )  )
+					{
+						var msg = "<?php echo $translator->translator('flight_route_departure_date_err','', '', $front_template['theme_folder']); ?>";
+						openMsgDialog_block(msg);
+						$('#'+id).val('');
+					}
+				}
+				else if(id_type_arr[2] == 'arrival')
+				{
+					if( (dateText != '') && ( (toTimestamp_block(dateText) <= toTimestamp_block($('#'+second_id).val())) || (toTimestamp_block(dateText) < toTimestamp_block(today)) )  )
+					{
+						var msg = "<?php echo $translator->translator('flight_route_arrival_date_err','', '', $front_template['theme_folder']); ?>";
+						openMsgDialog_block(msg);
+						$('#'+id).val('');
+					}
+				}
+			}
+		});
+		$("img[class='ui-datepicker-trigger']").each(function(){ 
+				$(this).attr('style', '');
+			 });
+	}
+	
+	function toTimestamp_block(strDate){
+		 var datum = Date.parse(strDate);
+		 return datum/1000;
+	}
+	
+	function openMsgDialog_block(msg)
+	{
+	$('#dialog_container_block').html(msg).dialog({
+				autoOpen: true,
+				modal: false,
+				show: 'fade',
+				resizable: 'false',				
+				buttons: { "<?php echo $translator->translator('common_ok'); ?>": function() { $(this).dialog('option', 'hide', 'explode').dialog("close"); } },
+				open: function(event, ui)
+					 {
+						setTimeout(function() 
+						{									
+							if($('#' + event.target.id).dialog('isOpen'))
+							{
+								//$('#' + event.target.id).dialog('option', 'hide', 'explode').dialog('close');										
+							}
+						}, 5000);
+					  }
+			});
+	}
+	
+function autoSugg_block()
+{	
+		autoSuggestion('location_for_search', "<?php echo $this->url( array('module'=> 'Hotels', 'controller' => 'frontend', 'action'     => 'searchname' ), 'adminrout',    true) ?>", {'location_for_search': ''}, ['hotels_primary_image', 'hotels_image', 'hotels_name', 'location_for_search', 'owner_name', 'hotels_location'], 'data/frontImages/hotels/hotels_image', 2);
+		autoSuggestion('post_code_B', "<?php echo $this->url( array('module'=> 'Vacationrentals', 'controller' => 'backendpro', 'action'     => 'searchname' ), 'adminrout',    true) ?>", {'post_code': ''}, ['vacationrentals_primary_image', 'vacationrentals_image', 'vacationrentals_name', 'post_code', 'owner_name','vacationrentals_postcode' ,'vacationrentals_room', 'vacationrentals_location'], 'data/frontImages/vacationrentals/vacationrentals_image', 2);	
+		autoSuggestion('post_code_tour_b', "<?php echo $this->url( array('module'=> 'Tours', 'controller' => 'backendpro', 'action'     => 'searchname' ), 'adminrout',    true) ?>", {'post_code': ''}, ['tours_primary_image', 'tours_image', 'tours_name', 'post_code', 'owner_name', 'num_of_days','tours_postcode' ,'ending_city', 'tours_location'], 'data/frontImages/tours/tours_image', 2);	
+}
+
+function stripslashes_block(str) 
+{
+	str=str.replace(/\\'/g,'\'');
+	str=str.replace(/\\"/g,'"');
+	str=str.replace(/\\0/g,'\0');
+	str=str.replace(/\\\\/g,'\\');
+	return str;
+}
+
+function autoList_block(id)
+{
+	autoSuggestion(id, "<?php echo $this->url( array('module'=> 'Flight', 'controller' => 'frontend', 'action'     => 'iata' ), 'adminrout',    true) ?>", {'datas': ''}, ['iata_code', 'iata_code', 'flight_label', 'flight_value', 'flight_location'], '', 3);
+}
+
+function removeError_block()
+{		
+	var filename = '';
+	var filevalue = '';		
+	$.each($('form').serializeArray(), function(i, field) {	
+			if(field.name.match(/\[\]$/))
+			{
+				var filearr = field.name.split('[]');
+				filename = filearr[0];					
+			}
+			else
+			{
+				filename 	= 	field.name;
+			} 			
+			$('input[name="'+filename+'[]"]').removeClass('ui-state-error');												
+	});				
+}
+
+function checkRouteFieldValue_block()
+{
+	var check = true;
+	var attr_id = '';
+	var id_no_arr = [];
+	removeError_block();
+	for(var i=0; i < $('input.flight_route_departure').length; i++)
+	{	
+		attr_id  =	$('input.flight_route_departure:eq('+i+')').attr('id');
+		id_no_arr = attr_id.split('flight_route_departure');		
+		if(jQuery.trim($('input.flight_route_departure:eq('+i+')').val()) == '' || jQuery.trim($('input.flight_route_arrival:eq('+i+')').val()) == '' || jQuery.trim($('input.flight_route_departure_date:eq('+i+')').val()) == '' || ( $('input[name="trip_type"]:checked').val() == 'Round' && jQuery.trim($('input.flight_route_arrival_date:eq('+i+')').val()) == '' ) )
+		{	
+			if(jQuery.trim($('input.flight_route_departure:eq('+i+')').val()) == '')
+			{	
+				$('input.flight_route_departure:eq('+i+')').addClass('ui-state-error');
+			}
+			
+			if(jQuery.trim($('input.flight_route_arrival:eq('+i+')').val()) == '')
+			{	
+				$('input.flight_route_arrival:eq('+i+')').addClass('ui-state-error');
+			}
+			
+			if(jQuery.trim($('input.flight_route_departure_date:eq('+i+')').val()) == '')
+			{	
+				$('input.flight_route_departure_date:eq('+i+')').addClass('ui-state-error');
+			}
+			
+			if($('input[name="trip_type"]:checked').val() == 'Round' && jQuery.trim($('input.flight_route_arrival_date:eq('+i+')').val()) == '')
+			{	
+				$('input.flight_route_arrival_date:eq('+i+')').addClass('ui-state-error');
+			}
+				
+			check = false;
+		}
+	}
+	if(check == false)
+	{
+		msg = '<?php echo $translator->translator("flight_front_page_fields_empty",'', '', $front_template['theme_folder']); ?>';
+		openMsgDialog_block(msg);
+	}
+	return 	check;	
+}
+
+function checkSameData_block(from_id, to_id, id_no)
+{
+	$('#'+from_id+id_no).blur(function() {		
+		if( ($('#'+from_id+id_no).val() != '') && ($('#'+from_id+id_no).val() == $('#'+to_id+id_no).val()) )
+		{
+			var msg = "<?php echo $translator->translator('flight_route_same_err','', '', $front_template['theme_folder']); ?>";
+			openMsgDialog_block(msg);
+			$('#'+from_id+id_no).val('');
+			$('#'+from_id+id_no).focus();
+		}
+	});
+	 
+	
+	$('#'+to_id+id_no).blur(function() {		
+		if( ($('#'+to_id+id_no).val() != '') && ($('#'+from_id+id_no).val() == $('#'+to_id+id_no).val()) )
+		{
+			var msg = "<?php echo $translator->translator('flight_route_same_err','', '', $front_template['theme_folder']); ?>";
+			openMsgDialog_block(msg);
+			$('#'+to_id+id_no).val('');
+			$('#'+to_id+id_no).focus();
+		}
+	});
+	
+	$(document).ready( function() {
+      $('#tab-container').easytabs();
+    });
+	
+	calender_block(from_id+'_date'+id_no, to_id+'_date'+id_no);
+	calender_block(to_id+'_date'+id_no, from_id+'_date'+id_no);
+	autoList_block(from_id+id_no);
+	autoList_block(to_id+id_no);	
+}
+</script>
+
+<div id="dialog_container_block" title="<?php echo $translator->translator('common_dialog_msg',$translator->translator('hotels_front_page_dialog_name','', '', $front_template['theme_folder'])); ?>"></div>
+<div class="block-home-search">
+	<div class="block-body">
+    	<h1><?php echo $translator->translator('travel_search_block_top_desc','', '', $front_template['theme_folder']); ?></h1>
+        <div id="tab-container" class="tab-container">
+            <ul class="etabs">
+                <li class="tabs"><a href="#tabs1"><span class="icon icon-1"></span><?php echo $translator->translator('travel_search_block_tab1','', '', $front_template['theme_folder']); ?></a></li>
+                <li class="tabs"><a href="#tabs2"><span class="icon icon-2"></span><?php echo $translator->translator('travel_search_block_tab2','', '', $front_template['theme_folder']); ?></a></li>
+                <li class="tabs"><a href="#tabs3"><span class="icon icon-3"></span><?php echo $translator->translator('travel_search_block_tab3','', '', $front_template['theme_folder']); ?></a></li>
+                <li class="tabs"><a href="#tabs4"><span class="icon icon-4"></span><?php echo $translator->translator('travel_search_block_tab4','', '', $front_template['theme_folder']); ?></a></li>
+                <li class="tabs"><a href="#tabs5"><span class="icon icon-5"></span><?php echo $translator->translator('travel_search_block_tab5','', '', $front_template['theme_folder']); ?></a></li>
+                <li class="tabs"><a href="#tabs6"><span class="icon icon-6"></span><?php echo $translator->translator('travel_search_block_tab6','', '', $front_template['theme_folder']); ?></a></li>
+                <li class="tabs"><a href="#tabs7"><span class="icon icon-7"></span><?php echo $translator->translator('travel_search_block_tab7','', '', $front_template['theme_folder']); ?></a></li>
+            </ul>
+     
+            <div class="panel-container">
+                <div id="tabs1">
+                    <h2><?php echo $translator->translator('hotels_block_simple_search_title','', '', $front_template['theme_folder']); ?></h2>
+                    <?php
+					$hotels_helper = new Hotels_View_Helper_HotelsGroup();
+					$num_hotels = $hotels_helper->getNumOfProduct(1);
+					$num_country = $hotels_helper->getNumOfProductCountry(1);
+					?>
+                    <div class="count"><?php echo $translator->translator('hotels_front_page_label_search', '', '', $front_template['theme_folder'] ); echo ' '.number_format($num_hotels). ' '; ?> <?php echo $translator->translator('hotels_front_page_label_world_wide', $num_country , '', $front_template['theme_folder'] ); ?></div>
+                    
+                    <form id="form1" name="form1" method="post" action="<?php echo $this->url( array('module' => 'Hotels', 'controller' => 'search', 'action'     => 'items' ), 'Search-Hotels',    true); ?>">
+                        <div class="col">
+                        	<label><?php echo $translator->translator('hotels_block_simple_search_label_city','', '', $front_template['theme_folder']); ?></label>
+                        	<input type="hidden" name="group_id_=" id="group_id" value="1" /><input type="hidden" name="active_=" id="active" value="1" />
+                        	<input name="location_for_search_LIKE" type="text" id="location_for_search" class="city"/>
+                      	</div>
+                        
+                        <div class="col">
+                            <label><?php echo $translator->translator('hotels_block_simple_search_label_check_in','', '', $front_template['theme_folder']); ?></label>
+                            <input name="<?php echo Eicra_File_Constants::HOTELS_CHECK_IN; ?>" type="text" id="check_in" class="medium" />
+                        </div>
+                      
+                        <div class="col">
+                            <label><?php echo $translator->translator('hotels_block_simple_search_label_check_out','', '', $front_template['theme_folder']); ?></label>
+                            <input name="<?php echo Eicra_File_Constants::HOTELS_CHECK_OUT; ?>" type="text" id="check_out" class="medium" />
+                        </div>
+                        
+                        <div class="clear">
+                        	<input type="submit" name="button" id="button" value="<?php echo $translator->translator('hotels_block_simple_search_label_btn','', '', $front_template['theme_folder']); ?>" />
+                        </div>
+                    </form>
+                </div>
+                
+                <div id="tabs2" style="display:none">
+                    <h2><?php echo $translator->translator('travel_search_block_tab2_title','', '', $front_template['theme_folder']); ?></h2>
+                    <div class="count"><?php echo $translator->translator('flight_front_page_label_search', '', '', $front_template['theme_folder'] ); ?> <?php echo $translator->translator('flight_front_page_label_world_wide', '' , '', $front_template['theme_folder'] ); ?></div>
+                    <form id="form1" name="form1" method="post" action="<?php echo $this->url( array('module' => 'Flight', 'controller' => 'frontend', 'action'     => 'airlineflightschedules' ), 'AirlineFlightSchedules',    true); ?>"  onsubmit="return checkRouteFieldValue_block();">
+                    	<div class="col">
+                            <label>
+                            	<input type="radio" name="trip_type" id="trip_type" value="Round" />&nbsp;<?php echo $translator->translator('flight_front_page_AirlineFlightSchedules_trip_type_round','', '', $front_template['theme_folder']); ?>
+                            </label>
+                        </div>
+                        
+                        <div class="col">
+                            <label>
+                            	<input type="radio" name="trip_type" id="trip_type" value="One way" checked="checked"/>&nbsp;<?php echo $translator->translator('flight_front_page_AirlineFlightSchedules_trip_type_one','', '', $front_template['theme_folder']); ?>
+                         	</label>
+                        </div>
+                      
+                      	<div class="col clear">
+                      		<label><?php echo $translator->translator('travel_search_block_tab2_from','', '', $front_template['theme_folder']); ?></label>
+                      		<input name="flight_route_departure[]" type="text" id="flight_route_departure0" class="flight_route_departure large" />
+                      	</div>
+                      
+                      	<div class="col">
+                      		<label><?php echo $translator->translator('travel_search_block_tab2_to','', '', $front_template['theme_folder']); ?></label>
+                      		<input name="flight_route_arrival[]" type="text" id="flight_route_arrival0" class="flight_route_arrival large" />
+                      	</div>                  
+
+                      	<div class="col clear">
+                      		<label><?php echo $translator->translator('travel_search_block_tab2_depart','', '', $front_template['theme_folder']); ?></label>
+                      		<input name="flight_route_departure_date[]" type="text" id="flight_route_departure_date0" class="flight_route_departure_date medium" />
+                      	</div>
+                      
+						<div class="col">
+                      		<span class="flight_route_arrival_date_box" <?php if($flight_api == 'Default' || $flight_api == 'WeGo'){ ?>style="display:none;"<?php } ?>>
+                      		<label><?php echo $translator->translator('travel_search_block_tab2_return','', '', $front_template['theme_folder']); ?></label>
+                      		<input name="flight_route_arrival_date[]" type="text" id="flight_route_arrival_date0" class="flight_route_arrival_date medium" /></span>
+                      	</div>
+                      
+                      	<div class="col">
+                      		<label><?php echo $translator->translator('flight_front_page_AirlineFlightSchedules_class_type','', '', $front_template['theme_folder']); ?></label>
+                      		<select name="class_type" id="class_type" class="large">
+                                <option value="Economy" ><?php echo $translator->translator('flight_front_page_AirlineFlightSchedules_class_1','', '', $front_template['theme_folder']); ?></option>
+                                <option value="Premium Economy"><?php echo $translator->translator('flight_front_page_AirlineFlightSchedules_class_4','', '', $front_template['theme_folder']); ?></option>
+                                <option value="Business" ><?php echo $translator->translator('flight_front_page_AirlineFlightSchedules_class_2','', '', $front_template['theme_folder']); ?></option>
+                                <option value="First" ><?php echo $translator->translator('flight_front_page_AirlineFlightSchedules_class_3','', '', $front_template['theme_folder']); ?></option>											
+                         	</select>
+                      	</div>  
+                     
+                      	<div class="col">
+                      		<label><?php echo $translator->translator('flight_front_page_AirlineFlightSchedules_adult_no','', '', $front_template['theme_folder']); ?></label>
+                            <select name="adult_no" id="adult_no" class="small">
+                                <?php for($i = 1; $i <= 12; $i++){ 						
+                                ?>
+                                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                                <?php } ?>										
+                            </select>
+                      	</div> 
+                      
+                      	<div class="col">
+                      		<label><?php echo $translator->translator('flight_front_page_AirlineFlightSchedules_child_no','', '', $front_template['theme_folder']); ?></label>
+                    		<select name="child_no" id="child_no" class="small">
+                            	<?php for($i = 0; $i <= 12; $i++){?>
+                            	<option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                            	<?php } ?>										
+                        	</select>
+                      	</div>  
+                    
+                      	<div class="col">
+                      		<label><?php echo $translator->translator('flight_front_page_AirlineFlightSchedules_infant_no','', '', $front_template['theme_folder']); ?></label>
+                      		<select name="infant_no" id="infant_no" class="small">
+                            	<?php for($i = 0; $i <= 12; $i++){ ?>
+                                <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                                <?php } ?>										
+                            </select>
+                      	</div>
+                        
+                      	<div class="">
+                      		<input type="submit" name="submit" id="button" value="<?php echo $translator->translator('flight_front_page_search_btn','', '', $front_template['theme_folder']); ?>" />
+                      	</div> 
+                    </form>
+                </div>
+                
+                <div id="tabs3" style="display:none">
+                	<?php
+						$vacationrentals_DB = new Vacationrentals_Model_DbTable_Vacationrentals();
+						$num_vacationrentals= $vacationrentals_DB->getNumOfProduct();
+						$num_vacationrentals_country = $vacationrentals_DB->getNumOfProductCountry();
+					?>
+                    <h2><?php echo $translator->translator('travel_search_block_tab3_title','', '', $front_template['theme_folder']); ?></h2>
+                  	<div class="count"><?php echo $translator->translator('vacationrentals_front_page_label_search', '', '', $front_template['theme_folder'] ); echo ' '.number_format($num_vacationrentals). ' '; ?> <?php echo $translator->translator('vacationrentals_front_page_label_world_wide', $num_vacationrentals_country , '', $front_template['theme_folder'] ); ?></div>
+                    <form id="form1" name="form1" method="post" action="<?php echo $this->url( array('module' => 'Vacationrentals', 'controller' => 'search', 'action'     => 'items' ), 'Vacationrentals-Search',    true); ?>">
+                    	<div class="col">
+                      		<label><?php echo $translator->translator('vacationrentals_list_page_search_postcode','', '', $front_template['theme_folder']); ?></label>
+                      		<input name="post_code_=" type="text" id="post_code_B" size="15" class="x-large"/>
+                      		<input type="hidden" name="active_=" id="active" value="1" /><input type="hidden" name="group_id_=" id="group_id" value="<?php echo $vacation_rental_group_id; ?>" />
+                      	</div>
+                      
+                      	<div class="col">
+                      		<label><?php echo $translator->translator('vacationrentals_block_advanced_search_label_types_name','', '', $front_template['theme_folder']); ?></label>
+						  	<?php
+                            	$type_db =  new Vacationrentals_Model_DbTable_BusinessType();
+                            	$type_info = $type_db->getBusinessTypeByGroup($vacation_rental_group_id);
+                          	?>
+                        	<select name="vacationrentals_type_=" id="vacationrentals_type_=" class="medium">
+                            	<option value=""><?php echo $translator->translator('vacationrentals_select_businessType','', '', $front_template['theme_folder']); ?></option>
+								<?php
+                                    if($type_info)
+                                    {
+                                        foreach($type_info as $types)
+                                        {	
+                                    ?>
+                                        <option value="<?php echo $types['id']; ?>"><?php echo $this->escape($types['business_type']); ?></option>
+                                    <?php
+                                        }
+                                    }
+                                ?>
+                        	</select>
+                      	</div>
+                      
+                      	<div class="col">
+                      		<label><?php echo $translator->translator('vacationrentals_list_page_search_country','', '', $front_template['theme_folder']); ?></label>
+                      		<?php $country_db = new Vacationrentals_Model_DbTable_Country(); $country_info = $country_db->getCountryInfo (); ?>
+                          	<select name="country_id_=" id="country_id_B" class="medium">
+                          		<option value="any"><?php echo $translator->translator('common_select','', '', $front_template['theme_folder']); ?></option>
+							  	<?php
+								  if($country_info)
+								  {
+									foreach($country_info as $key=>$value)
+									{
+										echo '<option value="'.$key.'">'.$value.'</option>';
+									}
+								  }
+                              	?>
+                          	</select>
+                      	</div>
+                      
+                      	<div class="col">
+                      		<label><?php echo $translator->translator('vacationrentals_list_page_search_state','', '', $front_template['theme_folder']); ?></label>
+                      		<select name="state_id_=" id="state_id_B" class="medium">
+                          		<option value="any"><?php echo $translator->translator('vacationrentals_select_state','', '', $front_template['theme_folder']); ?></option>
+                          	</select><span id="state_id_err"></span>
+                      	</div>
+                      
+                      	<div class="col">
+                      		<label><?php echo $translator->translator('vacationrentals_list_page_search_area','', '', $front_template['theme_folder']); ?></label>
+                          	<select name="area_id_=" id="area_id_B" class="medium">
+                            	<option value="any"><?php echo $translator->translator('vacationrentals_select_area','', '', $front_template['theme_folder']); ?></option>
+                          	</select><span id="area_id_err"></span>
+                      	</div>
+                      
+                      	<div class="clear">
+                      		<input type="submit" name="button" id="button" value="<?php echo $translator->translator('vacationrental_front_search_btn','', '', $front_template['theme_folder']); ?>" />
+                      	</div>
+                    </form>
+				</div>
+                
+                <div id="tabs4" style="display:none">
+                	<?php
+						$tours_DB = new Tours_Model_DbTable_Tours();
+						$num_tours	= $tours_DB->getNumOfProduct();
+						$num_tours_country = $tours_DB->getNumOfProductCountry();
+					?>
+                    <h2><?php echo $translator->translator('travel_search_block_tab4_title','', '', $front_template['theme_folder']); ?></h2>
+                    <div class="count"><?php echo $translator->translator('tours_front_page_label_search', '', '', $front_template['theme_folder'] ); echo ' '.number_format($num_tours). ' '; ?> <?php echo $translator->translator('tours_front_page_label_world_wide', $num_tours_country , '', $front_template['theme_folder'] ); ?></div>
+					<form id="form1" name="form1" method="post" action="<?php echo $this->url( array('module' => 'Tours', 'controller' => 'search', 'action'     => 'items' ), 'Tours-Search',    true); ?>">
+						<div class="col">
+							<label><?php echo $translator->translator('tours_list_page_search_postcode','','Tours','', '', $front_template['theme_folder']); ?></label>
+                          	<input name="post_code_=" type="text" id="post_code_tour_b" class="x-large"/>
+                          	<input type="hidden" name="active_=" id="active" value="1" /><input type="hidden" name="group_id_=" id="group_id" value="<?php echo $vacation_rental_group_id; ?>" />
+                      	</div>
+                          
+                      	<div class="col">
+                        	<label><?php echo $translator->translator('tours_block_advanced_search_label_group_name','', '', $front_template['theme_folder']). ' :'; ?></label>
+                          	<select name="group_id_=" id="group_id" class="country_id medium">	
+								<?php
+                                    $group_db = new Tours_Model_DbTable_ToursGroup();
+                                    $group_list = $group_db->getGroupInfo();
+                                    if($group_list)
+                                    {
+                                        foreach($group_list as $key => $value)
+                                        {
+                                            $selected = ($this->postValue['group_id_='] == $key) ? 'selected=""selected' : '';
+                                    ?>
+                                        <option value="<?php echo $key; ?>" <?php echo $selected; ?>><?php echo $this->escape($value); ?></option>
+                                    <?php
+                                        }
+                                    }
+                                ?>
+                         	</select>
+                      	</div>
+                          
+                      	<div class="col">
+                      		<label><?php echo $translator->translator('tours_list_page_search_country','', '', $front_template['theme_folder']); ?></label>
+						  	<?php  $country_info = $country_db->getCountryInfo (); ?>
+                          	<select name="country_id_=" id="country_id_T" class="medium">
+                                <option value=""><?php echo $translator->translator('common_select','', '', $front_template['theme_folder']); ?></option>
+                                <?php
+                                  if($country_info)
+                                  {
+                                    foreach($country_info as $key=>$value)
+                                    {
+                                        echo '<option value="'.$key.'">'.$value.'</option>';
+                                    }
+                                  }
+                                ?>
+                       		</select>
+                      	</div>
+                          
+                      	<div class="col">
+                      		<label><?php echo $translator->translator('tours_list_page_search_state','', '', $front_template['theme_folder']); ?></label>
+                      		<select name="state_id_=" id="state_id_T" class="medium">
+                          		<option value=""><?php echo $translator->translator('tours_select_state','', '', $front_template['theme_folder']); ?></option>
+                          	</select><span id="state_id_T_err"></span>
+                      	</div>
+                          
+                      	<div class="col">
+                      		<label><?php echo $translator->translator('tours_list_page_search_area','', '', $front_template['theme_folder']); ?></label>
+                          	<select name="area_id_=" id="area_id_T" class="medium">
+                            	<option value=""><?php echo $translator->translator('tours_select_area','', '', $front_template['theme_folder']); ?></option>
+                          	</select><span id="area_id_T_err"></span>
+                      	</div>
+                          
+                      	<div class="clear">  
+                       		<input type="submit" name="button" id="button" value="<?php echo $translator->translator('tours_front_page_search_button','', '', $front_template['theme_folder']); ?>" />
+                      	</div>
+                  	</form>
+               	</div>
+                
+                <div id="tabs5" style="display:none">
+                    <h2><?php echo $translator->translator('travel_search_block_tab5_title','', '', $front_template['theme_folder']); ?></h2>
+                    <p>
+                    	<?php echo $translator->translator('travel_search_block_tab5_desc','', '', $front_template['theme_folder']); ?><br /><br />
+                        <a href="Car-Hire" class="btn"><?php echo $translator->translator('travel_search_block_tab5_title','', '', $front_template['theme_folder']); ?></a>
+                    </p>
+                </div>
+                
+                <div id="tabs6" style="display:none">
+                    <h2><?php echo $translator->translator('travel_search_block_tab6_title','', '', $front_template['theme_folder']); ?></h2>
+                    <p><?php echo $translator->translator('travel_search_block_tab6_desc','', '', $front_template['theme_folder']); ?></p>
+                </div>
+                
+                <div id="tabs7" style="display:none">
+                    <h2><?php echo $translator->translator('travel_search_block_tab7_title','', '', $front_template['theme_folder']); ?></h2>
+                    <p>
+                        <div class="scroll">
+							<?php 
+                                $contact_db = new Contact_Model_DbTable_Contact();
+                                $find_us = $contact_db->getContactInfo();
+                                echo $this->escape($find_us['contact_desc']);
+                            ?>
+                        </div>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

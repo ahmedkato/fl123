@@ -1,0 +1,81 @@
+<?php
+$front_template = Zend_Registry::get('front_template'); 
+$is_frontend = new Eicra_Model_DbTable_Frontend(); 
+$license = new Zend_Session_Namespace('License'); 
+$validation_data = $license->license_data;
+$locale = Eicra_Global_Variable::getSession()->sess_lang;
+$locale_arr = explode('_', $locale);
+$locale_direction = Eicra_Global_Variable::getSession()->site_direction;
+$global_conf = Zend_Registry::get('global_conf');
+$this->translator = Zend_Registry::get('translator'); 
+$version = new Eicra_License_Version();
+$auth = Zend_Auth::getInstance ();
+$frontController = Zend_Controller_Front::getInstance();
+$moduleName = strtolower($frontController->getRequest()->getModuleName());	
+$controllerName = strtolower($frontController->getRequest()->getControllerName());
+$actionName = strtolower($frontController->getRequest()->getActionName());
+$acount_link =  'Members-Dashboard';
+$booking_link = 'Members-Invoice-Item-List';
+$add_url = $this->url(array('module'=> 'Hotels','controller'=>'members', 'action'=>'add'), 'Members-Hotel-Add/*', true)  ;
+?>
+<div id="wrapper">
+	<!-- Header Start -->
+	<?php echo $this->layout()->render('header'); ?>
+	<!-- Header End -->
+    
+    <!-- Top Navigation Start-->
+    <nav class="top-nav">
+        <div class="container"><?php echo $this->partial('blocks/menu_header.phtml'); ?></div>
+    </nav>
+    <!-- Top Navigation End-->
+    
+    <!-- Main Body Start -->
+    <section id="main">
+    	<!-- Banner Start -->
+        <div id="banner">
+            <img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/hotel-banner.jpg" alt="">            
+			<?php echo $this->partial('blocks/hotels/hotels_count.phtml'); ?>
+            <?php echo $this->partial('blocks/hotels/hotels_home_banner_search.phtml'); ?>
+        </div>
+        <!-- Banner End -->
+        
+        <div class="main-container">
+            <?php echo $this->partial('blocks/hotels/hotels_home_content_featured.phtml'); ?>   
+            
+            <!-- Left Sidebar Start-->
+            <aside id="sidebar">
+            	<div class="add-btn"><span class="icon"></span><a href="<?php echo $add_url; ?>"><?php echo $this->translator->translator('hotels_front_page_home_add_btn_link','', '', $front_template['theme_folder']); ?></a></div>
+            	<?php $this->ad(202); ?>
+                <?php echo $this->partial('blocks/sidebar_social.phtml'); ?>
+            </aside>
+            <!-- Left Sidebar End -->
+            
+            <!-- Content Start -->
+            <article id="content">
+            	<!-- Featured Tab Start -->
+                <div id="usual" class="usual">
+                    <ul>
+                      <li><a class="selected" href="#tab1"><?php echo $this->translator->translator('hotels_block_popular_list_title','', '', $front_template['theme_folder']); ?></a></li>
+                      <li><a class="" href="#tab2"><?php echo $this->translator->translator('hotels_block_latest_list_title','', '', $front_template['theme_folder']); ?></a></li>
+                    </ul>
+                </div>
+                <div class="usual-content">
+                    <div style="display: block;" id="tab1"><?php echo $this->partial('blocks/hotels/hotels_home_content_popular.phtml'); ?></div>
+                    <div style="display: none;" id="tab2"><?php echo $this->partial('blocks/hotels/hotels_home_content_recent.phtml'); ?></div>
+                </div>
+                <script type="text/javascript">
+                    $("#usual ul").idTabs();
+                </script>        
+                <!-- Featured Tab End-->
+            </article>
+            <!-- Content End -->
+            <div class="clear"></div>
+            <?php echo $this->partial('blocks/hotels/hotels_home_content_recent_listview.phtml'); ?>
+        </div>
+    </section>
+    <!-- Main Body End -->
+    
+    <!-- Footer Start -->
+    <?php echo $this->layout()->render('footer'); ?>
+    <!-- Footer End -->
+</div>

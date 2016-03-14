@@ -1,0 +1,114 @@
+<?php
+$this->headMeta()->setName('keywords', $this->escape($this->view_datas['highlights']));
+$this->headMeta()->setName('description', $this->escape($this->view_datas['highlights'])); 
+$this->headTitle()->headTitle( $this->escape($this->view_datas['highlights']),'SET'); 
+
+function vacationrentals_truncate($phrase,$start_words, $max_words)
+{
+   $phrase_array = explode(' ',$phrase);
+   if(count($phrase_array) > $max_words && $max_words > 0)
+	  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+   return $phrase;
+}
+//echo '<pre>';
+//print_r($this->view_datas);
+//echo '</pre>';
+?>
+
+<div class="mod mod-details mod-wego">
+	<h1><?php echo $this->escape($this->view_datas['headline']); ?></h1>
+	<div class="products-type"><?php echo ucfirst($this->escape($this->view_datas['classification'])); ?></div>
+    <div class="clear">&nbsp;</div>
+	<?php if($this->view_datas['image']){ ?>
+    <div class="img-wrapper">
+    	<a href="javascript:void(0);" class="preview" link="<?php echo $this->view_datas['image']; ?>" title="" ><img src="<?php echo $this->escape($this->view_datas['image']); ?>"  width="150" border="0" class="thumb"/></a>
+    </div>
+	<?php } ?>
+    <div class="clear">&nbsp;</div>
+    <div class="products-chart">
+		<div class="products-details">
+				<div class="products-details-header"><h4 class="icon"><?php echo $this->translator->translator('vacationrentals_front_page_Title_detail'); ?></h4></div>
+            	<div class="content">
+                	<div class="chart-desc">
+                		<div class="label"><?php echo $this->translator->translator('vacationrentals_block_featured_label_price'); ?></div>
+                    	<div class="value"><?php echo $this->escape($this->view_datas['currency']).' '.$this->escape($this->view_datas['price']); ?></div>
+                        
+                        <div class="label"><?php echo $this->translator->translator('Sales From :'); ?></div>
+                        <div class="value"><?php echo $this->escape($this->view_datas['sales_from']); ?></div>
+                        
+                        <div class="label"><?php echo $this->translator->translator('Sales Till :'); ?></div>
+                        <div class="value"><?php echo $this->escape($this->view_datas['sales_till']); ?></div>
+                        
+                        <div class="label"><?php echo $this->translator->translator('Days :'); ?></div>
+                        <div class="value"><?php echo $this->escape($this->view_datas['days']); ?></div>
+                        
+                        <div class="label"><?php echo $this->translator->translator('Nights :'); ?></div>
+                        <div class="value"><?php echo $this->escape($this->view_datas['nights']); ?></div>
+                        
+                        <div class="label"><?php echo $this->translator->translator('Airlines :'); ?></div>
+                        <div class="value"><?php echo $this->escape($this->view_datas['airlines']); ?></div>
+                        
+                        <div class="label"><?php echo $this->translator->translator('Hotels :'); ?></div>
+                        <div class="value"><?php echo $this->escape($this->view_datas['hotels']); ?></div>
+                        
+                        <div class="label"><?php echo $this->translator->translator('Travel Agent :'); ?></div>
+                        <div class="value"><?php echo $this->escape($this->view_datas['travel_agent']); ?></div>
+                        
+                        <div class="label"><?php echo $this->translator->translator('Dest Countries :'); ?></div>
+                        <div class="value"><?php $dest_countries = implode(', ', $this->view_datas['dest_countries']); echo $this->escape($dest_countries); ?></div>
+                        
+                        <div class="label"><?php echo $this->translator->translator('Dest Cities :'); ?></div>
+                        <div class="value"><?php $dest_cities = implode(', ', $this->view_datas['dest_cities_attractions']); echo $this->escape($dest_cities); ?></div>
+                        
+                        <?php
+							$remarks = nl2br($this->view_datas['remarks']); 
+							$remarks_arr = explode('<br />', $remarks);
+							foreach($remarks_arr as $remarks_value)
+							{				
+								$remarks_value_arr = explode(':', $remarks_value);
+								if(!empty($remarks_value_arr[0]) && !empty($remarks_value_arr[1]))
+								{
+									echo '<div class="label">'.$remarks_value_arr[0].':</div>'. '<div class="value">'.$remarks_value_arr[1].'</div>';
+								}
+							}
+						?>
+                        
+                        <div class="label"><?php echo $this->translator->translator('Highlights :'); ?></div>
+                        <div class="value"><?php  echo $this->escape($this->view_datas['highlights']);  ?></div>
+                    </div>
+                </div>
+        </div>
+	</div>
+
+	<div class="clear btn-container"><span class="form-button"><a href="http://www.wego.com/packages/api/redirect?id=<?php echo $this->view_datas['id']; ?>"><?php echo $this->translator->translator('vacationrentals_invoice_book_now'); ?></a></span></div>
+    <fieldset>
+        <legend><?php echo $this->translator->translator('Itineraries'); ?></legend>
+        <?php echo $this->translator->translator('Headline'); ?> <?php echo $this->translator->translator('Message'); ?>
+        
+        <div class="itinerary_main_body_block">
+            <?php               	
+                foreach($this->view_datas['itineraries'] as $itineraries_key => $itineraries)
+                {
+                    if($itineraries)
+                    {
+            ?>
+            <div class="itinerary_main_body_block_clild_header">
+                <div class="itinerary-header">
+                    <?php echo $this->translator->translator('Days :'); ?> <?php echo $this->escape($itineraries['days']); ?>
+                </div>
+            </div>
+            <div class="itinerary_main_body_block_clild_body">
+                <div class="itinerary_main_body_block_clild_body_box1">
+                    <p><?php echo $this->translator->translator('Headline :'); ?> <?php echo nl2br($this->escape($itineraries['headline'])); ?></p>
+                </div>
+                <div class="itinerary_main_body_block_clild_body_box3">
+                    <p><?php echo $this->escape($itineraries['message']); ?></p>
+                </div>
+            </div>
+            <?php
+                    }
+                }
+            ?>
+        </div> 
+    </fieldset>
+</div>

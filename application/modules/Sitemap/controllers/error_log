@@ -1,0 +1,2 @@
+[03-Aug-2013 04:31:33 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 04:31:33 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Action' not found in /home/wwwhotei/public_html/application/modules/Sitemap/controllers/SitemapController.php on line 0

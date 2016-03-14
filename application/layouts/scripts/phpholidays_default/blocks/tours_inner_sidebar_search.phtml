@@ -1,0 +1,465 @@
+<?php
+class Tour_search
+{
+	protected	$_group = 1;
+	protected	$_group_name = 'Domestic Tours';
+	protected	$_active =	1;
+	protected	$_front_template;
+	protected	$_translator;
+	protected	$_view;
+	protected	$postValue;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_view =	$view;	
+		$this->_translator = Zend_Registry::get('translator');	
+		$frontController = Zend_Controller_Front::getInstance();
+		$this->postValue = $frontController->getRequest()->getPost();
+	}
+	
+	public function class_body()
+	{
+		$version = new Eicra_License_Version();  
+		
+		$tours_Country_DB = new Tours_Model_DbTable_Country();
+		$tours_State_DB = new Tours_Model_DbTable_State();
+		$tours_Area_DB = new Tours_Model_DbTable_Area();
+		$tours_DB = new Tours_Model_DbTable_Tours();
+		$businessType_BD = new Tours_Model_DbTable_BusinessType();
+		$group_db = new Tours_Model_DbTable_ToursGroup();
+
+
+		$global_conf = Zend_Registry::get('global_conf');
+		$currency = new Zend_Currency($global_conf['default_locale']);
+		
+		
+		$price_info_min = $tours_DB->getPrice('ASC');
+		$price_info_max = $tours_DB->getPrice('DESC');
+		
+		$number_of_day_min = $tours_DB->getDays('ASC');
+		$number_of_day_max = $tours_DB->getDays('DESC');
+		
+		$number_of_nights_min = $tours_DB->getNights('ASC');
+		$number_of_nights_max = $tours_DB->getNights('DESC');
+
+		
+		$tours_type_ID = $tours_DB->getToursType();
+		$rating = $tours_DB->getRating();
+		$duration = $tours_DB->getDuration();
+		$startCity = $tours_DB->getStartCity();
+		$endCity = $tours_DB->getEndCity();		
+		$minimumStay = $tours_DB->getMinimumStay();
+		$countries = $tours_Country_DB->getCountryInfo ();
+		
+?>
+<script type="text/javascript">
+$(function() {
+	autoSuggestion('post_code_advance_box', "<?php echo $this->_view->url( array('module'=> 'Tours', 'controller' => 'backendpro', 'action'     => 'searchname' ), 'adminrout',    true) ?>", {'post_code': ''}, ['tours_primary_image', 'tours_image', 'tours_name', 'post_code', 'owner_name', 'num_of_days','tours_postcode' ,'ending_city', 'tours_location'], 'data/frontImages/tours/tours_image', 2);	
+		
+	$('a.clear_search').click(function() {		
+		$.each($('#formBlockAdvanceSearch').serializeArray(), function(i, field) {					
+			$('input[name="'+field.name+'"]').val('');		
+			$('select[name="'+field.name+'"]').val('');		
+		});	
+	});	
+	
+	
+	$('select.country_id').change(function() {	
+		if($('select.country_id option:selected').val() == 'any' || $('select.country_id option:selected').val() =='')
+		{
+			$('select.area_id').html('<option value="any"><?php echo $this->_translator->translator("tours_select_area"); ?></option>');	
+			$('select.state_id').html('<option value="any"><?php echo $this->_translator->translator("tours_select_state"); ?></option>');
+		}
+		else
+		{	
+			$.ajax({
+				  url: "<?php echo $this->_view->url( array('module' =>'Tours','controller' => 'frontend', 'action'     => 'states' ), 'adminrout',    true) ?>",
+				  type: 'POST',
+				  data: { id: $('select.country_id option:selected').val() },
+				  beforeSend: function(){						
+							$('select.state_id').html('<option value="any"><?php echo $this->_translator->translator("common_loading_language"); ?></option>');
+							$('select.area_id').html('<option value="any"><?php echo $this->_translator->translator("tours_select_area"); ?></option>');			
+							$('#state_id_err').html('<img src="application/layouts/scripts/<?php echo $this->_front_template['theme_folder']; ?>/images/loader/mod-loader.gif" width="15" border="0" />');	
+						 },
+				  success: function(response){
+					//alert(response);
+					var json_arr = eval("("+response+")");
+					var option = '<option value="any"><?php echo $this->_translator->translator("tours_select_state"); ?></option>';				
+					if(json_arr.status == 'ok')
+					{
+						for(var i = 0;i<json_arr.states.length;i++)
+						{
+							option += '<option value="'+json_arr.states[i].state_id+'" >'+stripslashes(json_arr.states[i].state_name)+'</option>';
+						}
+						$('select.state_id').html(option);
+					}
+					else
+					{
+						$('select.state_id').html('<option value="any">'+json_arr.msg+'</option>');
+					}
+					$('#state_id_err').html('');
+				  }
+			});
+		}
+	});
+	
+	$('select.state_id').change(function() {		
+				
+		if($('select.state_id option:selected').val() == 'any' || $('select.state_id option:selected').val() == '')
+		{
+			$('select.area_id').html('<option value="any"><?php echo $this->_translator->translator("tours_select_area"); ?></option>');
+		}
+		else
+		{
+			$.ajax({
+				  url: "<?php echo $this->_view->url( array('module' => 'Tours', 'controller' => 'frontend', 'action'     => 'areas' ), 'adminrout',    true) ?>",
+				  type: 'POST',
+				  data: { id: $('select.state_id option:selected').val() },
+				  beforeSend: function(){						
+						$('select.area_id').html('<option value="any"><?php echo $this->_translator->translator("common_loading_language"); ?></option>');
+						$('#area_id_err').html('<img src="application/layouts/scripts/<?php echo $this->_front_template['theme_folder']; ?>/images/loader/mod-loader.gif" width="15" border="0" />');	
+						},
+				  success: function(response){
+					//alert(response);
+					var json_arr = eval("("+response+")");
+					var option = '<option value="any"><?php echo $this->_translator->translator("tours_select_area"); ?></option>';				
+					if(json_arr.status == 'ok')
+					{
+						for(var i = 0;i<json_arr.cities.length;i++)
+						{
+							option += '<option value="'+json_arr.cities[i].city_id+'" >'+stripslashes(json_arr.cities[i].city)+'</option>';
+						}
+						$('select.area_id').html(option);
+					}
+					else
+					{
+						$('select.area_id').html('<option value="any">'+json_arr.msg+'</option>');
+					}
+					$('#area_id_err').html('');
+				  }
+			});
+		}
+	});	
+				
+});
+</script>
+
+<form name="formBlockAdvanceSearch" id="formBlockAdvanceSearch" method="post" action="<?php echo $this->_view->url( array('module' => 'Tours', 'controller' => 'search', 'action'     => 'items' ), 'Tours-Search',    true); ?>">
+<div class="block block-sidebar-search">
+	<div class="block-body">
+    	<div class="block-heading"><h1><?php echo $this->_translator->translator('tours_block_advanced_search_title','','Tours'); ?></h1></div>
+        <div class="block-content-1">
+			<p><?php echo $this->_translator->translator('tours_type_list_group_name','','Tours').' :'; ?></p>
+            <select name="group_id_=" id="group_id">					 	
+				<?php
+                $group_list = $group_db->getGroupInfo();
+				if($group_list)
+				{
+					foreach($group_list as $key => $value)
+					{
+							$selected = ($this->postValue['group_id_='] == $key) ? 'selected=""selected' : '';
+							$this->_group	= ($this->postValue['group_id_='] == $key) ? $this->postValue['group_id_='] : $this->_group;
+							$this->_group_name = ($this->postValue['group_id_='] == $key) ? $value : $this->_group_name;
+					?>
+						<option value="<?php echo $key; ?>" <?php echo $selected; ?>><?php echo $this->_view->escape($value); ?></option>
+					<?php	
+					}
+				}
+                ?>
+            </select>
+            
+            <p><?php echo $this->_translator->translator('tours_list_page_search_postcode','','Tours'); ?></p>
+            <input type="text" name="post_code_=" id="post_code_advance_box" value="<?php  if(!empty($this->postValue['post_code_='])){ echo $this->postValue['post_code_=']; } ?>" >
+        </div>
+    
+    	<div class="block-content-2">
+            <input type="hidden" name="active_=" id="active" value="<?php echo $this->_active; ?>" />
+            
+            <select name="tours_type_=" id="tours_type_=">
+                <option value=""><?php echo $this->_translator->translator('tours_block_advanced_search_label_types','','Tours'); ?></option>
+                <?php
+                if($tours_type_ID)
+				{
+                    foreach($tours_type_ID as $key => $value)
+                    {											
+                        
+                        $tours_type = $businessType_BD->getBusinessTypeInfo($value['tours_type']);
+                        $selected = ($this->postValue['tours_type_='] == $value['tours_type']) ? ' selected="selected" ' : '';
+                ?>
+                    <option value="<?php echo $value['tours_type']; ?>" <?php echo $selected; ?>><?php echo $this->_view->escape($tours_type['business_type']); ?></option>
+                <?php
+                    }
+				}
+                ?>
+            </select>
+            
+            <select name="country_id_="  id="country_id" class="country_id">
+                <option value="any"><?php echo $this->_translator->translator('tours_state_list_country_name','','Tours'); ?></option>
+                <?php
+                    $selected_country_id = (empty($this->postValue['country_id_='])) ? $global_conf['default_country'] : $this->postValue['country_id_='];
+                   	if($countries)
+					{
+						foreach($countries as $key=>$value)
+						{
+							$selected = ($selected_country_id == $key) ? ' selected="selected" ' : '';
+				?>
+						<option value="<?php echo $key; ?>"<?php echo $selected; ?>><?php echo $value; ?></option>					
+				<?php
+						}
+					}
+                ?>
+            </select>
+            
+            <select name="state_id_=" id="state_id" class="state_id">
+                <option value="any"><?php echo $this->_translator->translator('tours_select_state'); ?></option>	
+                <?php
+                    $state_info = $tours_State_DB->getAllStateInfo($selected_country_id); 
+                    if($state_info)
+					{
+						foreach($state_info as $key=>$value)
+						{
+							$selected = ($value['state_id'] == $this->postValue['state_id_=']) ? ' selected="selected" ' : '';
+							echo '<option value="'.$this->_view->escape($value['state_id']).'"'.$selected.'>'.$this->_view->escape($value['state_name']).'</option>';
+						}
+					}
+                 ?>																		
+            </select>
+            <div id="state_id_err" class="clear"></div>
+            
+            <select name="area_id_=" id="area_id" class="area_id">
+                <option value="any"><?php echo $this->_translator->translator('tours_select_area'); ?></option>	
+                <?php
+                        $selected_state_id = (empty($this->postValue['state_id_=']) || strtolower($this->postValue['state_id_=']) == 'any') ? '' : $this->postValue['state_id_='];
+                        if(!empty($selected_state_id ))
+                        {
+                            $area_info = $tours_Area_DB->getAllAreaInfo($selected_state_id); 
+                            if($area_info)
+							{	
+								foreach($area_info as $key=>$value)
+								{
+									$selected = ($value['city_id'] == $this->postValue['area_id_=']) ? ' selected="selected" ' : '';
+									echo '<option value="'.$this->_view->escape($value['city_id']).'"'.$selected.'>'.$this->_view->escape($value['city']).'</option>';
+								}
+							}
+                        }
+                     ?>																		
+            </select>
+            <div id="area_id_err" class="clear"></div>
+            
+            <select name="tours_price_>=" id="tours_price_>=" class="left">
+                <option value=""><?php echo $this->_translator->translator('tours_block_advanced_search_label_price_min','','Tours'); ?></option>
+                <?php	
+				if($price_info_min)
+				{					
+                    foreach($price_info_min as $key=>$value)
+                    {
+                        $selected = ($this->postValue['tours_price_>='] == $value['tours_price']) ? ' selected="selected" ' : '';
+                ?>
+                    <option value="<?php echo $value['tours_price']; ?>"<?php echo $selected; ?>><?php echo $this->_view->escape($value['tours_price']).' '.$currency->getSymbol(); ?></option>
+                <?php
+                    }
+				}
+                ?>
+            </select>
+            
+            <select name="tours_price_<=" id="tours_price_=" class="right">
+                <option value=""><?php echo $this->_translator->translator('tours_block_advanced_search_label_price_max','','Tours'); ?></option>
+                <?php
+				if($price_info_max)
+				{						
+                    foreach($price_info_max as $key=>$value)
+                    {
+                        $selected = ($this->postValue['tours_price_<='] == $value['tours_price']) ? ' selected="selected" ' : '';
+                ?>
+                    <option value="<?php echo $value['tours_price']; ?>"<?php echo $selected; ?>><?php echo $this->_view->escape($value['tours_price']).' '.$currency->getSymbol(); ?></option>
+                <?php
+                    }
+				}
+                ?>
+            </select>
+            
+            <select name="num_of_nights_>=" id="num_of_nights_>=" class="left">
+                <option value="" selected="selected"><?php echo $this->_translator->translator('tours_block_advanced_search_label_nights_min','','Tours'); ?></option>
+                <?php	
+				if($number_of_nights_min)
+				{					
+                    foreach($number_of_nights_min as $key=>$value)
+                    {
+                        
+                        $selected = ( ($this->postValue['num_of_nights_>='] != '') && ($this->postValue['num_of_nights_>='] == $value['num_of_nights'])) ? ' selected="selected" ' : '';
+                ?>
+                    <option value="<?php echo $value['num_of_nights']; ?>"<?php echo $selected; ?>><?php echo $this->_view->escape($value['num_of_nights']); ?></option>
+                <?php
+                    }
+				}
+                ?>
+            </select>
+                
+            <select name="num_of_nights_<=" id="num_of_nights_<=" class="right">
+                <option value=""><?php echo $this->_translator->translator('tours_block_advanced_search_label_nights_max','','Tours'); ?></option>
+                <?php
+				if($number_of_nights_max)
+				{						
+                    foreach($number_of_nights_max as $key=>$value)
+                    {
+                        $selected = ( ($this->postValue['num_of_nights_<='] != '') && ($this->postValue['num_of_nights_<='] == $value['num_of_nights'])) ? ' selected="selected" ' : '';
+                ?>
+                    <option value="<?php echo $value['num_of_nights']; ?>"<?php echo $selected; ?>><?php echo $this->_view->escape($value['num_of_nights']); ?></option>
+                <?php
+                    }
+				}
+                ?>
+            </select>
+            
+            <select name="num_of_days_>=" id="num_of_days_>=" class="left">
+                <option value="" selected="selected"><?php echo $this->_translator->translator('tours_block_advanced_search_label_price_days_min','','Tours'); ?></option>
+                <?php	
+				if($number_of_day_min)
+				{					
+                    foreach($number_of_day_min as $key=>$value)
+                    {
+                        
+                        $selected = ( ($this->postValue['num_of_days_>='] != '') && ($this->postValue['num_of_days_>='] == $value['num_of_days'])) ? ' selected="selected" ' : '';
+                ?>
+                    <option value="<?php echo $value['num_of_days']; ?>"<?php echo $selected; ?>><?php echo $this->_view->escape($value['num_of_days']); ?></option>
+                <?php
+                    }
+				}
+                ?>
+            </select>
+                
+            <select name="num_of_days_<=" id="num_of_days_<=" class="right">
+                <option value=""><?php echo $this->_translator->translator('tours_block_advanced_search_label_price_days_max','','Tours'); ?></option>
+                <?php
+				if($number_of_day_max)
+				{						
+                    foreach($number_of_day_max as $key=>$value)
+                    {
+                        $selected = ( ($this->postValue['num_of_days_<='] != '') && ($this->postValue['num_of_days_<='] == $value['num_of_days'])) ? ' selected="selected" ' : '';
+                ?>
+                    <option value="<?php echo $value['num_of_days']; ?>"<?php echo $selected; ?>><?php echo $this->_view->escape($value['num_of_days']); ?></option>
+                <?php
+                    }
+				}
+                ?>
+            </select>
+    	</div>
+        
+    	<div class="block-content-3">
+            <select name="rating_=" id="rating_=">
+                <option value=""><?php echo $this->_translator->translator('tours_block_advanced_search_label_stars','','Tours'); ?></option>
+                <?php
+                    if($rating)
+					{  
+                        foreach($rating as $key=>$value)
+                        {
+                            if(!empty($value['rating']))
+                            {
+                            $selected = ($this->postValue['rating_='] == $value['rating']) ? ' selected="selected" ' : '';
+                    ?>
+                        <option value="<?php echo $value['rating']; ?>"<?php echo $selected; ?>><?php echo $this->_view->escape($value['rating']); ?></option>
+                    <?php
+                            }
+                        }
+					}
+                    ?>
+            </select>
+      
+            <select name="duration_=" id="duration_=">
+                <option value=""><?php echo $this->_translator->translator('tours_block_advanced_search_label_duration','','Tours'); ?></option>
+                <?php
+        			if($duration)
+					{
+                        foreach($duration as $key=>$value)
+                        {
+                            if(!empty($value['duration']))
+                            {
+                            $selected = ($this->postValue['duration_='] == $value['duration']) ? ' selected="selected" ' : '';
+                    ?>
+                        <option value="<?php echo $value['duration']; ?>"<?php echo $selected; ?>><?php echo $this->_view->escape($value['duration']); ?></option>
+                    <?php
+                            }
+                        }
+					}
+                    ?>
+            </select>
+      
+            <select name="starting_city_=" id="starting_city_=">
+                <option value=""><?php echo $this->_translator->translator('tours_block_advanced_search_label_start_city','','Tours'); ?></option>
+                <?php
+                    if($startCity)
+					{  
+                        foreach($startCity as $key=>$value)
+                        {
+                            if(!empty($value['starting_city']))
+                            {
+                            $selected = ($this->postValue['starting_city_='] == $value['starting_city']) ? ' selected="selected" ' : '';
+                    ?>
+                        <option value="<?php echo $value['starting_city']; ?>"<?php echo $selected; ?>><?php echo $this->_view->escape($value['starting_city']); ?></option>
+                    <?php
+                            }
+                        }
+					}
+                    ?>
+            </select>
+      
+            <select name="ending_city_=" id="ending_city_=">
+                <option value=""><?php echo $this->_translator->translator('tours_block_advanced_search_label_end_city','','Tours'); ?></option>
+                <?php
+                    if($endCity)
+					{   
+                        foreach($endCity as $key=>$value)
+                        {
+                            if(!empty($value['ending_city']))
+                            {
+                                $selected = ($this->postValue['ending_city_='] == $value['ending_city']) ? ' selected="selected" ' : '';
+                    ?>
+                        <option value="<?php echo $value['ending_city']; ?>"<?php echo $selected; ?>><?php echo $this->_view->escape($value['ending_city']); ?></option>
+                    <?php
+                            }
+                        }
+					}
+                    ?>
+            </select>
+      
+            <select name="property_size_=" id="property_size_=">
+                <option value=""><?php echo $this->_translator->translator('tours_block_advanced_search_label_tour_code','','Tours'); ?></option>
+                <?php
+                    if($propertySize)
+					{  
+                        foreach($propertySize as $key=>$value)
+                        {
+                            if(!empty($value['property_size']))
+                            {
+                            $selected = ($this->postValue['property_size_='] == $value['property_size']) ? ' selected="selected" ' : '';
+                    ?>
+                        <option value="<?php echo $value['property_size']; ?>"<?php echo $selected; ?>><?php echo $this->_view->escape($value['property_size']); ?></option>
+                    <?php
+                            }
+                        }
+					}
+                    ?>
+            </select>
+      
+			<input type="submit" name="button" id="button" value="Find tours">
+			<a href="javascript:void(0);" class="clear_search"><?php echo $this->_translator->translator('tours_block_advanced_search_link','','Tours'); ?></a>
+		</div>
+    </div>
+</div>
+</form>
+
+<?php
+	}
+}
+	
+	try
+	{
+		$advanced_search_class = new Tour_search($this);
+		$advanced_search_class->class_body();
+	}
+	catch(Exception $e)
+	{
+		echo $e->getMessage();
+	}	
+?>

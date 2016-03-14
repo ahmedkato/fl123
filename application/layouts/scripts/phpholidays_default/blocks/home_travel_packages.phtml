@@ -1,0 +1,35 @@
+<?php
+$translator = Zend_Registry::get('translator');
+$front_template = Zend_Registry::get('front_template'); 
+?>
+
+<div class="block block-travel-pkgs">
+	<div class="block-body">
+    	<div class="pkgs">
+        	<img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/hotels.png">
+            <p><?php echo $translator->translator('block_pkg_title_info_hotels','','', $front_template['theme_folder']); ?></p>
+        	<a href="	Hotels"><?php echo $translator->translator('block_pkg_btn','','', $front_template['theme_folder']); ?></a>
+        </div>
+        
+        <div class="pkgs">
+        	<img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/flights.png">
+        	
+            <p><?php echo $translator->translator('block_pkg_title_info_flights','','', $front_template['theme_folder']); ?></p>
+        	<a href="Flights"><?php echo $translator->translator('block_pkg_btn','','', $front_template['theme_folder']); ?></a>
+        </div>
+        
+        <div class="pkgs">
+        	<img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/vacationrentals.png">
+        	
+            <p><?php echo $translator->translator('block_pkg_title_info_vacations','','', $front_template['theme_folder']); ?></p>
+        	<a href="Vacation-Rentals"><?php echo $translator->translator('block_pkg_btn','','', $front_template['theme_folder']); ?></a>
+        </div>
+        
+        <div class="pkgs last">
+        	<img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/tours.png">
+        	
+            <p><?php echo $translator->translator('block_pkg_title_info_tours','','', $front_template['theme_folder']); ?></p>
+        	<a href="Tour-Packages"><?php echo $translator->translator('block_pkg_btn','','', $front_template['theme_folder']); ?></a>
+        </div>
+    </div>
+</div>

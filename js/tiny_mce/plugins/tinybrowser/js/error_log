@@ -1,0 +1,1 @@
+[26-Jun-2013 15:47:13] PHP Warning:  set_time_limit() [<a href='function.set-time-limit'>function.set-time-limit</a>]: Cannot set time limit in safe mode in /home/wwwhotei/public_html/js/tiny_mce/plugins/tinybrowser/config_tinybrowser.php on line 24

@@ -1,0 +1,10 @@
+[03-Aug-2013 18:02:41 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 18:02:41 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Gallery/views/scripts/backend/nav_menu.phtml on line 2
+[03-Aug-2013 19:33:33 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 19:33:33 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Global_Variable' not found in /home/wwwhotei/public_html/application/modules/Gallery/views/scripts/backend/edit.phtml on line 2
+[04-Aug-2013 02:01:31 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[04-Aug-2013 02:01:31 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Gallery/views/scripts/backend/top_pagination.phtml on line 2
+[30-Aug-2013 14:41:04 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 14:41:04 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Global_Variable' not found in /home/wwwhotei/public_html/application/modules/Gallery/views/scripts/backend/add.phtml on line 2
+[30-Aug-2013 15:53:33 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[30-Aug-2013 15:53:33 Europe/Berlin] PHP Fatal error:  Class 'Zend_Controller_Front' not found in /home/wwwhotei/public_html/application/modules/Gallery/views/scripts/backend/pagination.phtml on line 2

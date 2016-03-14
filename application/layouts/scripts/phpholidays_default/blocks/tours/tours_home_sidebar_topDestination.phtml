@@ -1,0 +1,90 @@
+<?php
+class tours_block_top_destination
+{
+	protected	$_group = 1;
+	protected	$_limit = 10;
+	protected	$_DBconn;
+	protected	$_front_template;
+	protected	$_view;
+	protected	$translator;	
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_view =	$view;
+		$this->translator = Zend_Registry::get('translator');	
+		
+		//DB Connection
+		$this->_DBconn = Zend_Registry::get('msqli_connection');
+		$this->_DBconn->getConnection();	
+	}
+	
+	public function truncate($phrase,$start_words, $max_words)
+	{
+	   $phrase_array = explode(' ',$phrase);
+	   if(count($phrase_array) > $max_words && $max_words > 0)
+		  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+	   return $phrase;
+	}
+	
+	public function class_body()
+	{	
+		
+		/***********************************NEW CHANGE START*****************************************/
+		$selectGP = $this->_DBconn->select()
+						->from(array('vv' => Zend_Registry::get('dbPrefix').'vote_voting'), array('item_id' => 'DISTINCT(vv.table_id)', 'votes' => 'SUM(vv.vote_value)'))
+						//->where('hp.group_id = ?',$this->_group)
+						->where('vv.table_name = ?','tours_page')
+						->group('vv.table_id')->order('votes DESC')
+						->joinLeft(array('hp' => Zend_Registry::get('dbPrefix').'tours_page'), 'vv.table_id = hp.id')
+						->joinLeft(array('ct' => Zend_Registry::get('dbPrefix').'cities'), 'ct.city_id = hp.area_id', array('city' => 'ct.city'))
+						->joinLeft(array('cu' => Zend_Registry::get('dbPrefix').'countries'), 'cu.id = hp.country_id', array('country_name' => 'cu.value'))
+						->joinLeft(array('tp' => Zend_Registry::get('dbPrefix').'tours_business_type'), 'tp.id = hp.tours_type', array('business_type' => 'tp.business_type'))
+						->limit($this->_limit);
+		/***********************************NEW CHANGE END*****************************************/
+		$popular_tours =  $selectGP->query()->fetchAll();	
+?>	
+
+<div class="block block-list-vmenu">
+	<div class="block-heading">
+    	<div class="symbol"><?php echo $this->translator->translator('tours_front_page_home_top_destination_title','','',$this->_front_template['theme_folder']); ?></div>
+    </div>
+    
+    <div class="block-body">
+    	<ul>
+		<?php
+			if($popular_tours)
+			{
+				foreach($popular_tours as $entry)
+				{
+					/***********************************NEW CHANGE START*****************************************/
+					if($entry['city'] && $entry['country_name'])
+					{
+					/***********************************NEW CHANGE END*****************************************/
+		?>
+			<li><a href="<?php echo $this->_view->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => $this->_view->escape($entry['tours_title']) ),'Tours-details/:tours_title',true); ?>"><?php echo $this->_view->escape($entry['city']).', '.$this->_view->escape($entry['country_name']); ?></a></li>
+		<?php
+					/***********************************NEW CHANGE START*****************************************/
+					}
+					/***********************************NEW CHANGE END*****************************************/
+				}
+			}
+		?>                            	
+		</ul>
+    </div>
+</div>
+
+<?php
+						
+	}
+}
+try
+{
+	$tours_block_top_destination_class = new tours_block_top_destination($this);
+	$tours_block_top_destination_class->class_body();
+}
+catch(Exception $e)
+{
+	echo $e->getMessage();
+}
+?>

@@ -1,0 +1,154 @@
+<?php
+class featured_vacationrentals_special
+{
+	protected	$_group = 1;
+	protected	$_limit = 8;
+	protected	$_DBconn;
+	protected	$_front_template;
+	protected	$_global_conf;
+	protected	$_view;
+	protected	$area_db;
+	protected 	$group_datas;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_global_conf 		= Zend_Registry::get('global_conf');
+		$this->_view =	$view;
+		//DB Connection
+		$this->_DBconn = Zend_Registry::get('msqli_connection');
+		$this->_DBconn->getConnection();
+		
+		$this->area_db = new Vacationrentals_Model_DbTable_Area();	
+		$group_db =  new Vacationrentals_Model_DbTable_VacationrentalsGroup();
+		$this->group_datas = $group_db->getGroupName($this->_group);		
+	}
+	
+	public function truncate($phrase,$start_words, $max_words)
+	{
+	   $phrase_array = explode(' ',$phrase);
+	   if(count($phrase_array) > $max_words && $max_words > 0)
+		  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+	   return $phrase;
+	}
+	
+	public function class_body()
+	{		
+		$currency = new Zend_Currency($this->_global_conf['default_locale']);
+		$currency_symbol = $currency->getSymbol();
+		$translator = Zend_Registry::get('translator');	
+		$maximum_stars_digit =  $translator->translator('maximum_stars_digit','', 'Vacationrentals');
+		
+		$selectGP = $this->_DBconn->select()
+						->from(array('hp' => Zend_Registry::get('dbPrefix').'vacationrentals_page'), array('*'))
+					   	->where('hp.group_id = ?',$this->_group)
+						->where('hp.featured  = ?','1')
+					   	->where('hp.active  = ?','1')
+					   	->limit($this->_limit);
+		
+		$vacationrentals_info =  $selectGP->query()->fetchAll();		
+?>
+
+<div class="block block-featured">
+	<div class="block-body">
+		<h2><?php echo $translator->translator('vacationrentals_block_featured_list_title','', 'Vacationrentals'); ?></h2>
+    	<div id="featured_list">
+        <?php						  
+			if($vacationrentals_info)
+			{
+				$j = 1;	
+				foreach($vacationrentals_info as $entry)
+				{
+					$vacationrentals_image_val_arr = explode(',',$entry['vacationrentals_image']);
+					$vacationrentals_image_no = count($vacationrentals_image_val_arr);
+					if($this->_view->escape($entry['vacationrentals_primary_image']))
+					{ 
+						$thumb_image = 'data/frontImages/vacationrentals/vacationrentals_image/'.$this->_view->escape($entry['vacationrentals_primary_image']); 
+					}
+					else
+					{ 
+						if($this->_view->escape($entry['vacationrentals_image']))
+						{											
+							$thumb_image = 'data/frontImages/vacationrentals/vacationrentals_image/'.$this->_view->escape($vacationrentals_image_val_arr[0]); 
+						}
+						else
+						{
+							$thumb_image = 'application/layouts/scripts/'.$this->_front_template['theme_folder'].'/images/mod_vacation_img/no_image.png'; 
+						}		
+					}
+					if($this->group_datas['file_thumb_width'] && $this->group_datas['file_thumb_resize_func'] != 'resizeToHeight')
+					{ 
+						$width = 'width="'.$this->_view->escape($this->group_datas['file_thumb_width']).'"'; 
+					}
+					else
+					{
+						$width = '';
+					} 
+					if($this->group_datas['file_thumb_height'] && $this->group_datas['file_thumb_resize_func'] != 'resizeToWidth')
+					{ 
+						$height = 'height="'.$this->_view->escape($this->group_datas['file_thumb_height']).'"'; 
+					} 
+					else
+					{
+						$height = '';
+					}						
+					$lication_info = ($entry['area_id'])? $this->area_db->getAreaInfo($entry['area_id']) : '';
+					
+			?>
+			  <div class="col">
+					<span class="block-title">
+						<a href="<?php echo $this->_view->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->_view->escape($entry['vacationrentals_title']) ),'Vacationrentals-details/:vacationrentals_title',true); ?>" class="preview" link="" title="<?php echo $this->_view->escape($entry['vacationrentals_name']); ?>"><?php echo $this->truncate($this->_view->escape($entry['vacationrentals_name']), 0, 3); ?></a>
+					</span>
+					<div class="clear">
+						 <?php
+							for($i = 1; $i < $maximum_stars_digit; $i++)
+							{
+								$vacationrentals_stars = ($i <= $this->_view->escape($entry['stars'])) ? "<img src='application/layouts/scripts/".$this->_front_template['theme_folder']."/images/mod_vacation_img/star-small-active.png' border='0' />" : "<img src='application/layouts/scripts/".$this->_front_template['theme_folder']."/images/mod_vacation_img/star-small-inactive.png' border='0' />";
+								echo $vacationrentals_stars.'&nbsp;';
+							}
+						?>
+					</div>
+					
+					<div class="img-wrapper">
+						<a href="<?php echo $this->_view->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->_view->escape($entry['vacationrentals_title']) ),'Vacationrentals-details/:vacationrentals_title',true); ?>" class="preview" link="<?php echo $thumb_image; ?>"  title="<?php echo $this->_view->escape($entry['vacationrentals_name']); ?>" width="300">
+							<img src="<?php echo $thumb_image; ?>" <?php echo $width." ".$height; ?> border="0" class="thumb">
+						</a>
+						
+						<div class="photo-count-container">
+							<div class="photo-count">
+								<a href="<?php echo $this->_view->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details',vacationrentals_title => $this->_view->escape($entry['vacationrentals_title']),'tab' => 1 ),'Vacationrentals-details/:vacationrentals_title/:tab',true); ?>" title="<?php echo $translator->translator('vacationrentals_front_page_vacationrentals_click_view_listing','', 'Vacationrentals'); ?>"><?php echo $translator->translator('vacationrentals_front_page_vacationrentals_photo_no', '<span>'.$vacationrentals_image_no .'</span>', 'Vacationrentals'); ?></a>
+							</div>
+						</div>
+					</div>
+					
+					<div class="details">
+						<span><?php echo $translator->translator('vacationrentals_block_featured_label_price','', 'Vacationrentals'); ?></span> <span class="price price-big"><?php echo $currency->getSymbol().''.$this->_view->escape($entry['vacationrentals_price']); ?></span><br />
+						<span><?php echo $translator->translator('vacationrentals_block_featured_label_location', '', 'Vacationrentals'); ?></span> <a href="<?php echo $this->_view->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->_view->escape($entry['vacationrentals_title']) ),'Vacationrentals-details/:vacationrentals_title',true); ?>"><?php echo $this->_view->escape($lication_info['city']); ?></a><br />
+	
+						<div class="room"><?php if(!empty($entry['feature_bedroom'])){ echo (int)$this->_view->escape($entry['feature_bedroom']);  echo ' '.$translator->translator('vacationrentals_front_page_bedroom','', 'Vacationrentals'); } ?> <?php if(!empty($entry['feature_bathroom'])){ echo (int)$this->_view->escape($entry['feature_bathroom']);  echo ' '.$translator->translator('vacationrentals_front_page_bathroom','', 'Vacationrentals'); } ?></div>
+						<span><?php if(!empty($entry['vacationrentals_desc'])){ echo $translator->translator('vacationrentals_block_featured_label_description', '', 'Vacationrentals'); ?></span> <?php echo $this->truncate($this->_view->escape(strip_tags($entry['vacationrentals_desc'])), 0, 3); } ?><br />
+					</div>
+			  </div>
+			  <?php	
+								
+				$j++;
+				}
+			}
+        ?>
+   		</div>
+	</div>
+</div>
+
+<?php
+	}
+}
+try
+{
+	$featured_vacationrentals_special_class = new featured_vacationrentals_special($this);
+	$featured_vacationrentals_special_class->class_body();
+}
+catch(Exception $e)
+{
+	echo $e->getMessage();
+}
+?>

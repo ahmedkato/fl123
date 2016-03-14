@@ -1,0 +1,31 @@
+<?php
+$frontController = Zend_Controller_Front::getInstance();	
+$getController = $frontController->getRequest()->getControllerName();
+$getAction = $frontController->getRequest()->getActionName(); 
+$translator = Zend_Registry::get('translator');
+?>
+
+<div id="nav">
+	<div class="nav-header"><div class="nav-title"><?php echo $translator->translator('cost_menu_title'); ?></div></div>
+    <div class="nav-body">
+    	<ul>
+        	<?php if ($this->allow('update','backendsettings','Costcalculator')) : ?>
+			<li <?php if($getAction == 'update' && strtolower($getController) == 'backendsettings'){ ?> class="calculator selected"<?php }else{ ?>class="calculator"<?php } ?>>
+			<a href="<?php echo $this->url(array('module' => 'Costcalculator','controller'=>'backendsettings', 'action'=>'update'),'adminrout',true);?>" ><?php echo $translator->translator('cost_menu1'); ?></a>
+			</li>
+			<?php endif; ?>
+            
+            <?php if ($this->allow('list','backendpackage','Costcalculator')) : ?>
+			<li <?php if($getAction == 'list' && strtolower($getController) == 'backendpackage'){ ?> class="vehicle-list selected"<?php }else{ ?>class="vehicle-list"<?php } ?>>
+			<a href="<?php echo $this->url(array('module' => 'Costcalculator','controller'=>'backendpackage', 'action'=>'list'),'adminrout',true);?>" ><?php echo $translator->translator('cost_menu2'); ?></a>
+			</li>
+			<?php endif; ?>
+            
+            <?php if ($this->allow('list','backendplan','Costcalculator')) : ?>
+			<li <?php if($getAction == 'list' && strtolower($getController) == 'backendplan'){ ?> class="vehicle-plan-list selected last"<?php }else{ ?>class="vehicle-plan-list last"<?php } ?>>
+			<a href="<?php echo $this->url(array('module' => 'Costcalculator','controller'=>'backendplan', 'action'=>'list'),'adminrout',true);?>" ><?php echo $translator->translator('cost_menu3'); ?></a>
+			</li>
+			<?php endif; ?>                
+        </ul>
+	</div>
+</div>

@@ -1,0 +1,8 @@
+[26-Jul-2013 06:53:50 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 06:53:50 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Costcalculator/forms/ProportionForm.php on line 0
+[02-Aug-2013 20:49:21 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 20:49:21 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Costcalculator/forms/SettingsForm.php on line 0
+[02-Aug-2013 21:53:38 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[02-Aug-2013 21:53:38 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Costcalculator/forms/DistanceForm.php on line 0
+[03-Aug-2013 02:06:07 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 02:06:07 Europe/Berlin] PHP Fatal error:  Class 'Zend_Form' not found in /home/wwwhotei/public_html/application/modules/Costcalculator/forms/CalculateForm.php on line 0

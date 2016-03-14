@@ -1,0 +1,127 @@
+<?php
+class flights_home_sidebar_fare
+{
+	protected	$_group = 1;
+	protected	$_limit = 10;
+	protected	$_DBconn;
+	protected	$_front_template;
+	protected	$_view;
+	protected	$translator;
+	protected	$_currency;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_view =	$view;
+		//DB Connection
+		$this->_DBconn = Zend_Registry::get('msqli_connection');
+		$this->_DBconn->getConnection();
+		
+		$global_conf = Zend_Registry::get('global_conf');
+		$this->_currency = new Zend_Currency($global_conf['default_locale']);
+	}
+	
+	public function truncate($phrase,$start_words, $max_words)
+	{
+	   $phrase_array = explode(' ',$phrase);
+	   if(count($phrase_array) > $max_words && $max_words > 0)
+		  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+	   return $phrase;
+	}
+	
+	public function class_body()
+	{
+		$this->translator = Zend_Registry::get('translator');		
+		$route_db = new Flight_View_Helper_Route();
+		//Top Destination
+		$selectToDestination = $this->_DBconn->select()
+								   ->from(array('vv' => Zend_Registry::get('dbPrefix').'vote_voting'), array('item_id' => 'DISTINCT(vv.table_id)', 'votes' => 'SUM(vv.vote_value)'))
+								   ->where('vv.table_name = ?','flight_flights')
+								   ->group('vv.table_id')
+								   ->order('votes DESC')
+								   ->joinLeft(array('ff' => Zend_Registry::get('dbPrefix').'flight_flights'), 'vv.table_id = ff.id')
+								   ->joinLeft(array('fa' => Zend_Registry::get('dbPrefix').'flight_airlines'), 'fa.id = ff.airlines_id', array('airlines_name' => 'fa.airlines_name', 'airlines_code' => 'fa.airlines_code'))
+								   ->limit($this->_limit);
+		
+		$top_destination = $selectToDestination->query()->fetchAll();
+?>
+<div class="block block-flight-fare">
+	<div class="block-body">
+    	<h2><?php echo $this->translator->translator('block_flight_fare_title','', '', $this->_front_template['theme_folder']); ?></h2>
+    	<ul>                    
+		<?php
+          if($top_destination)
+          {							  
+            foreach($top_destination as $top_destination_key => $entry)
+            {
+                if($entry['id'])
+                {
+                    $route_info = $route_db->getRoute($entry['id']);	
+                    $only_flight_price = ($entry['flight_journey_type'] != 'Round') ?  ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) 
+                                                                      : ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair'])           +                 ($entry['flight_adult_fair_round'] + $entry['flight_child_fair_round'] + $entry['flight_infant_fair_round']) );
+                    $total_price = ($entry['flight_journey_type'] != 'Round') ? ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) + ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) * ($entry['flight_tax'] / 100 ) ) ) 
+                                                                      : ( ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) + ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) * ($entry['flight_tax'] / 100 ) ) )            +                 ( ($entry['flight_adult_fair_round'] + $entry['flight_child_fair_round'] + $entry['flight_infant_fair_round']) + ( ($entry['flight_adult_fair_round'] + $entry['flight_child_fair_round'] + $entry['flight_infant_fair_round']) * ($entry['flight_tax_round'] / 100 ) ) ) );
+                    
+                    $hotel_text = (empty($entry['hotels_id'])) ? '' : ' + '.$this->translator->translator('flight_front_page_home_tab_hotel','', '', $this->_front_template['theme_folder']);
+                    $tour_text = (empty($entry['tours_id'])) ? '' : ' + '.$this->translator->translator('flight_front_page_home_tab_tour','', '', $this->_front_template['theme_folder']);
+                    $vacation_text = (empty($entry['vacationrentals_id'])) ? '' : ' + '.$this->translator->translator('flight_front_page_home_tab_vacationrental','', '', $this->_front_template['theme_folder']);
+                    $include_with_flight = (!empty($entry['hotels_id']) || !empty($entry['tours_id']) || !empty($entry['vacationrentals_id'])) ? $this->translator->translator('flight_front_page_home_tab_flight','', '', $this->_front_template['theme_folder']).$hotel_text.$tour_text.$vacation_text  : $this->translator->translator('flight_front_page_home_tab_title4','', '', $this->_front_template['theme_folder']);
+                    
+                    foreach($route_info as $route_info_arr)
+                    {
+                        if($route_info_arr['journey_type'] == '0' && $route_info_arr['route_way_type'] != 'Round')
+                        {
+                            $start_route_info = $route_info_arr;
+                        }
+                        if($route_info_arr['journey_type'] == '1' && $route_info_arr['route_way_type'] != 'Round')
+                        {
+                            $end_route_info = $route_info_arr;
+                        }
+                    }
+                    $end_route_info = (empty($$end_route_info)) ? $start_route_info : $end_route_info;							
+                    $departure_date_arr = explode(',', $start_route_info['departure_date']);
+                    $arrival_date_arr = explode(',', $end_route_info['arrival_date']);
+                    $next_start_date = $route_db->getJustNextDate(date("Y-m-d"), $departure_date_arr[0]);
+                    $next_end_date =   $route_db->getJustNextDate($next_start_date, $arrival_date_arr[0]);
+                    $this->top_destination[$top_destination_key]['next_start_date'] = strtotime($next_start_date);
+                    $this->top_destination[$top_destination_key]['next_end_date'] = strtotime($next_end_date);
+                    $this->top_destination[$top_destination_key]['departure_iata'] = $start_route_info['departure_iata'];
+                    $this->top_destination[$top_destination_key]['arrival_city'] = $end_route_info['arrival_city'];
+                    $this->top_destination[$top_destination_key]['only_flight_price'] = $only_flight_price;
+                    $this->top_destination[$top_destination_key]['total_price'] = $total_price;
+                    $this->top_destination[$top_destination_key]['include_with_flight'] = $include_with_flight;
+                    if($start_route_info['departure_iata'])
+                    {
+        ?>
+                  
+			<?php //echo $this->_view->escape($start_route_info['departure_iata']); ?>
+            <?php //echo $this->_currency->getSymbol().$total_price; ?> <?php //echo $include_with_flight; ?>
+            
+            <li>
+                <a href="<?php echo $this->_view->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->_view->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>" class="preview" link="" title="<?php echo $this->_view->escape($entry['flight_route_name']); ?>"><?php echo $this->_view->escape($end_route_info['arrival_city']); ?>&nbsp; <em><?php echo strftime("%d %b",strtotime($next_start_date)); ?>-<?php echo strftime("%d %b",strtotime($next_end_date)); ?></em>
+                <div class="fare"><span><?php echo $this->translator->translator('block_flight_fare_from','', '', $this->_front_template['theme_folder']); ?></span>&nbsp; <?php echo $this->_currency->getSymbol().$only_flight_price; ?></div></a>
+            </li>
+			             
+		<?php
+                    }
+              }
+            }                        
+            
+          }
+        ?>
+        </ul>
+	</div>
+</div>
+<?php
+	}
+}
+try
+{
+	$flights_home_sidebar_fare_class = new flights_home_sidebar_fare($this);
+	$flights_home_sidebar_fare_class->class_body();
+}
+catch(Exception $e)
+{
+	echo $e->getMessage();
+}
+?>

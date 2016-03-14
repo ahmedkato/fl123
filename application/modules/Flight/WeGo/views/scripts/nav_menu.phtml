@@ -1,0 +1,35 @@
+<?php
+$frontController = Zend_Controller_Front::getInstance();	
+$getController = $frontController->getRequest()->getControllerName();
+$getAction = $frontController->getRequest()->getActionName();
+$translator = Zend_Registry::get('translator'); 
+$modules_license = new Administrator_Controller_Helper_ModuleLoader();
+?>
+
+<div id="nav">
+	<div class="nav-header"><div class="nav-title"><?php echo $translator->translator('flight_menu_title'); ?></div></div>
+    <div class="nav-body">
+    	<ul>
+        	<?php if ($this->allow('update','api','Flight')) : ?>
+			<li <?php if($getAction == 'update' && strtolower($getController) == 'api'){ ?> class="api-setting selected"<?php }else{ ?>class="api-setting"<?php } ?>>
+			<a href="<?php echo $this->url(array('module' => 'Flight','controller'=>'api', 'action'=>'update'),'adminrout',true);?>"><?php echo $translator->translator('flight_menu1'); ?></a>
+           	</li>
+			<?php endif; ?>
+            
+           	<?php if ($this->allow('list','airport','Flight')  && $modules_license->checkModulesLicense('Flight')) : ?>
+			<li <?php if($getAction == 'list' && strtolower($getController) == 'airport'){ ?> class="airport selected"<?php }else{ ?>class="airport"<?php } ?>>
+			<a href="<?php echo $this->url(array('module' => 'Flight','controller'=>'airport', 'action'=>'list'),'adminrout',true);?>">
+			<?php echo $translator->translator('flight_menu8'); ?>
+			</a>
+            </li>
+			<?php endif; ?>
+            
+            <?php if ($this->allow('list','airlines','Flight')  && $modules_license->checkModulesLicense('Flight')) : ?>
+			<li <?php if($getAction == 'list' && strtolower($getController) == 'airlines'){ ?> class="airline selected last"<?php }else{ ?>class="airline last"<?php } ?>>
+			<a href="<?php echo $this->url(array('module' => 'Flight','controller'=>'airlines', 'action'=>'list'),'adminrout',true);?>">
+			<?php echo $translator->translator('flight_menu6'); ?>
+			</a>
+			<?php endif; ?>            
+        </ul>
+	</div>
+</div>

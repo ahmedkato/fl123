@@ -1,0 +1,116 @@
+<?php
+$global_conf = Zend_Registry::get('global_conf');
+$currency = new Zend_Currency($global_conf['default_locale']);
+$currencySymbol = $currency->getSymbol();
+$currencyShortName = $currency->getShortName();
+?>
+
+<div class="booking-title">
+	Flight Booking
+</div>
+
+<div class="quote-booking-container">
+<table width="99%" border="0" align="center" cellpadding="0" cellspacing="0"  class="quote-booking-wrapper">
+  <tbody>
+  <tr class="quote-booking-header">
+    <td width="66%" align="center"><?php echo '<b>'.$this->translator->translator("flight_invoice_desc_title").'</b>'; ?></td>
+    <td width="34%"  align="center" style="border-left:1px solid #FFF"><?php echo '<b>'.$this->translator->translator("flight_invoice_amount_title").'</b>'; ?></td>
+  </tr>
+  <?php
+  $total_amount = 0;
+  $total_tax = 0;
+  foreach($this->cart_result as $flightInfo)
+  {
+  ?>
+  <tr>
+    <td valign="top">
+    <div class="quote-booking-desc">
+	<table width="98%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td width="15%" height="63" align="center"><img src="data/frontImages/flight/airlines/<?php echo $flightInfo['airline_infos']['airlines_pic']; ?>" height="60" title="<?php echo $flightInfo['airline_infos']['airlines']; ?>" style="border:1px solid #CCC; background:#FFF; padding:5px;"/></td>
+			<td width="85%">
+			<span class="quote-booking-desc-title"><?php echo $flightInfo['FlightInfoExResult'][0]['originName'].', '.$flightInfo['FlightInfoExResult'][0]['originCity'].' --> '.$flightInfo['FlightInfoExResult'][0]['destinationName'].', '.$flightInfo['FlightInfoExResult'][0]['destinationCity']; ?></span>
+			<br />
+			<?php echo '<strong>'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_depart").' :</strong> '.$flightInfo['FlightInfoExResult'][0]['filed_departuretime']; ?>
+			<br  />
+			<?php echo '<strong>'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_arive").' :</strong> '.$flightInfo['FlightInfoExResult'][0]['estimatedarrivaltime']; ?>
+			<br  />
+			<?php echo '<strong>'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_class").' :</strong> '.$flightInfo['airline_price_info']['classType']; ?>
+			</td>
+    	</tr>
+	</table>
+    </div>
+	<td valign="top">
+		<div class="quote-booking-value-general">
+        <table width="100%" border="0" cellpadding="2" cellspacing="2">
+			<tr>
+				<td width="44%"><?php echo $this->translator->translator("flight_AirlineFlightSchedules_page_table_adult").' ('.$flightInfo['airline_price_info']['adult_no'].')'; ?> :</td><td width="56%"><?php echo $currencySymbol.($flightInfo['airline_price_info']['adult_price']*$flightInfo['airline_price_info']['adult_no']).$currencyShortName; ?></td>
+			</tr>
+			<tr>
+				<td><?php echo $this->translator->translator("flight_AirlineFlightSchedules_page_table_child").' ('.$flightInfo['airline_price_info']['child_no'].')'; ?> :</td><td><?php echo $currencySymbol.($flightInfo['airline_price_info']['child_price']*$flightInfo['airline_price_info']['child_no']).$currencyShortName; ?></td>
+			</tr>
+			<tr>
+				<td><?php echo $this->translator->translator("flight_AirlineFlightSchedules_page_table_infant").' ('.$flightInfo['airline_price_info']['infant_no'].')'; ?> :</td><td><?php echo $currencySymbol.($flightInfo['airline_price_info']['infant_price']*$flightInfo['airline_price_info']['infant_no']).$currencyShortName; ?></td>
+			</tr>
+		</table>
+        </div>
+	</td>
+  </tr>
+  <tr>
+  	<td></td>
+	<td>
+		<div class="quote-booking-value-tax">
+        <table border="0" width="100%">
+			<tr>
+				<td width="45%"><span class="quote-booking-tax-label"><?php echo $this->translator->translator("flight_invoice_total_tax_title"); ?></span></td><td width="55%"><?php $total_tax += $flightInfo['airline_price_info']['total_tax'];  echo $currencySymbol.$flightInfo['airline_price_info']['total_tax'].$currencyShortName; ?></td>
+			</tr>
+		</table>
+        </div>
+	</td>
+  </tr>
+  <tr>
+  	<td></td>
+	<td>
+    	<div class="quote-booking-subtotal">
+		<table border="0" width="100%">
+			<tr>
+				<td width="45%"> <?php echo $this->translator->translator("flight_invoice_sub_total_title"); ?></td><td width="55%"><?php $sub_total = $flightInfo['airline_price_info']['adult_price']*$flightInfo['airline_price_info']['adult_no']+$flightInfo['airline_price_info']['child_price']*$flightInfo['airline_price_info']['child_no']+$flightInfo['airline_price_info']['infant_price']*$flightInfo['airline_price_info']['infant_no']; echo $currencySymbol.$sub_total.$currencyShortName; $total_amount += $sub_total; ?></td>
+			</tr>
+		</table>
+        </div>
+	</td>
+  </tr>
+  <?php
+  	}
+  ?> 
+  <tr>
+  	<td></td>
+	<td>
+    	<div class="quote-booking-grandtotal">
+		<table border="0" width="100%">
+			<tr>
+				<td width="44%"> <?php echo $this->translator->translator("flight_invoice_total_title"); ?></td><td width="56%"><?php echo $currencySymbol.($total_amount+$total_tax).$currencyShortName; ?></td>
+			</tr>
+		</table>
+        </div>
+	</td>
+  </tr>
+  <tr>
+    <td colspan="2" height="50">&nbsp;</td>
+  </tr>
+  <tr>
+  	<td colspan="2">
+		<table width="100%">
+			<tr>
+			<td align="right">
+				<div class="form_button ui-widget-content-1" style="width:120px;" align="right"><a href="AirlineFlightSchedules" ><?php echo $this->translator->translator('flight_cart_continue'); ?></a></div></td>
+				<td width="10%">&nbsp;</td>
+				<td><div class="form_button ui-widget-content-1" style="width:120px;" align="right"><a href="Create-Invoice"><?php echo $this->translator->translator('flight_continue_next'); ?></a></div>
+			</td>
+			</tr>
+	    </table>
+	</td>
+  </tr>
+  </tbody>
+</table>
+</div>

@@ -1,0 +1,179 @@
+<?php
+$front_template = Zend_Registry::get('front_template'); 
+$is_frontend = new Eicra_Model_DbTable_Frontend(); 
+$license = new Zend_Session_Namespace('License'); 
+$validation_data = $license->license_data;
+$locale = Eicra_Global_Variable::getSession()->sess_lang;
+$locale_arr = explode('_', $locale);
+$locale_direction = Eicra_Global_Variable::getSession()->site_direction;
+$global_conf = Zend_Registry::get('global_conf');
+$this->translator = Zend_Registry::get('translator'); 
+$version = new Eicra_License_Version();
+$frontController = Zend_Controller_Front::getInstance();
+$moduleName = strtolower($frontController->getRequest()->getModuleName());	
+$controllerName = strtolower($frontController->getRequest()->getControllerName());
+$actionName = strtolower($frontController->getRequest()->getActionName());
+$acount_link = 'Members-Dashboard';
+?>
+<div id="wrapper">
+	<!-- Header Start -->
+	<?php echo $this->layout()->render('header'); ?>
+	<!-- Header End -->
+    
+    <!-- Top Navigation Start-->
+    <nav class="top-nav">
+        <div class="container"><?php echo $this->partial('blocks/menu_header.phtml'); ?></div>
+    </nav>
+    <!-- Top Navigation End-->
+    <?php
+	if($is_frontend->isFrontend())
+	{
+	?>
+    <!-- Main Body Start -->
+    <section id="main">
+        <div id="banner">
+        	<img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/banner-1.jpg" border="0">
+        </div>
+        <div class="main-container">
+            <!-- Content Start -->
+            <article id="content">
+            	<?php echo $this->partial('blocks/phpholidays_home_search.phtml'); ?>
+                <!-- Featured Tab 1 Start -->
+                <div id="usual" class="usual">
+                    <ul>
+                      <li><a class="selected" href="#tab1"><?php echo $this->translator->translator('hotels_block_popular_list_title','', '', $front_template['theme_folder']); ?></a></li>
+                      <li><a class="" href="#tab2"><?php echo $this->translator->translator('vacationrentals_block_popular_list_title','', '', $front_template['theme_folder']); ?></a></li>
+                      <li><a class="" href="#tab3"><?php echo $this->translator->translator('tours_block_popular_list_title','', '', $front_template['theme_folder']); ?></a></li>
+                      <li><a class="" href="#tab4"><?php echo $this->translator->translator('tab_latest_flight_package','', '', $front_template['theme_folder']); ?></a></li>
+                    </ul>
+                </div>
+                <div class="usual-content">
+                    <div style="display: block;" id="tab1"><?php echo $this->partial('blocks/hotels_home_content_popular.phtml'); ?></div>
+                    <div style="display: none;" id="tab2"><?php echo $this->partial('blocks/vacationrentals_home_content_popular.phtml'); ?></div>
+                    <div style="display: none;" id="tab3"><?php echo $this->partial('blocks/tours_home_content_popular.phtml'); ?></div>                
+                    <div style="display: none;" id="tab4"><?php echo $this->partial('blocks/flight_home_content_packages.phtml'); ?></div>
+                </div>
+                <script type="text/javascript">
+                    $("#usual ul").idTabs();
+                </script>        
+                <!-- Featured Tab 1 End-->
+                                
+                <?php $this->ad(203); ?>
+                
+                <!-- Collapsible Panel Start -->
+                <div class="accordion clear">
+                    <p><span><?php echo $this->translator->translator('hotels_block_latest_list_title','', '', $front_template['theme_folder']); ?></span></p>
+                    <?php echo $this->partial('blocks/hotels_home_content_recent_listview.phtml'); ?>
+                    
+                    <p><span><?php echo $this->translator->translator('vacationrentals_block_popular_title','', '', $front_template['theme_folder']); ?></span></p>
+                    <?php echo $this->partial('blocks/vacationrentals_home_content_popularGateways.phtml'); ?>
+                    
+                    <p><span><?php echo $this->translator->translator('tours_block_popular_destination_title','', '', $front_template['theme_folder']); ?></span></p>
+                    <?php echo $this->partial('blocks/tours_home_content_popularDestinations.phtml'); ?>
+                    
+                    <p><span><?php echo $this->translator->translator('flight_front_page_home_world_wide_flight_title','', '', $front_template['theme_folder']); ?></span></p>
+                    <?php echo $this->partial('blocks/flights_home_content_worldDestinations.phtml'); ?>
+                </div>
+				<script>
+                    $(document).ready(function() {
+                        $('.accordion:eq(0)> div').hide();
+                        $('.accordion:eq(0)> p').click(function() {
+                            $(this).next().slideToggle('fast');
+                            $(this).toggleClass('active');
+                        });
+                    });
+                </script>
+				<!-- Collapsible Panel End -->
+                <?php echo $this->partial('blocks/newsletter_content.phtml'); ?>
+            </article>
+            <!-- Content End -->
+            
+            <!-- Right Sidebar Start-->
+            <aside id="sidebar">
+                <?php $this->ad(202); ?>
+                <?php echo $this->partial('blocks/flights_home_sidebar_fare.phtml'); ?>
+                <?php echo $this->partial('blocks/gallery_sidebar_featured.phtml'); ?>
+                <?php echo $this->partial('blocks/sidebar_social.phtml'); ?>
+                <?php echo $this->partial('blocks/news_home_sidebar_latest.phtml'); ?>
+            </aside>
+            <!-- Right Sidebar End -->
+            
+            <div class="clear"></div>
+            	<?php echo $this->partial('blocks/home_travel_packages.phtml'); ?>
+        </div>
+    </section>
+	<!-- Main Body End -->
+    <?php
+		}
+		else if(strtolower($frontController->getRequest()->getParam('menu_id')) == 'special-offers')
+		{					
+			$this->headTitle()->headTitle($frontController->getRequest()->getParam('menu_id'),'SET');
+	?>
+    <section id="main">	
+        <div class="main-container">
+            <?php echo $this->partial('blocks/vacationrentals_content_featuredSpecial.phtml');  ?>
+            <?php echo $this->partial('blocks/flight_content_featuredSpecial.phtml');  ?>
+            <?php echo $this->partial('blocks/tours_content_featuredSpecial.phtml');  ?>
+        </div>
+    </section>
+  	<?php
+	}
+	else
+	{		
+	?> 
+    <!-- Inner Layout Start -->
+    <section id="main">
+        <div class="main-container">  
+            <?php 
+                  $innter_page_content_width = 'style="width:100%"';
+                  if(!empty($moduleName) && $actionName != 'home' && $actionName != 'homepage'  && $actionName != 'detailspage')
+                  {
+                      switch($moduleName)
+                      {	
+                          case 'vacationrentals':	                                    
+                          case 'tours':
+                          if( strtolower($controllerName) != 'wego'){ 
+                              $innter_page_content_width = '';
+            ?>
+            <!-- Inner Sidebar Start -->
+            <div id="sidebar-inner">					
+                <?php echo $this->partial('blocks/'.$moduleName.'_inner_sidebar_search.phtml');   ?>                  	
+                <?php echo $this->partial('blocks/ad_inner_leftsidebar.phtml'); ?>
+            </div>
+            <?php
+                        }
+                  break;
+                  case 'hotels':
+                      
+                      if($actionName != 'index' && !(strtolower($controllerName) == 'expedia' && $actionName == 'details') && strtolower($controllerName) != 'wego')
+                      {
+                      $innter_page_content_width = '';
+            ?>
+            <div id="sidebar-inner">
+                <?php if( strtolower($controllerName) == 'expedia'){ /*echo $this->partial('blocks/'.$moduleName.'_inner_sidebar_travelNow_search.phtml');*/ }else{ echo $this->partial('blocks/'.$moduleName.'_inner_sidebar_search.phtml'); } ?>               					
+                <?php echo $this->partial('blocks/ad_inner_leftsidebar.phtml'); ?>
+            </div>
+            <!-- Inner Sidebar End -->
+            <?php
+                     }
+                  break;	
+                  
+                     }
+                  }
+            ?>
+            <!-- Inner Content Start -->
+            <div id="content-inner" <?php echo $innter_page_content_width; ?>>
+              <?php echo $this->layout()->content ?>
+            </div>
+            <!-- Inner Content End -->
+        </div>
+    </section>  
+    <!-- Inner Layout End -->
+    <?php
+	}
+	?>
+    
+    <!-- Footer Start -->
+    <?php echo $this->layout()->render('footer'); ?>
+    <!-- Footer End --> 
+</div>

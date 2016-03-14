@@ -1,0 +1,91 @@
+<?php
+$this->headMeta()->setName('keywords',$this->escape($this->translator->translator('flight_front_page_details_WeGo_meta_key')));
+$this->headMeta()->setName('description',$this->escape($this->translator->translator('flight_front_page_details_WeGo_meta_desc')));
+$this->headTitle()->headTitle($this->escape($this->translator->translator('flight_front_page_details_WeGo_meta_title')),'SET');
+?>
+
+<?php
+if($this->flight_info)
+{
+	/*echo '<pre>';
+	print_r($this->flight_info);
+	echo '</pre>';*/
+
+?>
+
+<div class="mod">
+    <div class="flight-icon">
+        <h1><?php echo $this->translator->translator('flight_front_page_details_WeGo_page_name'); ?></h1>
+    </div>
+	<div class="clear">&nbsp;</div>	    
+  	<?php if($this->flight_info['primary_image']){ ?><img src="data/frontImages/flight/airlines/<?php echo $this->escape($this->flight_info['primary_image']); ?>"  width="150" height="115" border="0" class="thumb"/><?php } ?>
+	
+	<div class="clear">&nbsp;</div>
+    <fieldset>
+            <legend><?php echo $this->translator->translator('flight_front_page_details_WeGo_trip_name'); ?></legend>
+            <div class="route_box_container">
+                <div class="route_box_head">
+                    <div class="route_box_head_column1"><?php echo $this->translator->translator('flight_front_page_details_WeGo_label'); ?></div><div class="route_box_head_column2"><?php echo $this->translator->translator('flight_front_page_details_WeGo_label'); ?></div>
+                </div> 
+                <?php
+                        
+                    foreach($this->flight_info['details'] as $flight_info_key => $flight_info)
+                    {			
+                ?>
+                    <div class="route_box_body">
+                        
+                        <?php				
+                            if($flight_info && $flight_info['list'])
+                            {
+                                $k = 1;						
+                                foreach($flight_info['list'] as $outboundSegments_list_key => $outboundSegments)
+                                {	
+                                    $class_no = ($k % 2 != 0) ? '1' : '2';						
+                        ?>							
+                                    <div class="route_box_body_column<?php echo $class_no; ?>">
+                                        <p>
+                                            <?php
+                                                foreach($outboundSegments as $outboundSegments_key => $outboundSegments_info)
+                                                {
+                                                    if($outboundSegments_key == 'flightNumber' || $outboundSegments_key == 'operatingAirlineFlightNumber')
+                                                    {
+                                            ?>
+                                                        <span class="mod-title"><?php echo $outboundSegments_key; ?></span> <?php echo $this->escape($outboundSegments_info['designator'] . ' '.$outboundSegments_info['number']); ?><br />
+                                            <?php
+                                                    }
+                                                    else if($outboundSegments_key == 'codeSharingFlightNumbers')
+                                                    {
+                                                        if($outboundSegments_info[0] && $outboundSegments_info[0])
+                                                        {
+                                            ?>
+                                                        <span class="mod-title"><?php echo $outboundSegments_key; ?></span> <?php echo $this->escape($outboundSegments_info[0]['designator'] . ' '.$outboundSegments_info[0]['number'] ); ?><br />
+                                            <?php	
+                                                        }	
+                                                    }
+                                                    else
+                                                    {
+                                            ?>
+                                                        <span class="mod-title"><?php echo $outboundSegments_key; ?></span> <?php echo $this->escape($outboundSegments_info); ?><br />
+                                            <?php
+                                                    }
+                                                }
+                                            ?>
+                                        </p>
+                                    </div>							
+                        <?php
+                                    $k++;
+                                }
+                            }
+                        ?>
+
+                </div> 
+            <?php			
+                }
+            ?>
+         </div>
+    </fieldset>
+</div>
+
+<?php
+}
+?>

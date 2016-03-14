@@ -1,0 +1,99 @@
+<?php
+class hotels_popular_destinations
+{
+	protected	$_group = 1;
+	protected	$_limit = 24;
+	protected	$_DBconn;
+	protected	$_front_template;
+	protected	$_view;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_view =	$view;
+		//DB Connection
+		$this->_DBconn = Zend_Registry::get('msqli_connection');
+		$this->_DBconn->getConnection();
+	}
+	
+	public function truncate($phrase,$start_words, $max_words)
+	{
+	   $phrase_array = explode(' ',$phrase);
+	   if(count($phrase_array) > $max_words && $max_words > 0)
+		  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+	   return $phrase;
+	}
+	
+	public function class_body()
+	{
+		$translator = Zend_Registry::get('translator');		
+		$selectGP = $this->_DBconn->select()
+						->from(array('vv' => Zend_Registry::get('dbPrefix').'vote_voting'), array('item_id' => 'DISTINCT(vv.table_id)', 'votes' => 'SUM(vv.vote_value)'))
+					   	->where('vv.table_name = ?','tours_page')
+					   	->group('vv.table_id')
+					   	->order('votes DESC')
+					   	->joinLeft(array('hp' => Zend_Registry::get('dbPrefix').'tours_page'), 'vv.table_id = hp.id')
+					   	->limit($this->_limit);
+		
+		$tours_info =  $selectGP->query()->fetchAll();
+	
+?>
+
+<div class="block block-listing">
+	<div class="block-body">
+    	<!--<h2><?php //echo $translator->translator('tours_block_popular_destination_title','', '', $this->_front_template['theme_folder']); ?></h2>-->
+        <div class="col">
+        	<ul>
+			<?php	
+				if($tours_info)
+				{
+					$l =1;
+					foreach($tours_info as $entry)						
+					{				
+						if($this->_view->escape($entry['tours_primary_image']))
+						{ 
+							$thumb_image = 'data/frontImages/tours/tours_image/'.$this->_view->escape($entry['tours_primary_image']); 
+						}
+						else
+						{ 
+							if($this->_view->escape($entry['tours_image']))
+							{
+								$tours_image_val_arr = explode(',',$entry['tours_image']);
+								$thumb_image = 'data/frontImages/tours/tours_image/'.$this->_view->escape($tours_image_val_arr[0]); 
+							}
+							else
+							{
+								$thumb_image = 'application/layouts/scripts/'.$this->_front_template['theme_folder'].'/images/mod_tour_img/no_image.png'; 
+							}		
+						}
+								
+				?>						
+						<li><a href="<?php echo $this->_view->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => $this->_view->escape($entry['tours_title']) ),'Tours-details/:tours_title',true); ?>" class="preview" link="<?php echo $thumb_image; ?>" title="<?php echo $this->_view->escape($entry['tours_name']); ?>" width="300"><?php echo $this->truncate($this->_view->escape($entry['tours_name']), 0, 4); ?></a></li>
+																	
+				<?php
+						if($l % 4 == 0)
+						{
+							echo '</ul></div><div class="col"><ul>';
+						}
+						$l++;
+					}
+				}
+            ?>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<?php
+	}
+}
+try
+{
+	$hotels_popular_destinations_class = new hotels_popular_destinations($this);
+	$hotels_popular_destinations_class->class_body();
+}
+catch(Exception $e)
+{
+	echo $e->getMessage();
+}
+?>

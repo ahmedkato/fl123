@@ -1,0 +1,232 @@
+<?php
+$this->headMeta()->setName('keywords',$this->translator->translator('flight_itinerarylist_page_meta_keywords'));
+$this->headMeta()->setName('description',$this->translator->translator('flight_itinerarylist_page_meta_desc'));
+$this->headTitle()->headTitle($this->translator->translator('flight_itinerarylist_page_meta_title'),'SET');
+?>
+
+<div class="itinerary-heading">
+    <h1><?php echo $this->translator->translator('flight_itinerarylist_page_meta_title'); ?></h1>
+</div> 
+    
+<div class="clear"></div>
+
+<div class="mod-data-area">
+	<?php
+		$airport_db = new Flight_Model_DbTable_Airport();
+		$flight_db = new Flight_Model_DbTable_Route();
+		
+		foreach($this->itinerary_info as $itinerary_info)
+		{			
+			switch($itinerary_info['invoice_status'])
+			{
+				case '1':
+					$active_msg = $this->translator->translator('common_confirmed_language');			
+					break;
+				case '2':
+					$active_msg = $this->translator->translator('common_unpaid_language');	
+					break;
+				case '0':
+					$active_msg = $this->translator->translator('common_cancelled_language');	
+					break;
+			}
+			
+	?>
+    
+	<div class="itinerary_main_body_block">
+		<div class="itinerary_main_body_block_clild_header">
+        	<div class="itinerary-header">
+			<?php echo $this->escape($itinerary_info['itinerary_id']); ?>&nbsp;<?php echo $this->escape($itinerary_info['itinerary_obj']['invoiceTo']); ?>
+            </div>
+		</div>
+		<div class="itinerary_main_body_block_clild_body">
+			<?php
+				foreach($itinerary_info['itinerary_obj']['invoice_items'] as $invoice_items)
+				{
+					$route_info = $this->route_helper->getRoute($invoice_items['object_value'][Eicra_File_Constants::MAIN_TABLE_ID]);	
+					$flight_code_no = $invoice_items['object_value']['flight_code'].'-'.$invoice_items['object_value']['flight_number'];
+					$flight_code_no_data = 	'<strong>'.$this->translator->translator('flight_route_flight_no').'</strong> '.$flight_code_no;		
+			?>
+				<div class="itinerary_main_body_block_clild_body_box1">
+					<?php echo $active_msg.' '.$this->escape($invoice_items['object_value']['airlines_name']); ?>
+				</div>
+				<div class="itinerary_main_body_block_clild_body_box2">
+					<?php
+					 if($invoice_items['object_value']['posted_data']['trip_type'] == 'One way')
+					 {
+					?>
+						<div class="itinerary_main_body_block_clild_body_box2_row1_column1">
+							<?php 
+							
+							$flight_route_departure_date =  $this->route_helper->getNearestDate($invoice_items['object_value']['posted_data']['flight_route_departure_date'][0], $invoice_items['object_value']['flight_route_departure_date']);
+							$flight_route_arrival_date =  $this->route_helper->getNearestDate($flight_route_departure_date['raw_date'], $invoice_items['object_value']['flight_route_arrival_date']);
+							echo strftime("%d %b %y", strtotime($flight_route_departure_date['raw_date'])); ?>
+						</div>
+						<div class="itinerary_main_body_block_clild_body_box2_row1_column2">
+							<?php echo strftime("%a", strtotime($flight_route_departure_date['raw_date'])); ?>
+						</div>
+						<div class="itinerary_main_body_block_clild_body_box2_row1_column3">							
+							<?php								
+								$depart_airport_info = $airport_db->getInfoByIata($invoice_items['object_value']['flight_route_departure']);
+								echo $this->translator->translator('flight_front_page_itnerary_check_in_label').$this->escape($depart_airport_info['city']);							
+							 ?>
+							 <br />
+							 <?php
+								echo $flight_code_no_data;
+								?>
+								<br />
+							 <?php  echo $this->translator->translator('flight_front_page_itnerary_depart_label').$this->escape($depart_airport_info['city']).'&nbsp;&nbsp;&nbsp;'.$this->escape($invoice_items['object_value']['flight_route_departure_time']).' '.$flight_route_departure_date['format_date']; ?>
+							 <br />
+							 <?php 
+								$arrive_airport_info = $airport_db->getInfoByIata($invoice_items['object_value']['flight_route_arrival']);
+								echo $this->translator->translator('flight_front_page_itnerary_arrive_label').$this->escape($arrive_airport_info['city']).'&nbsp;&nbsp;&nbsp;'.$this->escape($invoice_items['object_value']['flight_route_arrival_time']).' '.$flight_route_arrival_date['format_date'];							
+							 ?>
+						</div>
+						<div class="itinerary_main_body_block_clild_body_box2_row1_column4">
+							<?php echo $this->escape($invoice_items['object_value']['flight_travel_class']); ?>
+						</div>
+					<?php
+					 }
+					 if($invoice_items['object_value']['posted_data']['trip_type'] == 'Round')
+					 {
+					 	$flight_route_departure_date =  $this->route_helper->getNearestDate($invoice_items['object_value']['posted_data']['flight_route_departure_date'][0],$invoice_items['object_value']['departure_date']);
+						$flight_route_arrival_date =  $this->route_helper->getNearestDate($flight_route_departure_date['raw_date'],$invoice_items['object_value']['arrival_date']);	
+												
+					?>
+					  <div class="itinerary_main_body_block_clild_body_box2_row1_column1_round">
+							<div class="itinerary_main_body_block_clild_body_box2_row1_column1">
+								<?php echo strftime("%d %b %y", strtotime($flight_route_departure_date['raw_date'])); ?>
+							</div>
+							<div class="itinerary_main_body_block_clild_body_box2_row1_column2">
+								<?php echo strftime("%a", strtotime($flight_route_departure_date['raw_date'])); ?>
+							</div>
+							<div class="itinerary_main_body_block_clild_body_box2_row1_column3">								
+								<?php 
+									$depart_airport_info = $airport_db->getInfoByIata($invoice_items['object_value']['flight_route_departure']);
+									echo $this->translator->translator('flight_front_page_itnerary_check_in_label').$this->escape($depart_airport_info['city']);							
+								 ?>
+								 <br />
+								 <?php
+									echo $flight_code_no_data;
+								 ?>
+								 <br />
+								 <?php  
+									foreach($route_info as $route_key=>$route_value)
+									{
+										if($route_value['route_way_type'] == 'One way')
+										{
+											echo $this->translator->translator('flight_front_page_itnerary_depart_label').$this->escape($route_value['departure_airport']).', '.$this->escape($route_value['departure_city']).'&nbsp;&nbsp;&nbsp;&nbsp;'.$this->escape($route_value['departure_time']).' '.$flight_route_departure_date['format_date'];
+											echo '<br />'.$this->translator->translator('flight_front_page_itnerary_arrive_label').$this->escape($route_value['arrival_airport']).', '.$this->escape($route_value['arrival_city']).'&nbsp;&nbsp;&nbsp;&nbsp;'.$this->escape($route_value['arrival_time']).' '.$flight_route_arrival_date['format_date'].'<br /><br />';
+										}
+									}	
+								 ?>								
+							</div>
+							<div class="itinerary_main_body_block_clild_body_box2_row1_column4">
+								<?php echo $this->escape($invoice_items['object_value']['flight_travel_class']); ?>
+							</div>
+						</div>
+						
+						<?php
+							$flight_route_round_departure_date	=	$this->route_helper->getNearestDate($invoice_items['object_value']['posted_data']['flight_route_arrival_date'][0],$invoice_items['object_value']['posted_data']['flight_route_departure_date']);
+							$flight_route_round_arrival_date	=	$this->route_helper->getNearestDate($flight_route_round_departure_date['raw_date'], $invoice_items['object_value']['posted_data']['flight_route_arrival_date']);
+						?>
+						<div class="itinerary_main_body_block_clild_body_box2_row1_column1_round">
+							<div class="itinerary_main_body_block_clild_body_box2_row1_column1">
+								<?php echo strftime("%d %b %y", strtotime($flight_route_round_arrival_date['raw_date'])); ?>
+							</div>
+							<div class="itinerary_main_body_block_clild_body_box2_row1_column2">
+								<?php echo strftime("%a", strtotime($flight_route_round_arrival_date['raw_date'])); ?>
+							</div>
+							<div class="itinerary_main_body_block_clild_body_box2_row1_column3">
+								<?php 
+									$flight_route_arrival_arr = explode(' - ',$invoice_items['object_value']['posted_data']['flight_route_arrival'][0]);
+									$arrive_airport_info = $airport_db->getInfoByIata($flight_route_arrival_arr[1]);
+									echo $this->translator->translator('flight_front_page_itnerary_check_in_return_label').$this->escape($arrive_airport_info['city']);							
+								 ?>
+								 <br />
+								
+								 <?php  
+									foreach($route_info as $route_key=>$route_value)
+									{
+										if($route_value['route_way_type'] == 'Round')
+										{
+											echo $this->translator->translator('flight_front_page_itnerary_depart_label').$this->escape($route_value['departure_airport']).', '.$this->escape($route_value['departure_city']).'&nbsp;&nbsp;&nbsp;&nbsp;'.$this->escape($route_value['departure_time']).' '.$flight_route_round_departure_date['format_date'];
+											echo '<br />'.$this->translator->translator('flight_front_page_itnerary_arrive_label').$this->escape($route_value['arrival_airport']).', '.$this->escape($route_value['arrival_city']).'&nbsp;&nbsp;&nbsp;&nbsp;'.$this->escape($route_value['arrival_time']).' '.$flight_route_round_arrival_date['format_date'].'<br /><br />';
+										}
+									}
+								?>
+							</div>
+							<div class="itinerary_main_body_block_clild_body_box2_row1_column4">
+								<?php echo $this->escape($invoice_items['object_value']['flight_travel_class']); ?>
+							</div>
+						</div>
+												
+					<?php
+					 }	
+					 if($invoice_items['object_value']['posted_data']['trip_type'] == 'Multi City')
+					 {		 		
+								 
+					?>
+						<div class="itinerary_main_body_block_clild_body_box2_row1_column1_round">
+							<div class="itinerary_main_body_block_clild_body_box2_row1_column1">
+								<?php echo strftime("%d %b %y", strtotime($invoice_items['object_value']['posted_data']['flight_route_departure_date'][0])); ?>
+							</div>
+							<div class="itinerary_main_body_block_clild_body_box2_row1_column2">
+								<?php echo strftime("%a", strtotime($invoice_items['object_value']['posted_data']['flight_route_departure_date'][0])); ?>
+							</div>
+							<div class="itinerary_main_body_block_clild_body_box2_row1_column3">
+								<?php 
+									$depart_airport_info = $airport_db->getInfoByIata($invoice_items['object_value']['flight_route_departure']);
+									echo $this->translator->translator('flight_front_page_itnerary_check_in_label').$this->escape($depart_airport_info['city']);							
+								 ?>
+								 <br />
+								 <?php
+									echo $flight_code_no_data;
+								?>
+								<br />
+								 <?php  
+									$route_arr = explode(' => ',$invoice_items['invoice_flight_route']['route_show']);	
+									$new_route_arr = array();
+									$new_route_arr_key = 0;
+									foreach($route_arr as $route_arr_key => $routes)
+									{
+										if($route_arr_key > 0)
+										{
+											$new_route_arr[$new_route_arr_key] = $route_arr[($route_arr_key-1)].'-'.$routes;
+											$new_route_arr_key++;
+										}
+									}
+									foreach($new_route_arr as $new_route_arr_key => $new_route)
+									{
+										
+																	
+										$sub_route_arr = explode('-',$new_route);
+										$flight_info = $flight_db->getFlightInfoByRoute($invoice_items['object_value'][Eicra_File_Constants::MAIN_TABLE_ID], $sub_route_arr[0], $sub_route_arr[1]);
+										
+										
+										$flight_route_departure_date =  $this->route_helper->getNearestDate($invoice_items['object_value']['posted_data']['flight_route_departure_date'][$new_route_arr_key],$flight_info['flight_route_departure_date']);
+										$flight_route_arrival_date =  $this->route_helper->getNearestDate($flight_route_departure_date['raw_date'],$flight_info['flight_route_arrival_date']);	
+										
+										$depart_airport_info = $airport_db->getInfoByIata($sub_route_arr[0]);
+										$arrive_airport_info = $airport_db->getInfoByIata($sub_route_arr[1]);
+										echo $this->translator->translator('flight_front_page_itnerary_depart_label').$this->escape($depart_airport_info['airport_name']).', '.$this->escape($depart_airport_info['city']).'&nbsp;&nbsp;&nbsp;&nbsp;'.$this->escape($flight_info['flight_route_departure_time']).' '. $flight_route_departure_date['format_date'];
+										echo '<br />'.$this->translator->translator('flight_front_page_itnerary_arrive_label').$this->escape($arrive_airport_info['airport_name']).', '.$this->escape($arrive_airport_info['city']).'&nbsp;&nbsp;&nbsp;&nbsp;'.$this->escape($flight_info['flight_route_arrival_time']).' '. $flight_route_arrival_date['format_date'].'<br /><br />';
+									}										
+								 ?>								
+							</div>
+							<div class="itinerary_main_body_block_clild_body_box2_row1_column4">
+								<?php echo $this->escape($invoice_items['object_value']['flight_travel_class']); ?>
+							</div>
+						</div>					
+					<?php						
+					 }
+					?>
+				</div>
+			<?php
+				}
+			?>
+		</div>
+	</div>
+	<?php
+		}
+	?>
+</div>

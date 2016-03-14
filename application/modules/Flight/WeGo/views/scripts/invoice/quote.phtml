@@ -1,0 +1,211 @@
+<?php
+$global_conf = Zend_Registry::get('global_conf');
+$currency = new Zend_Currency($global_conf['default_locale']);
+$currencySymbol = str_replace('&Acirc;', '', htmlentities($currency->getSymbol(), ENT_QUOTES));
+$currencyShortName = $currency->getShortName();
+
+$auth = Zend_Auth::getInstance ();
+if ($auth->hasIdentity ())
+{
+	$mem_db = new Members_Model_DbTable_MemberList();
+	$country_db = new Eicra_Model_DbTable_Country();
+	$payment_db = new Paymentgateway_Model_DbTable_Gateway();
+	$payment_info = $payment_db->getDefaultGateway();
+	
+	$globalIdentity = $auth->getIdentity();
+	$user_id = $globalIdentity->user_id;			
+	$mem_info = $mem_db->getMemberInfo($user_id);
+	
+	$admin_info = $mem_db->getMemberInfo('2');
+	$country_info = $country_db->getInfo($mem_info['country']);
+	
+	$invoice_arr['invoiceTo'] = stripslashes($mem_info['title']).' '.stripslashes($mem_info['firstName']).' '.stripslashes($mem_info['lastName']).'<br />'.stripslashes($mem_info['mobile']).'<br />'.stripslashes($mem_info['city']).', '.stripslashes($mem_info['state']).', '.stripslashes($mem_info['postalCode']).'<br />'.stripslashes($country_info['value']).'<BR />'.stripslashes($mem_info['username']);
+	$invoice_arr['payTo'] = stripslashes($admin_info['title']).' '.stripslashes($admin_info['firstName']).' '.stripslashes($admin_info['lastName']);
+	$invoice_arr['invoiceToEmail'] = $mem_info['username'];
+	$invoice_arr['payment_info'] = $payment_info;
+}
+?>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('a.submit_quote_btn').click(function(){
+		$('form.quoteForm').submit();
+	});
+});
+</script>
+
+
+
+<div class="quote-title">
+	Request a Quote
+</div>
+
+
+<div class="quote-booking-container">
+<form id="quoteForm" name="quoteForm" class="quoteForm" method="post" action="<?php echo $this->url( array('module'=> 'Flight', 'controller' => 'invoice', 'action'     => 'submitquote' ), 'Submit-Quote',    true); ?>">
+<table width="99%" border="0" align="center" cellpadding="0" cellspacing="0" class="quote-booking-wrapper">
+  <tbody>
+  <tr class="quote-booking-header">
+    <td width="66%" height="30" align="center"><?php echo '<b>'.$this->translator->translator("flight_invoice_desc_title").'</b>'; ?></td>
+    <td width="34%"  align="center" style="border-left:1px solid #FFF"><?php echo '<b>'.$this->translator->translator("flight_invoice_amount_title").'</b>'; ?></td>
+  </tr>
+  <?php
+  $total_amount = 0;
+  $total_tax = 0;
+  $invoice_items_arr = array();
+  $invoice_arr['invoice_table'] = '<table id="invoiceitemstable" border="0" cellspacing="0" align="center">
+									<tbody>
+									<tr>
+										<td id="invoiceitemsheading" style="border:1px solid #cccccc;border-bottom:0px;" width="70%" align="center"><strong>'.$this->translator->translator("flight_invoice_desc_title").'</strong></td>
+										<td id="invoiceitemsheading" style="border:1px solid #cccccc;border-left:0px;border-bottom:0px;" width="30%" align="center"><strong>'.$this->translator->translator("flight_invoice_amount_title").'</strong></td>
+									</tr>';
+
+  foreach($this->cart_result as $key => $flightInfo)
+  {
+  	$invoice_items_arr[$key]['object_value'] = Zend_Json_Encoder::encode($flightInfo);
+  	$invoice_items_arr[$key]['item_details'] = '<tr>
+									<td style="border:1px solid #cccccc;border-bottom:0px;border-right:0px;">
+									<table width="85%">
+										<tr>
+											<td><img src="data/frontImages/flight/airlines/'.$flightInfo['airline_infos']['airlines_pic'].'" height="60" title="'.$flightInfo['airline_infos']['airlines'].'" /></td>
+											<td>
+											'.$flightInfo['FlightInfoExResult'][0]['originName'].', '.$flightInfo['FlightInfoExResult'][0]['originCity'].' --> '.$flightInfo['FlightInfoExResult'][0]['destinationName'].', '.$flightInfo['FlightInfoExResult'][0]['destinationCity'].
+											'<br />'.
+											'<strong>'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_depart").' :</strong> '.$flightInfo['FlightInfoExResult'][0]['filed_departuretime'].
+											'<br  />'.
+											'<strong>'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_arive").' :</strong> '.$flightInfo['FlightInfoExResult'][0]['estimatedarrivaltime'].
+											'<br  />'.
+											'<strong>'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_class").' :</strong> '.$flightInfo['airline_price_info']['classType'].
+											'</td>'.
+										'</tr>'.
+									'</table>'.	
+									'<td style="border:1px solid #cccccc;border-bottom:0px;">'.
+										'<table border="0" width="100%">'.
+											'<tr>'.
+												'<td width="50%">'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_adult").' ('.$flightInfo['airline_price_info']['adult_no'].') :</td>'.
+												'<td width="50%">'. $currencySymbol.'&nbsp;%adult_price'.$key.'%&nbsp;'. $currencyShortName.'</td>'.
+											'</tr>'.
+											'<tr>'.
+												'<td>'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_child").' ('.$flightInfo['airline_price_info']['child_no'].') :</td><td>'.$currencySymbol.'&nbsp;%child_price'.$key.'%&nbsp;'.$currencyShortName.'</td>'.
+											'</tr>'.
+											'<tr>'.
+												'<td>'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_infant").' ('.$flightInfo['airline_price_info']['infant_no'].') :</td><td>'.$currencySymbol.'&nbsp;%infant_price'.$key.'%&nbsp;'.$currencyShortName.'</td>'.
+											'</tr>'.
+										'</table>'.
+									'</td>'.
+								  '</tr>'.								  
+								  '<tr>'.
+									'<td style="border:1px solid #cccccc;border-bottom:0px;border-right:0px;">'.$this->translator->translator("flight_invoice_total_tax_title").'</td>'.
+									'<td style="border:1px solid #cccccc;border-bottom:0px;">'.
+										'&nbsp;&nbsp;%total_tax'.$key.'% %'.
+									'</td>'.
+								  '</tr>'.
+								  '<tr>'.
+										'<td id="invoiceitemsheading" style="border:1px solid #cccccc;border-bottom:0px;text-align:right;">'.
+										'<div>'.$this->translator->translator("flight_invoice_sub_total_title").'&nbsp;</div>'.
+										'</td>'.
+										'<td id="invoiceitemsheading" style="border:1px solid #cccccc;border-bottom:0px;border-left:0px;" align="center"><strong>'.$currencySymbol.'%sub_total'.$key.'%'.$currencyShortName.'</strong></td>'.
+									'</tr>';
+  ?>
+  <tr>
+    <td valign="top">
+    
+    <div class="quote-booking-desc">
+	<table width="98%">
+		<tr>
+			<td width="14%" align="center"><img src="data/frontImages/flight/airlines/<?php echo $flightInfo['airline_infos']['airlines_pic']; ?>" height="60" title="<?php echo $flightInfo['airline_infos']['airlines']; ?>" style="border:1px solid #CCC; background:#FFF; padding:5px;"/></td>
+			<td width="86%">
+			<span class="quote-booking-desc-title"><?php echo $flightInfo['FlightInfoExResult'][0]['originName'].', '.$flightInfo['FlightInfoExResult'][0]['originCity'].' --> '.$flightInfo['FlightInfoExResult'][0]['destinationName'].', '.$flightInfo['FlightInfoExResult'][0]['destinationCity']; ?></span>
+			<br />
+			<?php echo '<strong>'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_depart").' :</strong> '.$flightInfo['FlightInfoExResult'][0]['filed_departuretime']; ?>
+			<br  />
+			<?php echo '<strong>'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_arive").' :</strong> '.$flightInfo['FlightInfoExResult'][0]['estimatedarrivaltime']; ?>
+			<br  />
+			<?php echo '<strong>'.$this->translator->translator("flight_AirlineFlightSchedules_page_table_class").' :</strong> '.$flightInfo['airline_price_info']['classType']; ?><input type="hidden" name="business_type<?php echo $key; ?>" id="business_type<?php echo $key; ?>" value="<?php echo $flightInfo['airline_price_info']['classType']; ?>" />
+			</td>
+    	</tr>
+	</table>	
+    </div>
+	<td valign="top">
+    	<div class="quote-booking-value-general">
+		<table border="0" width="100%">
+			<tr>
+				<td width="26%"><?php echo $this->translator->translator("flight_AirlineFlightSchedules_page_table_adult").' ('.$flightInfo['airline_price_info']['adult_no'].')'; ?><input type="hidden" name="adult_no<?php echo $key; ?>" id="adult_no<?php echo $key; ?>" value="<?php echo $flightInfo['airline_price_info']['adult_no']; ?>" /> :</td>
+				<td width="74%"><?php echo $currencySymbol; ?> <input type="text" name="adult_price<?php echo $key; ?>" id="adult_price<?php echo $key; ?>"  /> <?php echo $currencyShortName; ?></td>
+			</tr>
+			<tr>
+				<td><?php echo $this->translator->translator("flight_AirlineFlightSchedules_page_table_child").' ('.$flightInfo['airline_price_info']['child_no'].')'; ?><input type="hidden" name="child_no<?php echo $key; ?>" id="child_no<?php echo $key; ?>" value="<?php echo $flightInfo['airline_price_info']['child_no']; ?>" /> :</td><td><?php echo $currencySymbol; ?> <input type="text" name="child_price<?php echo $key; ?>" id="child_price<?php echo $key; ?>"  /> <?php echo $currencyShortName; ?></td>
+			</tr>
+			<tr>
+				<td><?php echo $this->translator->translator("flight_AirlineFlightSchedules_page_table_infant").' ('.$flightInfo['airline_price_info']['infant_no'].')'; ?><input type="hidden" name="infant_no<?php echo $key; ?>" id="infant_no<?php echo $key; ?>" value="<?php echo $flightInfo['airline_price_info']['infant_no']; ?>" /> :</td><td><?php echo $currencySymbol; ?> <input type="text" name="infant_price<?php echo $key; ?>" id="infant_price<?php echo $key; ?>"  /> <?php echo $currencyShortName; ?></td>
+			</tr>
+		</table>
+        </div>
+	</td>
+  </tr>
+  <tr>
+  	<td></td>
+	<td>
+		
+        <div class="quote-booking-value-tax">
+        <table border="0" width="100%">
+			<tr>
+				<td width="26%"><span class="quote-booking-tax-label"><?php echo $this->translator->translator("flight_invoice_total_tax_title"); ?></span></td>
+				<td width="74%">&nbsp;&nbsp;
+			  <input type="text" name="total_tax<?php echo $key; ?>" id="total_tax<?php echo $key; ?>" value="0.00"  /> <?php echo '%'; ?></td>
+			</tr>
+		</table>
+        </div>
+	</td>
+  </tr>  
+  <?php 
+  		$invoice_arr['invoice_table'] .= $invoice_items_arr[$key]['item_details']; 		
+  	}
+	$invoice_arr['invoice_table'] .= '<tr>
+						<td id="invoiceitemsheading" style="border:1px solid #cccccc;text-align:right;">
+						<div>'.$this->translator->translator("flight_invoice_total_title").'&nbsp;</div>
+						</td>
+						<td id="invoiceitemsheading" style="border:1px solid #cccccc;border-left:0px;" align="center"><strong>'.$currencySymbol.'%total_amount%'.$currencyShortName.'</strong></td>
+					</tr>
+				</tbody>
+			</table>';
+
+	$invoice_arr['invoice_items'] = $invoice_items_arr;
+	Eicra_Global_Variable::getSession()->invoice_arr = $invoice_arr;	
+  ?> 
+  <tr>
+  	<td>&nbsp;</td>
+	<td>&nbsp;	
+			
+	</td>
+  </tr>
+  <tr>
+  	<td colspan="2">
+		<table width="100%">
+			<tr>
+				<td colspan="2">
+					<h4><u><?php echo $this->translator->translator('Flight_quote_notes_title').':'; ?></u></h4>
+				</td>
+			</tr>
+			<tr>
+				<td width="14%"><span class="quote-booking-label"><?php echo $this->translator->translator('Flight_quote_customer_notes'); ?></span></td><td width="86%" align="right"><textarea name="quote_customer_notes" id="quote_customer_notes" cols="70" rows="5" class="quote-booking-note-field"></textarea></td>
+			</tr>
+		</table>
+	</td>
+  </tr>
+  <tr>
+  	<td colspan="2">
+		<table width="100%">
+			<tr>
+			<td align="right">
+				<div class="form_button ui-widget-content-1" style="width:120px;" align="right"><a href="AirlineFlightSchedules" ><?php echo $this->translator->translator('flight_cart_continue'); ?></a></div></td>
+				<td width="10%">&nbsp;</td>
+				<td><div class="form_button ui-widget-content-1" style="width:120px;" align="right"><a href="javascript:void();" class="submit_quote_btn"><?php echo $this->translator->translator('flight_quote_continue_next'); ?></a></div>
+			</td>
+			</tr>
+	    </table>
+	</td>
+  </tr>
+  </tbody>
+</table>
+</form>
+</div>

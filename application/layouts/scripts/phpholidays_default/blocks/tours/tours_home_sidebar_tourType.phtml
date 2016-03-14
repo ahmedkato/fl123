@@ -1,0 +1,66 @@
+<?php
+class tours_block_type
+{
+	protected	$_group = 2;
+	protected	$_limit = 10;
+	protected	$_DBconn;
+	protected	$_front_template;
+	protected	$_view;
+	protected	$translator;	
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_view =	$view;
+		$this->translator = Zend_Registry::get('translator');		
+	}
+	
+	public function truncate($phrase,$start_words, $max_words)
+	{
+	   $phrase_array = explode(' ',$phrase);
+	   if(count($phrase_array) > $max_words && $max_words > 0)
+		  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+	   return $phrase;
+	}
+	
+	public function class_body()
+	{
+		$business_type_db = new Tours_Model_DbTable_BusinessType();
+		$tours_types = $business_type_db->getBusinessTypeByGroup($this->_group);
+?>	
+
+<div class="block block-list-vmenu">
+	<div class="block-heading">
+		<div class="symbol"><?php echo $this->translator->translator('tours_front_page_home_by_type_title','','',$this->_front_template['theme_folder']); ?></div>
+    </div>
+    
+	<div class="block-body">
+    	<ul>
+			<?php
+            if($tours_types)
+            {
+                foreach($tours_types as $entry)
+                {
+            ?>
+				<li><a href="<?php echo $this->_view->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'view', 'type'  => $this->_view->escape($entry['id']) ),'Tours-List-Type/*',true); ?>"><?php echo $this->_view->escape($entry['business_type']); ?></a></li>
+            <?php
+                }
+            }
+            ?>
+		</ul>
+    </div>
+</div>
+			
+<?php						
+	}
+}
+try
+{
+	$tours_block_type_class = new tours_block_type($this);
+	$tours_block_type_class->class_body();
+}
+catch(Exception $e)
+{
+	echo '<div class="block block-list-vmenu">'.$e->getMessage().'</div>';
+}
+?>

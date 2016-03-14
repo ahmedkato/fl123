@@ -1,0 +1,681 @@
+<?php
+$version = new Eicra_License_Version();
+
+$global_conf = Zend_Registry::get('global_conf');
+$front_template = Zend_Registry::get('front_template');
+
+$countryDbObj = new Eicra_Model_DbTable_Country();
+$countryInfo = $countryDbObj->getInfo($global_conf['default_country']) ;
+
+echo $this->headScript()->setFile($this->baseUrl().'/js/jquery/jquery-ui.multidatespicker.js');
+
+$this->headMeta()->setName('keywords',$this->translator->translator('cost_calculator_meta_keywords'));	
+$this->headMeta()->setName('description',$this->translator->translator('cost_calculator_meta_description'));
+$this->headTitle()->headTitle($this->translator->translator('cost_calculator_meta_title'),'SET');
+
+
+if($this->google_api_client_id)
+{
+	$google_api_client_id = '&client='.$this->google_api_client_id;
+}
+else
+{
+	$google_api_client_id = '';
+}
+?>
+<style type="text/css">	
+	/* begin: jQuery UI Datepicker moving pixels fix */
+	table.ui-datepicker-calendar {border-collapse: separate;}
+	.ui-datepicker-calendar td {border: 1px solid transparent;}
+	/* end: jQuery UI Datepicker moving pixels fix */
+	
+	/* begin: jQuery UI Datepicker moving pixels fix */
+	table.ui-datepicker-calendar {border-collapse: separate;}
+	.ui-datepicker-calendar td {border: 1px solid transparent ;}
+	/* end: jQuery UI Datepicker moving pixels fix */
+	.ui-state-highlight a.ui-state-default{ background:#FF9900; color:#FFFFFF}
+	.ui-datepicker-unselectable span.ui-state-default{ text-decoration: line-through; color:#FF0000; }	
+	
+</style>
+<!--http://code.google.com/apis/maps/documentation/premier/guide.html#URLs-->
+<!--Google Maps API v3 Example: Distance Matrix-->
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false<?php echo $google_api_client_id; ?>"></script>
+<!--<script type="text/javascript" src="github.com/douglascrockford/JSON-js/blob/master/json2.js" ></script>-->
+<script type="text/javascript">
+
+$(document).ready(function() {	
+	
+	
+	
+	function stripslashes(str) 
+	{
+		str=str.replace(/\\'/g,'\'');
+		str=str.replace(/\\"/g,'"');
+		str=str.replace(/\\0/g,'\0');
+		str=str.replace(/\\\\/g,'\\');
+		return str;
+	}
+	
+	
+	function openMsgDialogCalc(msg)
+	{
+		$('#dialog_msg').html(msg).dialog({
+			autoOpen: true,
+			modal: true,
+			show: 'fade',
+			resizable: 'false',				
+			buttons: { "<?php echo html_entity_decode($this->translator->translator('common_ok'), ENT_QUOTES, 'UTF-8'); ?>": function() { $(this).dialog('option', 'hide', 'explode').dialog("close"); } },
+			open: function(event, ui)
+				 {
+					setTimeout(function() 
+					{									
+						if($('#' + event.target.id).dialog('isOpen'))
+						{
+							$('#' + event.target.id).dialog('option', 'hide', 'explode').dialog('close');										
+						}
+					}, 10000);
+				  }
+		});
+	}
+		
+	$('a.reset_btn').click(function() {			
+		 resetFields();	
+		 removeError();	
+	});
+	
+	function resetFields()
+	{
+		$( "form" )[ 0 ].reset();					
+	}
+	
+	function removeError()
+	{
+		$('#actionMessage').attr('class','none');
+		$('#actionMessage').html('&nbsp;');
+		$('div.invoice_btn').css('display','none');
+		$('#outputDiv').html('');
+		$('#map_canvas').html('');
+		$('#map_canvas').css('display','none');
+		
+		var filename = '';
+		var filevalue = '';		
+		$.each($('form').serializeArray(), function(i, field) {	
+				if(field.name.match(/\[\]$/))
+				{
+					var filearr = field.name.split('[]');
+					filename = filearr[0];					
+				}
+				else
+				{
+					filename 	= 	field.name;
+				} 			
+				$('#'+filename).removeClass('ui-state-error');
+				$('#'+filename+'_err').html('');									
+		});				
+	}
+	
+	function addError(key,errMsg)
+	{
+		var err_id = key+'_err';
+		var field_name = key;
+		$('#'+field_name).addClass('ui-state-error');
+		$('#'+err_id).append(errMsg);
+	}
+	
+	function openLoaderDialogCalculator()
+	{
+		$('#dialog_container').dialog({
+			autoOpen: true,
+			modal: true,
+			show: 'fade',
+			resizable: 'false',				
+			open: function(event, ui)
+				 {
+					$("#progressbar").progressbar({
+						value:100
+		
+					});							
+				  }
+		});
+	}
+	
+	function closeLoaderDialogCalculator()
+	{
+		$('#dialog_container').dialog('option','hide','explode').dialog('close');
+	}	
+	
+	function openLoaderDialogCalculatorRemove()
+	{
+		$('#dialog_container_remove').dialog({
+			autoOpen: true,
+			modal: true,
+			show: 'fade',
+			resizable: 'false',				
+			open: function(event, ui)
+				 {
+					$("#progressbar_remove").progressbar({
+						value:100
+		
+					});							
+				  }
+		});
+	}
+	
+	function openLoaderDialogNotCalculate()
+	{
+		$('#dialog_not_calculate').dialog({
+			autoOpen: true,
+			modal: true,
+			show: 'fade',
+			resizable: 'false',				
+			open: function(event, ui)
+				 {
+					$("#progressbar_not_calculate").progressbar({
+						value:100
+		
+					});							
+				  }
+		});
+	}
+	
+	function closeLoaderDialogNotCalculate()
+	{
+		$('#dialog_not_calculate').dialog('option','hide','explode').dialog('close');
+	}
+	
+	function closeLoaderDialogCalculatorRemove()
+	{
+		$('#dialog_container_remove').dialog('option','hide','explode').dialog('close');
+	}
+	
+	function getFormData()
+	{
+		var fieldObj = {};
+		var filename = '';
+		var filevalue = '';
+		$.each($('form').serializeArray(), function(i, field) {	
+			if(field.name.match(/\[\]$/))
+			{
+				var filearr = field.name.split('[]');
+				filename = filearr[0];
+				filevalue = $('#'+filename).val();
+			}
+			else
+			{
+				filename 	= 	field.name;
+				filevalue 	= 	field.value;
+			}			
+			fieldObj[filename] = filevalue;			
+		});		
+		return fieldObj;
+	}
+	
+	function makeDisplay()
+	{
+		$('div.invoice_btn').css('display','inline');
+		$('a.remove_cost_btn').css('display','inline');
+		$('input.supplimentary_id').css('display','inline');
+	}
+	
+	$('a.make_date').click(function(){
+		$('#cost_booking_date').trigger('focus');
+	});
+	
+	$('select.package_change').change(function() {
+		var self = $(this);
+		var package_id = $(self).val();
+		//$('#cost_booking_date').val('');
+		var dateArr;
+		if(package_id != '')
+		{
+			$.ajax({
+			  url: "<?php echo $this->url( array('module' => 'Costcalculator', 'controller' => 'frontendcalculator', 'action'     => 'packageinfo' ), 'adminrout',    true) ?>",
+			  type: 'POST',
+			  data: {id: package_id},
+			  beforeSend: function(){
+				  	$('#cost_package_loader').html('<img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/loader/search-loader.gif" alt="<?php echo $this->translator->translator('common_processing_language'); ?>" title="<?php echo $this->translator->translator('common_processing_language'); ?>" />');
+					},
+			  success: function(response){
+				//alert(response);
+				$('#cost_package_loader').html('');
+				var json_arr = eval("("+response+")");					
+				if(json_arr.status == 'ok')
+				{
+					var i;
+					var date_string = json_arr.data.not_available_date;					
+					if(date_string.length > 0)
+					{
+						var date_arr = date_string.split('|');
+						dateArr = "<?php echo $this->translator->translator('cost_not_available_title'); ?>"; 
+						for(i= 0; i < date_arr.length; i++)
+						{
+							dateArr += date_arr[i]+'<br />'; 
+						}
+					}
+					else
+					{
+						dateArr = "<?php echo $this->translator->translator('cost_all_available_title'); ?>"; 
+					}
+					$('#cost_booking_date_helper').attr('title',dateArr);
+					if(json_arr.cost_unit_title == 'Day')
+					{
+						$('input#cost_zip_code_from').attr('disabled','disabled');
+						$('input#cost_zip_code_to').attr('disabled','disabled');
+						$('input#cost_zip_code_from, input#cost_zip_code_to').removeClass('ui-widget-content');											
+						$("#cost_booking_date").multiDatesPicker({
+							mode: {
+								modeName: 'normal',
+								options : {maxPicks: 30}
+							}
+						});
+					}
+					else
+					{
+						$('input#cost_zip_code_from').removeAttr('disabled');
+						$('input#cost_zip_code_to').removeAttr('disabled');
+						$('input#cost_zip_code_from, input#cost_zip_code_to').addClass('ui-widget-content');	
+						$("#cost_booking_date").multiDatesPicker({
+							mode: {
+								modeName: 'daysRange',
+								options : {autoselectRange: [0,1]}
+							}
+						});
+					}
+				}
+			  },
+			  error: function (xhr,status,msg)
+				{
+					openMsgDialogCalc(msg);
+				}
+			});		
+		}
+		else
+		{
+			var dateArr = "<?php echo $this->escape($this->calculateForm->cost_package->getAttrib('title')) ?>" ;
+			$('#cost_booking_date_helper').attr('title',dateArr);
+		}
+	});
+	
+	function removeSupplimentary()
+	{
+		$('a.remove_cost_btn').click(function() {
+			var self = $(this);
+			var idArr = new Array();
+			$("input:checkbox[name='supplimentary_id[]']:checked").each(function(id,field) { 				
+					idArr[id] 		= field.value;
+			});
+			
+			if(idArr.length > 0)
+			{
+				$.ajax({
+				  url: "<?php echo $this->url( array('module' => 'Costcalculator', 'controller' => 'frontendcalculator', 'action'     => 'remove' ), 'adminrout',    true) ?>",
+				  type: 'POST',
+				  data: {id_arr: idArr},
+				  beforeSend: function(){						
+						//removeError();
+						openLoaderDialogCalculatorRemove();
+						},
+				  success: function(response){
+					//alert(response);
+					var json_arr = eval("("+response+")");
+					result = $('#outputDiv');
+					var result_value = '';	
+					var additional_value = '';				
+					if(json_arr.status == 'ok')
+					{
+						var data = json_arr.data.replace('%payment_status%','');	
+						var data = data.replace('Payment Status','');						
+						result.html(data);
+						$('.invoice_hide').css('display','none');
+						removeSupplimentary();	
+						makeDisplay();					
+					}
+					else if(json_arr.status == 'errV')
+					{
+						$('#actionMessage').attr('class','errMess');
+						$('#actionMessage').html("<?php echo $this->translator->translator('common_err'); ?>");
+												
+						for(var i= 0; i < json_arr.msg.length; i++)
+						{
+							addError(json_arr.msg[i].key,json_arr.msg[i].value);							
+						}
+					}
+					closeLoaderDialogCalculatorRemove();
+				  },
+				  error: function (xhr,status,msg)
+					{
+						openMsgDialogCalc(msg);
+					}
+				});
+			}
+			else
+			{
+				openMsgDialogCalc("<?php echo $this->translator->translator('cost_delete_suppliment_row');?>");
+			}			
+		});	
+	}
+	
+	
+	function sendAjaxRequest(distance, hour, origin, destination, hour_text, id_arr, doGoogleCalculate)
+	{
+		var formData;
+		var loaderDialog;
+		var closeDialog;
+		formData = getFormData();
+		if(doGoogleCalculate == '1')
+		{
+			formData.google_distance = distance;
+			formData.google_hour = hour;
+			formData.origin = origin;
+			formData.destination = destination;
+			formData.hour_text = hour_text;
+			if(id_arr)
+			{
+				formData.supplimentary_id_arr = id_arr;
+			}
+			else
+			{
+				formData.supplimentary_id_arr = null; 
+			}
+		}
+		$.ajax({
+			  url: "<?php echo $this->url( array('module' => 'Costcalculator', 'controller' => 'frontendcalculator', 'action'     => 'calculate' ), 'adminrout',    true) ?>",
+			  type: 'POST',
+			  data: formData,
+			  beforeSend: function(){						
+					removeError();
+					if(doGoogleCalculate == '1')
+					{
+						openLoaderDialogCalculator();
+					}
+					else
+					{
+						openLoaderDialogNotCalculate();
+					}
+			  },
+			  success: function(response){
+				//alert(response);
+				var json_arr = eval("("+response+")");
+				result = $('#outputDiv');
+				var result_value = '';	
+				var additional_value = '';				
+				if(json_arr.status == 'ok')
+				{
+					var data = json_arr.data.replace('%payment_status%','');					
+					var data = data.replace('Payment Status','');	
+					result.html(data);
+					$('.invoice_hide').css('display','none');
+					removeSupplimentary();
+					makeDisplay();
+					
+					if(doGoogleCalculate == '1')
+					{
+						calcRoute(json_arr.source, json_arr.destination);							
+					}
+				}
+				else if(json_arr.status == 'errV')
+				{
+					$('#actionMessage').attr('class','errMess');
+					$('#actionMessage').html("<?php echo $this->translator->translator('common_err'); ?>");
+											
+					for(var i= 0; i < json_arr.msg.length; i++)
+					{
+						addError(json_arr.msg[i].key,json_arr.msg[i].value);							
+					}
+				}
+				else 
+				{
+					$('#actionMessage').attr('class','errMess');
+					$('#actionMessage').html(json_arr.msg);
+				}
+				if(doGoogleCalculate == '1')
+				{
+					closeLoaderDialogCalculator();
+				}
+				else
+				{
+					closeLoaderDialogNotCalculate();
+				}
+			  },
+			  error: function (xhr,status,msg)
+				{
+					openMsgDialogCalc(msg);
+				}
+		});
+	}
+	
+	/*  Start - Google Maps API v3 Example: Distance Matrix */
+	
+	//var destinationIcon = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=D|FF0000|000000";
+	//var originIcon = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=O|FFFF00|000000";
+	
+	
+     function callback(response, status){
+	    //alert(JSON.stringify(response, null, 2));
+		if(response == null && status == null)
+		{
+			sendAjaxRequest(null, null, null, null, null, null, '0');
+		}
+		else
+		{
+			var distance;
+			if (status != google.maps.DistanceMatrixStatus.OK ) {
+				openMsgDialogCalc("<?php echo $this->translator->translator('cost_google_maps_error');?> " + status);
+			} 
+			else
+			{
+				if((distance = response.rows[0].elements[0].status) != "OK")
+				{
+					if(distance == 'NOT_FOUND')
+					{
+						openMsgDialogCalc("<?php echo $this->translator->translator('cost_google_maps_distance_not_found');?>");
+					}
+					else
+					{
+						openMsgDialogCalc("<?php echo $this->translator->translator('cost_google_maps_distance_zero_result');?>");
+					}
+				}
+				else 
+				{
+					var origins = response.originAddresses;
+					var destinations = response.destinationAddresses;
+					// as we expect only single source to destination so first row is our result			  	
+					var distance = response.rows[0].elements[0].distance.value;
+					var hour = response.rows[0].elements[0].duration.value;
+					var hour_text = response.rows[0].elements[0].duration.text;
+					var calculate = '1';
+					sendAjaxRequest(distance, hour, origins[0], destinations[0], hour_text, null, calculate);
+				}
+			}
+		}
+	}
+	
+	
+	$('a.calculate_cost_btn').click(function() {			
+			
+		var zip_from = $('#cost_zip_code_from').attr('disabled');
+		var zip_to = $('#cost_zip_code_to').attr('disabled');
+		if(zip_from || zip_to)
+		{
+			callback(null, null);
+		}
+		else
+		{
+			var formData = getFormData();
+			removeError();
+			var country = "<?php echo $countryInfo['value'] ?>";  
+			var zipCodeFrom = $('#cost_zip_code_from').val();
+			var zipCodeTo = $('#cost_zip_code_to').val();
+			
+			var origin1 = $.trim(zipCodeFrom) + ', ' + country;
+			var destinationA = $.trim(zipCodeTo) + ', ' + country;
+			
+			try
+			{
+				var service = new google.maps.DistanceMatrixService();        
+				
+				service.getDistanceMatrix(
+				  {
+					origins: [origin1],
+					destinations: [destinationA],
+					travelMode: google.maps.TravelMode.DRIVING,
+					unitSystem: google.maps.UnitSystem.IMPERIAL,//METRIC,IMPERIAL -- FOR MILES
+					avoidHighways: false,
+					avoidTolls: false
+				  }, callback);	
+			}
+			catch(err)
+			{ 
+				openMsgDialogCalc("<?php echo $this->translator->translator('cost_google_maps_loading_error');?>");
+			}
+		}		
+	});	
+	/* End - Google Maps API v3 Example: Distance Matrix */
+	
+	/* Start - Google Maps API v3 Example: Direction API */
+	var directionDisplay;
+  	var directionsService = new google.maps.DirectionsService();
+ 	var map;
+	function calcRoute(start, end) 
+   	{
+		directionsDisplay = new google.maps.DirectionsRenderer();
+		var chicago = new google.maps.LatLng(start, end);
+		var myOptions = {
+		  zoom:7,
+		  mapTypeId: google.maps.MapTypeId.ROADMAP
+		}
+		$('#map_canvas').css('display','block');
+		var mapObj = $('#map_canvas');
+		map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
+		directionsDisplay.setMap(map);
+	
+	
+		var request = {
+			origin:start, 
+			destination:end,
+			travelMode: google.maps.DirectionsTravelMode.DRIVING
+		};
+		directionsService.route(request, function(response, status) {
+		  if (status == google.maps.DirectionsStatus.OK) {
+			directionsDisplay.setDirections(response);
+		  }
+		});
+  	}
+  	/* End - Google Maps API v3 Example: Direction API */
+});
+</script>
+
+<div class="mod mod-calculator">
+    <div class="calculator-icon">
+        <h1><?php echo $this->translator->translator('cost_calculate_page_name'); ?></h1>
+    </div>
+	<div class="clear"></div>
+    <form name="formSettings" id="formSettings" method="post" >
+        <div id="actionMessage"></div>
+        <div id="generalInfo">
+            <div class="products-list">
+            	<div class="list-header">
+					<h4><?php echo $this->translator->translator('cost_calculate_journey_details'); ?></h4>
+                </div>
+                
+                <div class="body-container">
+                    <div class="form-label-container"><span class="label_class"><?php echo $this->calculateForm->cost_travel_type->getLabel();  if($this->calculateForm->cost_travel_type->isRequired()){ ?></span><span class="star_class">*</span><?php } ?></div>
+                    <div class="form-field-container">
+						<span class="mod-title"><?php echo $this->calculateForm->cost_travel_type; ?></span>
+                        <span class="input-errors" id="<?php echo $this->calculateForm->cost_travel_type->getName().'_err'; ?>"></span>
+                    </div>
+                    
+                    <div class="form-label-container"><span class="label_class"><?php echo $this->calculateForm->cost_package->getLabel();  if($this->calculateForm->cost_package->isRequired()){ ?></span><span class="star_class">*</span><?php } ?></div>
+                    <div class="form-field-container">
+                    	<?php echo $this->calculateForm->cost_package; ?><span id="cost_package_loader"></span>
+                    	<span class="input-errors" id="<?php echo $this->calculateForm->cost_package->getName().'_err'; ?>"></span>
+                  	</div>
+                    
+                    <div class="form-label-container"><span class="label_class"><?php echo $this->calculateForm->cost_booking_date->getLabel();  if($this->calculateForm->cost_booking_date->isRequired()){ ?></span><span class="star_class">*</span><?php } ?></div>
+                    <div class="form-field-container">
+                    	<?php echo $this->calculateForm->cost_booking_date; ?>
+                   		<a href="javascript: void(0)" class="make_date"> <img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/mod_img/calendar-small.png" alt="<?php echo $this->translator->translator('cost_calender_title'); ?>" title="<?php echo $this->translator->translator('cost_calender_title'); ?>" /></a>
+                        <span class="products-available" id="cost_booking_date_helper" title="<?php echo $this->escape($this->calculateForm->cost_package->getAttrib('title')); ?>">Availability</span>
+                        <span class="input-errors" id="<?php echo $this->calculateForm->cost_booking_date->getName().'_err'; ?>"></span>
+                    </div>
+            	</div>
+			</div>
+
+            <!-- From Start -->
+            <div class="products-list from">
+                <div class="list-header">
+                    <h4><?php echo $this->translator->translator('cost_calculate_travel_from'); ?></h4>
+                </div>
+                <div class="body-container">
+                    <div class="form-label-container">
+                        <span class="label_class"><?php echo $this->calculateForm->cost_select_country_from->getLabel();  if($this->calculateForm->cost_select_country_from->isRequired()){ ?></span> <span class="star_class">*</span><?php } ?>
+                    </div>
+                    
+                    <div class="form-field-container">
+                        <span class="mod-title"><?php echo $countryInfo['value'] ?></span>
+                    </div>
+                    
+                    <div class="form-label-container">
+                        <span class="label_class"><?php echo $this->calculateForm->cost_zip_code_from->getLabel();  if($this->calculateForm->cost_zip_code_from->isRequired()){ ?></span> <span class="star_class">*</span><?php } ?>
+                    </div>
+                    
+                    <div class="form-field-container">
+                        <?php echo $this->calculateForm->cost_zip_code_from;?>
+                        <span class="input-errors" id="<?php echo $this->calculateForm->cost_zip_code_from->getName().'_err'; ?>"></span>
+                    </div>
+                </div>			
+            </div>
+            <!-- From End -->
+                
+            <!-- Destination Start -->
+            <div class="products-list destination">
+            	<div class="list-header">
+            		<h4><?php echo $this->translator->translator('cost_calculate_travel_destination'); ?></h4>
+               	</div>
+                <div class="body-container">
+                	<div class="form-label-container">
+                        <span class="label_class"><?php echo $this->calculateForm->cost_select_country_to->getLabel();  if($this->calculateForm->cost_select_country_to->isRequired()){ ?></span> <span class="required">*</span><?php } ?>
+					</div>
+                    
+                    <div class="form-field-container">
+                    	<span class="mod-title"><?php echo $countryInfo['value'] ?></span>
+                    </div>
+                    
+                    <div class="form-label-container">
+                    	<span class="label_class"><?php echo $this->calculateForm->cost_zip_code_to->getLabel();  if($this->calculateForm->cost_zip_code_to->isRequired()){ ?></span> <span class="required">*</span><?php } ?>
+                    </div>
+                    
+                    <div class="form-field-container">
+                    	<?php echo $this->calculateForm->cost_zip_code_to; ?>
+                        <span  class="input-errors" id="<?php echo $this->calculateForm->cost_zip_code_to->getName().'_err'; ?>"></span>
+                    </div>
+                </div>            
+            </div>	
+            <!-- Destination End -->
+                
+            <div class="clear"></div>
+            <div id="outputDiv" align="center"></div>
+                
+          	<div id="map_canvas" class="map-container"></div>
+            
+            <div class="clear btn-container">
+                <span class="form-button ui-widget-content-1"><a href="javascript: void(0);" class="calculate_cost_btn"><?php echo $this->translator->translator('cost_calculate_title'); ?></a></span>
+                <span class="form-button ui-widget-content-1"><a href="Create-Invoice"><?php echo $this->translator->translator('cost_make_reservation'); ?></a></span>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="dialog_msg" title="<?php echo $this->translator->translator('common_dialog_msg',$this->translator->translator('cost_calculate_page_name')); ?>"></div>
+<div id="dialog_container" style="display:none" title="<?php echo $this->translator->translator('common_processing_language'); ?>">
+	<?php echo $this->translator->translator('cost_calculate_google_and_costing');?>
+	<div id="progressbar" ></div>	
+</div>
+<div id="dialog_container_remove" style="display:none" title="<?php echo $this->translator->translator('common_processing_language'); ?>">
+	<?php echo $this->translator->translator('cost_calculate_remove_costing');?>
+	<div id="progressbar_remove" ></div>	
+</div>
+<div id="dialog_not_calculate" style="display:none" title="<?php echo $this->translator->translator('common_processing_language'); ?>">
+	<?php echo $this->translator->translator('cost_not_calculating');?>
+	<div id="progressbar_not_calculate" ></div>	
+</div>

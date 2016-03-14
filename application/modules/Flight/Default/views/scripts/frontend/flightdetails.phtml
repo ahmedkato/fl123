@@ -1,0 +1,185 @@
+<?php
+$this->headMeta()->setName('keywords',$this->escape($this->flight_info['flight_route_name']));
+$this->headMeta()->setName('description',$this->escape($this->flight_info['flight_route_desc']));
+$this->headTitle()->headTitle($this->escape($this->flight_info['flight_route_name']),'SET');
+
+$vote = new Vote_Controller_Helper_ShowVoteButton('plus_minus','flight_flights' );
+?>
+
+<div class="mod">
+    <div class="flight-icon">
+    	<h1><?php echo $this->escape($this->flight_info['flight_route_name']); ?></h1>
+    </div>
+	<div class="clear">&nbsp;</div>
+	<img src="data/frontImages/flight/airlines/<?php echo $this->escape($this->flight_info['primary_image']); ?>"  width="150" height="115" border="0" class="thumb"/>
+
+    <div class="flight-details-header">
+        <span class="mod-title"><?php echo $this->translator->translator('flight_airlines_list_code'). ' : '; ?></span> <?php echo $this->escape($this->flight_info['airlines_code']); ?><br />
+        <?php
+        if($this->hotels_db != null && !empty($this->flight_info['hotels_id']))
+        {
+            $hotels_info = $this->hotels_db->getHotelsInfo($this->flight_info['hotels_id']);
+        ?>
+        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_include_hotel'); ?></span> <?php echo $this->escape($hotels_info['hotels_name']); ?><br />
+        <?php
+        }
+        ?>
+        
+        <?php
+        if($this->tours_db != null && !empty($this->flight_info['tours_id']))
+        {
+            $tours_info = $this->tours_db->getToursInfo($this->flight_info['tours_id']);
+        ?>
+        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_include_tour'); ?></span> <?php echo $this->escape($tours_info['tours_name']); ?><br />
+        <?php
+        }
+        ?>
+        
+        <?php
+        if($this->vacationrentals_db != null && !empty($this->flight_info['vacationrentals_id']))
+        {
+            $vacationrentals_info = $this->vacationrentals_db->getVacationrentalsInfo($this->flight_info['vacationrentals_id']);
+        ?>
+        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_include_vacationrental'); ?></span> <?php echo $this->escape($vacationrentals_info['vacationrentals_name']); ?><br />
+        <?php
+        }
+        ?>
+        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_class'); ?></span> <?php echo $this->escape($this->flight_info['flight_travel_class']); ?><br />
+        <?php
+        if(!empty($this->flight_info['flight_route_desc']))
+        {
+        ?>
+            <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_description'); ?></span> <?php echo $this->escape($this->flight_info['flight_route_desc']); ?><br />
+        <?php
+        }
+        ?>
+    </div>
+
+    <div class="flight-vote">
+    	<?php  $vote->showButton($this->flight_info['id'] , $this->escape($this->flight_info['flight_route_name'])); ?>
+        <div class="flight-vote-title">
+        	<?php echo strtoupper($this->translator->translator('partial_poll_vote_title')); ?>
+        </div>
+    </div>
+
+	<div class="clear">&nbsp;</div>
+  	<div class="flight-details-info">
+	<fieldset class="fieldset">
+         <legend class="legend"><?php echo $this->translator->translator('flight_front_page_details_one_way'); ?></legend>
+         <div class="flight-fair-container">
+             <?php
+                 if(!empty($this->flight_info['flight_route_terminal']))
+                 {
+             ?>
+                 <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_terminal'); ?></span> <?php echo $this->escape($this->flight_info['flight_route_terminal']); ?><br />
+             <?php
+                }
+             ?> 
+             <div class="flight-fair-label"><?php echo $this->translator->translator('flight_front_page_details_adult_fair'); ?></div> <div class="flight-fair-value"><?php echo $this->escape($this->flight_info['flight_adult_fair']).$this->currency->getSymbol(); ?></div>
+             <div class="flight-fair-label"><?php echo $this->translator->translator('flight_front_page_details_child_fair'); ?></div> <div class="flight-fair-value"><?php echo $this->escape($this->flight_info['flight_child_fair']).$this->currency->getSymbol(); ?></div>
+             <div class="flight-fair-label"><?php echo $this->translator->translator('flight_front_page_details_infant_fair'); ?></div> <div class="flight-fair-value"><?php echo $this->escape($this->flight_info['flight_infant_fair']).$this->currency->getSymbol(); ?></div>
+             <div class="flight-fair-label last"><?php echo $this->translator->translator('flight_front_page_details_tax'); ?></div> <div class="flight-fair-value last"><?php echo $this->escape($this->flight_info['flight_tax']).'%'; ?></div>
+         </div>
+         <div class="route_box">
+            <div class="route_box_head">
+                <div class="route_box_head_column1"><?php echo $this->translator->translator('flight_AirlineFlightSchedules_page_table_depart'); ?></div><div class="route_box_head_column2"><?php echo $this->translator->translator('flight_AirlineFlightSchedules_page_table_arive'); ?></div>
+            </div> 
+            <?php
+                $route_helper = new Flight_View_Helper_Route();
+                $route_info = $route_helper->getRoute($this->flight_info['id']);		
+                foreach($route_info as $route_key => $routes)
+                {
+                    if($routes['route_way_type'] != 'Round')
+                    {
+            ?>
+                <div class="route_box_body">
+                    <div class="route_box_body_column1">
+                        <p>
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_location'); ?></span> <?php echo $this->escape($routes['departure_city']); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_airport'); ?></span> <?php echo $this->escape($routes['departure_airport']); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_iata'); ?></span> <?php echo $this->escape($routes['departure_iata']); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_days'); ?></span> <?php echo str_replace(',',', ',$this->escape($routes['departure_date'])); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_time'); ?></span> <?php echo $this->escape($routes['departure_time']); ?><br />
+                        </p>
+                    </div>
+                    <div class="route_box_body_column2">
+                        <p>
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_location'); ?></span> <?php echo $this->escape($routes['arrival_city']); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_airport'); ?></span> <?php echo $this->escape($routes['arrival_airport']); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_iata'); ?></span> <?php echo $this->escape($routes['arrival_iata']); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_days'); ?></span> <?php echo str_replace(',',', ',$this->escape($routes['arrival_date'])); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_time'); ?></span> <?php echo $this->escape($routes['arrival_time']); ?><br />
+                        </p>
+                    </div>
+                </div> 
+            <?php
+                    }
+                }
+            ?>
+         </div>
+	</fieldset>
+    </div>
+
+	<?php
+    if($this->flight_info['flight_journey_type'] == 'Round')
+    {
+    ?>
+	<div class="flight-details-info">
+	<fieldset class="fieldset round">
+ 		<legend class="legend round"><?php echo $this->translator->translator('flight_front_page_details_round'); ?></legend>
+        <div class="flight-fair-container">
+        <?php
+		 if(!empty($this->flight_info['flight_route_terminal']))
+		 {
+        ?>
+ 		<span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_terminal'); ?></span> <?php echo $this->escape($this->flight_info['flight_route_terminal_round']); ?><br />
+		<?php
+            }
+        ?>
+        <div class="flight-fair-label"><?php echo $this->translator->translator('flight_front_page_details_adult_fair'); ?></div> <div class="flight-fair-value"><?php echo $this->escape($this->flight_info['flight_adult_fair_round']).$this->currency->getSymbol(); ?></div>
+        <div class="flight-fair-label"><?php echo $this->translator->translator('flight_front_page_details_child_fair'); ?></div> <div class="flight-fair-value"><?php echo $this->escape($this->flight_info['flight_child_fair_round']).$this->currency->getSymbol(); ?></div>
+        <div class="flight-fair-label"><?php echo $this->translator->translator('flight_front_page_details_infant_fair'); ?></div> <div class="flight-fair-value"><?php echo $this->escape($this->flight_info['flight_infant_fair_round']).$this->currency->getSymbol(); ?></div>
+        <div class="flight-fair-label last"><?php echo $this->translator->translator('flight_front_page_details_tax'); ?></div> <div class="flight-fair-value last"><?php echo $this->escape($this->flight_info['flight_tax_round']).'%'; ?></div>
+ 		</div>
+        
+ 		<div class="route_box">
+            <div class="route_box_head">
+                <div class="route_box_head_column1"><?php echo $this->translator->translator('flight_AirlineFlightSchedules_page_table_depart'); ?></div><div class="route_box_head_column2"><?php echo $this->translator->translator('flight_AirlineFlightSchedules_page_table_arive'); ?></div>
+            </div> 
+            <?php				
+                foreach($route_info as $route_key => $routes)
+                {
+                    if($routes['route_way_type'] == 'Round')
+                    {
+            ?>
+                <div class="route_box_body">
+                    <div class="route_box_body_column1">
+                        <p>
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_location'); ?></span> <?php echo $this->escape($routes['departure_city']); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_airport'); ?></span> <?php echo $this->escape($routes['departure_airport']); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_iata'); ?></span> <?php echo $this->escape($routes['departure_iata']); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_days'); ?></span> <?php echo str_replace(',',', ',$this->escape($routes['departure_date'])); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_time'); ?></span> <?php echo $this->escape($routes['departure_time']); ?><br />
+                        </p>
+                    </div>
+                    <div class="route_box_body_column2">
+                        <p>
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_location'); ?></span> <?php echo $this->escape($routes['arrival_city']); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_airport'); ?></span> <?php echo $this->escape($routes['arrival_airport']); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_iata'); ?></span> <?php echo $this->escape($routes['arrival_iata']); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_days'); ?></span> <?php echo str_replace(',',', ',$this->escape($routes['arrival_date'])); ?><br />
+                        <span class="mod-title"><?php echo $this->translator->translator('flight_front_page_details_time'); ?></span> <?php echo $this->escape($routes['arrival_time']); ?><br />
+                        </p>
+                    </div>
+                </div> 
+            <?php
+                    }
+                }
+            ?>
+ 		</div>
+	</fieldset>
+	</div>
+<?php
+}
+?>
+</div>

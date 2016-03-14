@@ -1,0 +1,29 @@
+<?php
+if($this->invoice_arr['invoice_desc'])
+{
+?>
+<table width="100%">
+	<tr>
+		<tr>
+			<?php
+				echo $this->escape($this->invoice_arr['invoice_desc']);
+			?>
+		</tr>
+	</tr>
+	<tr>
+		<td>
+			<table width="100%">
+				<tr>
+				<td align="right">
+					</td>
+					<td width="10%">&nbsp;</td>
+					<td><div class="form_button ui-widget-content-1" style="width:120px;" align="right"><a href="<?php echo $this->url( array('module'=> 'Invoic', 'controller' => 'invoice', 'action'     => 'quote' ), 'Quote-Submit-Result',    true); ?>" ><?php echo $this->translator->translator('flight_quote_submit'); ?></a></div>
+				</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<?php
+}
+?>

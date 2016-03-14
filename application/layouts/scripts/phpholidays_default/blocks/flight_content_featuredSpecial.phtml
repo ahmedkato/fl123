@@ -1,0 +1,160 @@
+<?php
+class featured_flight_special
+{
+	protected	$_group = 1;
+	protected	$_limit = 8;
+	protected	$_DBconn;
+	protected	$_front_template;
+	protected	$_global_conf;
+	protected	$_view;
+	protected	$area_db;
+	protected 	$group_datas;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_global_conf 		= Zend_Registry::get('global_conf');
+		$this->_view =	$view;
+		//DB Connection
+		$this->_DBconn = Zend_Registry::get('msqli_connection');
+		$this->_DBconn->getConnection();
+		
+		$this->area_db = new Hotels_Model_DbTable_Area();		
+	}
+	
+	public function truncate($phrase,$start_words, $max_words)
+	{
+	   $phrase_array = explode(' ',$phrase);
+	   if(count($phrase_array) > $max_words && $max_words > 0)
+		  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+	   return $phrase;
+	}
+	
+	public function class_body()
+	{		
+		$currency = new Zend_Currency($this->_global_conf['default_locale']);
+		$currency_symbol = $currency->getSymbol();
+		$translator = Zend_Registry::get('translator');	
+		
+		
+		$hotels_db = (class_exists('Hotels_Model_DbTable_Hotels')) ? new Hotels_Model_DbTable_Hotels() : null ;	
+		$tours_db = (class_exists('Tours_Model_DbTable_Tours')) ? new Tours_Model_DbTable_Tours() : null ;	
+				
+		//Featured Flight Offers
+		$selectFeatured = $this->_DBconn->select()
+								->from(array('ff' => Zend_Registry::get('dbPrefix').'flight_flights'), array('*'))
+								->where('ff.active = ?', '1')	
+								->where('ff.featured = ?', '1')								
+								->joinLeft(array('fa' => Zend_Registry::get('dbPrefix').'flight_airlines'), 'ff.airlines_id = fa.id', array('airlines_name' => 'fa.airlines_name', 'primary_image' => 'fa.primary_image', 'other_images' => 'fa.airlines_logo'))
+								->limit($this->_limit);
+		
+		$search_obj = $selectFeatured->query()->fetchAll();
+		if($search_obj)
+		{			
+			foreach($search_obj as $key =>$value_obj)
+			{	
+				$search_obj[$key]['image_path']	=	'data/frontImages/flight/airlines/';							
+				foreach($value_obj as $value_key => $value)
+				{
+					$search_obj[$key][$value_key] = stripslashes($search_obj[$key][$value_key]);
+					
+					switch($value_key)
+					{
+						case 'hotels_id':
+								if(!empty($search_obj[$key][$value_key]))
+								{
+									if($hotels_db != null)
+									{
+										$hotels_info = $hotels_db->getHotelsInfo($search_obj[$key][$value_key]);
+										if($hotels_info)
+										{
+											$search_obj[$key]['primary_image'] 	= 	stripslashes($hotels_info['hotels_primary_image']);
+											$search_obj[$key]['other_images'] 	= 	stripslashes($hotels_info['hotels_image']);
+											$search_obj[$key]['image_path'] 	= 	'data/frontImages/hotels/hotels_image/';
+										}
+									}
+								}
+							break;	
+						case 'tours_id':
+								if(!empty($search_obj[$key][$value_key]))
+								{
+									if($hotels_db != null)
+									{
+										$tours_info = $tours_db->getToursInfo($search_obj[$key][$value_key]);
+										if($tours_info)
+										{
+											$search_obj[$key]['primary_image'] 	= 	stripslashes($tours_info['traveler_photos']);
+											$search_obj[$key]['other_images'] 	= 	stripslashes($tours_info['tours_image']);
+											$search_obj[$key]['image_path'] 	= 	'data/frontImages/tours/tours_image/';
+										}
+									}
+								}
+							break;						 							
+					}
+				}
+			}
+		
+		$featured_datas =  $search_obj;		
+		$route_db = new Flight_View_Helper_Route();
+		}
+?>
+
+<div class="block block-featured">
+	<div class="block-body">
+        <h2><?php echo ucfirst($translator->translator('flight_front_page_home_featured_flight_title','' ,'Flight')); ?></h2>
+		<?php
+        if($featured_datas)
+        {
+            foreach($featured_datas as $entry)
+            {
+                $primary_image_path = $this->_view->escape($entry['image_path']).$this->_view->escape($entry['primary_image']);
+                $other_image_arr = explode(',', $this->_view->escape($entry['other_images']));
+                $flight_image_no = ($other_image_arr[0]) ? count($other_image_arr) : '0';
+                $total_price = ($entry['flight_journey_type'] != 'Round') ? ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) + ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) * ($entry['flight_tax'] / 100 ) ) ) 
+                                                                          : ( ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) + ( ($entry['flight_adult_fair'] + $entry['flight_child_fair'] + $entry['flight_infant_fair']) * ($entry['flight_tax'] / 100 ) ) )            +                 ( ($entry['flight_adult_fair_round'] + $entry['flight_child_fair_round'] + $entry['flight_infant_fair_round']) + ( ($entry['flight_adult_fair_round'] + $entry['flight_child_fair_round'] + $entry['flight_infant_fair_round']) * ($entry['flight_tax_round'] / 100 ) ) ) );
+                $route_info = $route_db->getRoute($entry['id']);
+                $routes = $route_db->getAbsoluteRoute($route_info, array('trip_type' => $entry['flight_journey_type']));
+        ?>
+            <div class="col flight-col">
+                <div class="block-title">
+                    <a href="<?php echo $this->_view->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->_view->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>" class="preview" link="" title="<?php echo $this->_view->escape($entry['flight_route_name']); ?>"><?php echo $this->_view->escape($entry['flight_route_name']); ?></a>
+                </div>
+                
+                <div class="img-wrapper">
+                    <a class="preview" link="<?php echo $primary_image_path;  ?>" title="<?php echo $this->_view->escape($entry['flight_route_name']); ?>" href="<?php echo $this->_view->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->_view->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>" width="250">
+                        <img src="<?php echo $primary_image_path;  ?>" width="150" height="115" border="0" class="thumb"/>
+                    </a>
+                     
+                    <div class="photo-count-container">
+                        <div class="photo-count">
+                            <a href="<?php echo $this->_view->url(array('module' => 'Flight','controller' =>'frontend', 'action' => 'flightdetails','flight_title' => $this->_view->escape($entry['flight_route_title']) ),'Flight-Details/:flight_title',true); ?>"><?php echo $translator->translator('flight_front_page_home_photo_no', '<span>'.$flight_image_no.'</span>' ,'Flight'); ?></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="details">
+                    <span><?php echo $translator->translator('flight_front_page_home_price_label','' ,'Flight'); ?></span> <span class="price price-big"><?php echo $currency->getSymbol(). $total_price; ?></span> 
+                    <div class="trip"><?php echo $translator->translator('flight_front_page_home_trip_type',$entry['flight_journey_type'], 'Flight'); ?></div>
+                    <span><?php echo $translator->translator('flight_front_page_home_localion_label','' ,'Flight'); ?></span> <a class="preview" link="" title="<?php echo $routes['route_show']; ?>"><?php echo $this->truncate($routes['route_show'], 0, 5); ?></a>                        
+                </div>
+            </div>
+          <?php
+            }
+          }
+          ?>
+	</div>
+</div>
+
+<?php
+	}
+}
+try
+{
+	$featured_flight_special_class = new featured_flight_special($this);
+	$featured_flight_special_class->class_body();
+}
+catch(Exception $e)
+{
+	echo $e->getMessage();
+}
+?>

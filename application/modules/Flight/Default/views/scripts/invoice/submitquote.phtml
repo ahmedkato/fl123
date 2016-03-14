@@ -1,0 +1,16 @@
+<?php
+if($this->invoice_arr['invoice_desc'])
+{
+?>
+
+<div>
+	<?php echo $this->escape($this->invoice_arr['invoice_desc']); ?>
+</div>
+
+<div class="clear form-btn-container">
+    <span class="form-button ui-widget-content-1"><a href="<?php echo $this->url( array('module'=> 'Invoic', 'controller' => 'invoice', 'action'     => 'quote' ), 'Quote-Submit-Result',    true); ?>" ><?php echo $this->translator->translator('flight_quote_submit'); ?></a></span>
+</div>
+
+<?php
+}
+?>

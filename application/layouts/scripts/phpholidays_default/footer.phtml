@@ -1,0 +1,55 @@
+<?php 
+$front_template = Zend_Registry::get('front_template'); 
+$this->translator = Zend_Registry::get('translator');
+$global_conf = Zend_Registry::get('global_conf');
+?>
+
+<!-- Footer Start -->
+<footer id="footer">
+    <div class="container">
+    	<?php $this->ad(204); ?>
+    	<div class="social">
+            <?php echo $this->translator->translator('always_stay_connected','', '', $front_template['theme_folder']); ?><br><br>
+            <a href="http://www.facebook.com" target="_blank"><img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/facebook.png" width="41" height="41" border="0" title="Facebook"></a>
+            <a href="http://www.twitter.com" target="_blank"><img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/twitter.png" width="41" height="41" border="0" title="Twitter"></a>
+            <a href="https://plus.google.com" target="_blank"><img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/google-plus.png" width="41" height="41" border="0" title="Google Plus"></a>
+            <a href="http://feeds.feedburner.com" target="_blank"><img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/rss.png" width="41" height="41" border="0" title="RSS"></a>
+            <a href="http://www.youtube.com" target="_blank"><img src="application/layouts/scripts/<?php echo $front_template['theme_folder']; ?>/images/youtube.png" width="41" height="41" border="0" title="You Tube"></a>
+        </div>
+        
+        <div class="links clear">
+            <span><?php echo $this->translator->translator('footer1_label','', '', $front_template['theme_folder']); ?></span> 
+            <ul>
+                <li class="first"><a href="<?php echo $this->serverUrl().$this->baseUrl(); ?>"><?php echo $this->translator->translator('footer_menu_home','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="All-Hotel-List/group_id/1"><?php echo $this->translator->translator('footer_all_hotel','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="Flights"><?php echo $this->translator->translator('footer_flight','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="All-Vacation-List/group_id/1"><?php echo $this->translator->translator('footer_all_vacationrentals','', '', $front_template['theme_folder']); ?></a></li>                    
+                <li><a href="All-Tour-List/group_id/1"><?php echo $this->translator->translator('footer_all_tours','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="Car-Hire"><?php echo $this->translator->translator('footer_car_hire','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="Travel-Tips"><?php echo $this->translator->translator('footer_travel_tips','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="Photo-Album"><?php echo $this->translator->translator('footer_photo_album','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="Video-Album"><?php echo $this->translator->translator('footer_video_album','', '', $front_template['theme_folder']); ?></a></li>
+            </ul>
+            <hr />
+            <span><?php echo $this->translator->translator('footer2_label','', '', $front_template['theme_folder']); ?></span> 
+            <ul>
+                <li class="first"><a href="<?php echo $this->serverUrl().$this->baseUrl(); ?>"><?php echo $this->translator->translator('footer_menu_home','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="About-Us"><?php echo $this->translator->translator('footer_about_us','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="Write-a-Review"><?php echo $this->translator->translator('footer_write_review','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="Membership"><?php echo $this->translator->translator('footer_membership','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="News"><?php echo $this->translator->translator('footer_news','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="<?php echo $this->url(); ?>" class="jQueryBookmark" title="<?php echo $this->translator->translator('footer_favorites_title','', '', $front_template['theme_folder']); ?>"><?php echo $this->translator->translator('footer_favorites_title','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="Feedback"><?php echo $this->translator->translator('header_feedback','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="Site-Map"><?php echo $this->translator->translator('header_sitemap','', '', $front_template['theme_folder']); ?></a></li>
+                <li><a href="Contact-Us"><?php echo $this->translator->translator('header_contact','', '', $front_template['theme_folder']); ?></a></li>
+            </ul>
+            <hr />
+            <div class="copyright">
+				<?php echo $this->translator->translator('footer_copyright','', '', $front_template['theme_folder']); ?> <?php echo date("Y"); ?> <?php echo $this->translator->translator('footer_all_rights','', '', $front_template['theme_folder']); ?> &nbsp;<a href="http://www.<?php if(!empty($global_conf['frontend_footer_url'])){ echo $global_conf['frontend_footer_url']; }else if(!empty($validation_data['vendor_domain'])){  echo $validation_data['vendor_domain']; }else{ echo 'eicra.com'; } ?>" target="_blank" title="<?php if(!empty($global_conf['frontend_footer'])){ echo $global_conf['frontend_footer']; }else if($validation_data['footer_name']){ echo $validation_data['footer_name']; }else{ echo 'Eicra Soft Ltd'; } ?>"><?php echo $this->translator->translator('footer_develop_by','', '', $front_template['theme_folder']); ?></a>
+                <?php if(!empty($global_conf['frontend_footer'])){ echo $global_conf['frontend_footer']; }else if($validation_data['footer_name']){ echo $validation_data['footer_name']; }else{ echo 'Eicra Soft Ltd'; } ?>
+                <?php echo $this->translator->translator('footer_version','', '', $front_template['theme_folder']); ?> <?php echo Eicra_License_Version::getVersion(); ?>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Footer End -->

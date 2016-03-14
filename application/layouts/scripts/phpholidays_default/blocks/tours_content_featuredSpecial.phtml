@@ -1,0 +1,156 @@
+<?php
+class featured_tours_special
+{
+	protected	$_group = 2;
+	protected	$_limit = 8;
+	protected	$_DBconn;
+	protected	$_front_template;
+	protected	$_global_conf;
+	protected	$_view;
+	protected	$area_db;
+	protected 	$group_datas;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_global_conf 		= Zend_Registry::get('global_conf');
+		$this->_view =	$view;
+		//DB Connection
+		$this->_DBconn = Zend_Registry::get('msqli_connection');
+		$this->_DBconn->getConnection();
+		
+		$this->area_db = new Tours_Model_DbTable_Area();	
+		$group_db =  new Tours_Model_DbTable_ToursGroup();
+		$this->group_datas = $group_db->getGroupName($this->_group);		
+	}
+	
+	public function truncate($phrase,$start_words, $max_words)
+	{
+	   $phrase_array = explode(' ',$phrase);
+	   if(count($phrase_array) > $max_words && $max_words > 0)
+		  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+	   return $phrase;
+	}
+	
+	public function class_body()
+	{		
+		$currency = new Zend_Currency($this->_global_conf['default_locale']);
+		$currency_symbol = $currency->getSymbol();
+		$translator = Zend_Registry::get('translator');
+		$maximum_stars_digit =  $translator->translator('maximum_rating_digit','', 'Tours');
+		
+		
+	    $selectGP = $this->_DBconn->select()
+						->from(array('hp' => Zend_Registry::get('dbPrefix').'tours_page'), array('*'))
+					   	->where('hp.group_id = ?',$this->_group)
+						->where('hp.featured  = ?','1')
+					   	->where('hp.active  = ?','1')
+					   	->limit($this->_limit);
+		
+		$tours_info =  $selectGP->query()->fetchAll();
+?>
+
+<div class="block block-featured">
+	<div class="block-body">
+		<h2><?php echo $translator->translator('tours_block_featured_list_title', '', 'Tours'); ?></h2>
+    	<div id="featured_list">
+        <?php						  
+        if($tours_info)
+        {
+            $j = 1;	
+            foreach($tours_info as $entry)
+            {
+                $tours_image_val_arr = explode(',',$entry['tours_image']);
+                $tours_image_no = count($tours_image_val_arr);
+                if($this->_view->escape($entry['traveler_photos']))
+                { 
+                    $thumb_image = 'data/frontImages/tours/tours_image/'.$this->_view->escape($entry['traveler_photos']); 
+                }
+                else
+                { 
+                    if($this->_view->escape($entry['tours_image']))
+                    {											
+                        $thumb_image = 'data/frontImages/tours/tours_image/'.$this->_view->escape($tours_image_val_arr[0]); 
+                    }
+                    else
+                    {
+                        $thumb_image = 'application/layouts/scripts/'.$this->_front_template['theme_folder'].'/images/mod_hotel_img/no_image.png'; 
+                    }		
+                }
+                if($this->group_datas['file_thumb_width'] && $this->group_datas['file_thumb_resize_func'] != 'resizeToHeight')
+                { 
+                    $width = 'width="'.$this->_view->escape($this->group_datas['file_thumb_width']).'"'; 
+                }
+                else
+                {
+                    $width = '';
+                } 
+                if($this->group_datas['file_thumb_height'] && $this->group_datas['file_thumb_resize_func'] != 'resizeToWidth')
+                { 
+                    $height = 'height="'.$this->_view->escape($this->group_datas['file_thumb_height']).'"'; 
+                } 
+                else
+                {
+                    $height = '';
+                }						
+                $lication_info = ($entry['area_id'])? $this->area_db->getAreaInfo($entry['area_id']) : '';
+                
+        ?>
+        <div class="col">
+            <span class="block-title">
+                <a href="<?php echo $this->_view->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => $this->_view->escape($entry['tours_title']) ),'Tours-details/:tours_title',true); ?>" class="preview" link="" title="<?php echo $this->_view->escape($entry['tours_name']); ?>"><?php echo $this->truncate($this->_view->escape($entry['tours_name']), 0, 3); ?></a>
+            </span>
+             
+            <div class="clear">
+                 <?php
+                    for($i = 1; $i < $maximum_stars_digit; $i++)
+                    {
+                        $tours_rating = ($i <= $this->_view->escape($entry['rating'])) ? "<img src='application/layouts/scripts/".$this->_front_template['theme_folder']."/images/mod_tour_img/star-small-active.png' border='0' />" : "<img src='application/layouts/scripts/".$this->_front_template['theme_folder']."/images/mod_tour_img/star-small-inactive.png' border='0' />";
+                        echo $tours_rating.'&nbsp;';
+                    }
+                ?>
+            </div>
+        
+            <div class="img-wrapper">
+                <a href="<?php echo $this->_view->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => $this->_view->escape($entry['tours_title']) ),'Tours-details/:tours_title',true); ?>" class="preview" link="<?php echo $thumb_image; ?>"  title="<?php echo $this->_view->escape($entry['tours_name']); ?>" width="300">
+                    <img src="<?php echo $thumb_image; ?>" <?php echo $width." ".$height; ?> border="0" class="thumb">
+                </a>
+                 
+                <div class="photo-count-container">
+                    <div class="photo-count">
+                        <a href="<?php echo $this->_view->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details',tours_title => $this->_view->escape($entry['tours_title']),'tab' => 1 ),'Tours-details/:tours_title/:tab',true); ?>" title="<?php echo $translator->translator('tours_front_page_tours_click_view_listing', '', 'Tours'); ?>"><?php echo $translator->translator('tours_front_page_tours_photo_no', '<span>'.$tours_image_no.'</span>', 'Tours'); ?></a>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="details">
+                <span><?php echo $translator->translator('tours_block_featured_label_price', '', 'Tours'); ?></span> <span class="price price-big"><?php echo $currency->getSymbol().''.$this->_view->escape($entry['tours_price']); ?></span><br />
+                <span><?php echo $translator->translator('tours_block_featured_label_location', '', 'Tours'); ?></span> <a href="<?php echo $this->_view->url(array('module' => 'Tours','controller' =>'frontend', 'action' => 'details','tours_title' => $this->_view->escape($entry['tours_title']) ),'Tours-details/:tours_title',true); ?>"><?php echo $this->_view->escape($lication_info['city']); ?></a><br />
+
+                <div class="duration"><span class="night"><?php if(!empty($entry['scheduled_on'])){ echo (int)$this->_view->escape($entry['scheduled_on']);  echo ' '.$translator->translator('tours_num_of_nights', '', 'Tours'); } ?></span><span class="day"><?php if(!empty($entry['sightseeing'])){ echo (int)$this->_view->escape($entry['sightseeing']);  echo ' '.$translator->translator('tours_num_of_days', '', 'Tours'); } ?></span></div>
+                <span class="mod-label"><?php if(!empty($entry['tours_desc'])){ echo $translator->translator('tours_block_featured_label_description', ' ', 'Tours'); ?></span> <?php echo $this->truncate($this->_view->escape(strip_tags($entry['tours_desc'])), 0, 5); } ?><br />
+            </div>
+        </div>
+        <?php	                     
+        $j++;
+        
+            }
+        }
+        ?>
+    	</div>
+	</div>
+</div>
+
+<?php
+	}
+}
+try
+{
+	$featured_tours_special_class = new featured_tours_special($this);
+	$featured_tours_special_class->class_body();
+}
+catch(Exception $e)
+{
+	echo $e->getMessage();
+}
+?>

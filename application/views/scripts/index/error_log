@@ -1,0 +1,2 @@
+[25-Aug-2013 13:38:07 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[25-Aug-2013 13:38:07 Europe/Berlin] PHP Fatal error:  Using $this when not in object context in /home/wwwhotei/public_html/application/views/scripts/index/index.phtml on line 23

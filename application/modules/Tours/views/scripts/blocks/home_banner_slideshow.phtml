@@ -1,0 +1,96 @@
+<?php
+class home_banner_slideshow_mod
+{
+	protected	$_group = 5;
+	protected	$_category = 61;
+	protected	$_active =	1;
+	protected	$_front_template;
+	protected	$_translator;
+	protected	$_view;
+	protected	$postValue;
+	protected 	$_vacationrentals_db;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_view =	$view;	
+		$this->_translator = Zend_Registry::get('translator');	
+		$frontController = Zend_Controller_Front::getInstance();
+		$this->postValue = $frontController->getRequest()->getPost();
+		$this->_banner_db = new News_Model_DbTable_Page();
+	}
+	
+	public function class_body()
+	{
+		echo $this->_view->headScript()->setFile('application/layouts/scripts/'.$this->_front_template['theme_folder'].'/vendor/scripts/js/banner-slideshow.js');
+		echo $this->_view->headLink()->setStylesheet('application/layouts/scripts/'.$this->_front_template['theme_folder'].'/css/banner-slideshow.css');
+		echo $this->_view->headLink()->setStylesheet('application/layouts/scripts/'.$this->_front_template['theme_folder'].'/css/rs-slides.css');
+
+		$search_params['filter']['filters'][0] = array('field' => 'group_id', 'operator' => 'eq', 'value' => $this->_group);
+		$search_params['filter']['logic'] = ($search_params['filter']['logic']) ? $search_params['filter']['logic'] : 'and';
+		$search_params['filter']['filters'][1] = array('field' => 'category_id', 'operator' => 'eq', 'value' => $this->_category);
+			
+		$list_info = $this->_banner_db->getListInfo($this->_active, $search_params, false) ;
+		
+?>
+	<script>
+	// You can also use "$(window).load(function() {"
+	$(function () {
+	
+	  // Slideshow 4
+	  $("#slider4").responsiveSlides({
+		auto: false,
+		pager: false,
+		nav: true,
+		speed: 500,
+		namespace: "callbacks",
+		before: function () {
+		  $('.events').append("<li>before event fired.</li>");
+		},
+		after: function () {
+		  $('.events').append("<li>after event fired.</li>");
+		}
+	  });
+	
+	});
+	</script>
+    
+		
+            <?php
+				if($list_info)
+				{	
+			?>
+            <!-- Slideshow 4 -->
+            <div class="callbacks_container">
+              <ul class="rslides" id="slider4">
+            <?php				
+					foreach($list_info as $entry)
+					{
+			?>
+                <li>
+                    <img src="data/frontImages/news/page_thumb/<?php echo $entry['page_thumb']; ?>" alt="<?php echo $this->_view->escape($entry['page_name']); ?>"/>
+                </li>
+            <?php
+					}
+			?>
+            	</ul>
+			</div>
+            <?php
+				}
+			?>                
+           
+        
+<?php	
+	}
+}
+try
+{
+	$home_banner_slideshow_mod_class = new home_banner_slideshow_mod($this);
+	$home_banner_slideshow_mod_class->class_body();
+}
+catch(Exception $e)
+{
+	echo $e->getMessage();
+}
+
+?>

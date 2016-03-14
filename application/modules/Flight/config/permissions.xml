@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<permissions>
+	<resource name="price" for="backend" description="Manage Price Plan" langKey="permisson_price_plan">
+		<privilege name="list" description="View the list of Price Plan" langKey="permisson_price_plan_list" />
+		<privilege name="add" description="Create new Price Plan" langKey="permisson_price_plan_add" />
+		<privilege name="edit" description="Edit Price Plan" langKey="permisson_price_plan_edit" />
+		<privilege name="delete" description="Delete a Price Plan" langKey="permisson_price_plan_delete" />
+		<privilege name="publish" description="Active Deactive a Price Plan" langKey="permisson_price_plan_activeDeactive" />
+	</resource>
+	
+	<resource name="api" for="backend" description="Flight Api Settings" langKey="permisson_flight_api">
+		<privilege for="dashboard" name="update" description="Update Api Settings" langKey="permisson_flight_api_update" />
+	</resource>
+	
+	<resource name="airlines" for="backend" description="Airlines Management" langKey="permisson_flight_airlines_management">
+		<privilege for="dashboard" name="add" description="Add New Airlines" langKey="permisson_flight_airlines_add" />
+		<privilege name="edit" description="Edit Airlines" langKey="permisson_flight_airlines_edit" />
+		<privilege for="dashboard" name="list" description="Airlines List" langKey="permisson_flight_airlines_list" />
+		<privilege name="delete" description="Delete Airlines" langKey="permisson_flight_airlines_delete" />
+	</resource>
+	
+	<resource name="airport" for="backend" description="Airport Management" langKey="permisson_flight_airport_management">
+		<privilege for="dashboard" name="add" description="Add New Airport" langKey="permisson_flight_airport_add" />
+		<privilege name="edit" description="Edit Airport" langKey="permisson_flight_airport_edit" />
+		<privilege for="dashboard" name="list" description="Airport List" langKey="permisson_flight_airport_list" />
+		<privilege name="delete" description="Delete Airport" langKey="permisson_flight_airport_delete" />
+		<privilege name="search" description="Search Airport" langKey="permisson_flight_airport_search" />
+	</resource>
+	
+	<resource name="route" for="backend" description="Flight Route Management" langKey="permisson_flight_route_management">
+		<privilege for="dashboard" name="add" description="Add New Flight Route" langKey="permisson_flight_route_add" />
+		<privilege name="edit" description="Edit Flight Route" langKey="permisson_flight_route_edit" />
+		<privilege for="dashboard" name="list" description="Flight Route List" langKey="permisson_flight_route_list" />
+		<privilege name="delete" description="Delete Flight Route" langKey="permisson_flight_route_delete" />
+		<privilege name="featured" description="Featured Flight Route" langKey="permisson_flight_route_featured" />
+	</resource>
+	
+	<resource name="frontend" for="frontend" description="Frontend Layouts of Flight" langKey="permisson_frontend_flight">
+		<privilege name="airlineflightschedules" description="Airline Flight Schedules" langKey="permisson_flight_airline_flight_schedules" img="permisson_flight_airline_flight_schedules.jpg" />
+		<privilege name="home" description="Flight Home Page" langKey="permisson_flight_home_page" img="permisson_flight_home_page.jpg" />
+	</resource>
+	
+	
+</permissions>

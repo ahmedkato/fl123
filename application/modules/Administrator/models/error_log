@@ -1,0 +1,25 @@
+[29-Jun-2013 11:17:24] PHP Fatal error:  Class 'Eicra_Model_Entity' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/Role.php on line 0
+[26-Jul-2013 02:11:48 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 02:11:48 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Model_Entity' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/Role.php on line 0
+[26-Jul-2013 03:52:27 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 03:52:27 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Model_Entity' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/Resource.php on line 0
+[26-Jul-2013 12:35:28 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[26-Jul-2013 12:35:28 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Model_Entity' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/Privilege.php on line 0
+[27-Jul-2013 17:33:37 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[27-Jul-2013 17:33:37 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Model_Entity' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/Privilege.php on line 0
+[29-Jul-2013 02:34:40 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Jul-2013 02:34:40 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Model_Entity' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/Role.php on line 0
+[03-Aug-2013 05:30:58 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 05:30:58 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Model_Entity' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/Resource.php on line 0
+[03-Aug-2013 05:34:27 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[03-Aug-2013 05:34:27 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Model_Entity' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/Privilege.php on line 0
+[04-Aug-2013 12:57:28 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[04-Aug-2013 12:57:28 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Model_Entity' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/Privilege.php on line 0
+[16-Aug-2013 13:35:12 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[16-Aug-2013 13:35:12 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Model_Entity' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/Role.php on line 0
+[29-Aug-2013 21:15:29 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[29-Aug-2013 21:15:29 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Model_Entity' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/Role.php on line 0
+[31-Aug-2013 15:10:57 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[31-Aug-2013 15:10:57 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Model_Entity' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/Privilege.php on line 0
+[05-Sep-2013 03:53:40 Europe/Berlin] PHP Warning:  Cannot load module 'XCache' because conflicting module 'eAccelerator' is already loaded in Unknown on line 0
+[05-Sep-2013 03:53:40 Europe/Berlin] PHP Fatal error:  Class 'Eicra_Model_Entity' not found in /home/wwwhotei/public_html/application/modules/Administrator/models/Role.php on line 0

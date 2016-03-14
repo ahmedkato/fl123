@@ -1,0 +1,110 @@
+<?php
+class popular_getaways
+{
+	protected	$_group = 1;
+	protected	$_limit = 18;
+	protected	$_DBconn;
+	protected	$_front_template;
+	protected	$_view;
+	protected	$_d_num = 6;
+	
+	public function __construct($view) 
+	{
+		$this->_front_template = Zend_Registry::get('front_template'); 
+		$this->_view =	$view;
+		//DB Connection
+		$this->_DBconn = Zend_Registry::get('msqli_connection');
+		$this->_DBconn->getConnection();
+	}
+	
+	public function truncate($phrase,$start_words, $max_words)
+	{
+	   $phrase_array = explode(' ',$phrase);
+	   if(count($phrase_array) > $max_words && $max_words > 0)
+		  $phrase = implode(' ',array_slice($phrase_array, $start_words, $max_words)).'...';  
+	   return $phrase;
+	}
+	
+	public function class_body()
+	{
+		$translator = Zend_Registry::get('translator');	
+		$selectGP = $this->_DBconn->select()
+						->from(array('vv' => Zend_Registry::get('dbPrefix').'vote_voting'), array('item_id' => 'DISTINCT(vv.table_id)', 'votes' => 'SUM(vv.vote_value)'))
+					   	->where('hp.group_id = ?',$this->_group)
+					   	->where('vv.table_name = ?','vacationrentals_page')
+					   	->group('vv.table_id')
+					   	->order('votes DESC')
+					   	->joinLeft(array('hp' => Zend_Registry::get('dbPrefix').'vacationrentals_page'), 'vv.table_id = hp.id')
+					   	->limit($this->_limit);
+		
+		$vacationrentals_info =  $selectGP->query()->fetchAll();
+	
+?>
+
+<div class="block block-listing">
+	<div class="block-body">
+		<h2><?php echo $translator->translator('vacationrentals_block_popular_title','', '', $this->_front_template['theme_folder']); ?></h2>
+        <div class="col">
+			<ul>
+            <?php	
+                if($vacationrentals_info)
+                {
+                    $l =1;
+					$box = 1;
+                    foreach($vacationrentals_info as $entry)						
+                    {
+                    
+                        if($this->_view->escape($entry['vacationrentals_primary_image']))
+                        { 
+                            $thumb_image = 'data/frontImages/vacationrentals/vacationrentals_image/'.$this->_view->escape($entry['vacationrentals_primary_image']); 
+                        }
+                        else
+                        { 
+                            if($this->_view->escape($entry['vacationrentals_image']))
+                            {
+                                $vacationrentals_image_val_arr = explode(',',$entry['vacationrentals_image']);
+                                $thumb_image = 'data/frontImages/vacationrentals/vacationrentals_image/'.$this->_view->escape($vacationrentals_image_val_arr[0]); 
+                            }
+                            else
+                            {
+                                $thumb_image = 'application/layouts/scripts/'.$this->_front_template['theme_folder'].'/images/mod_vacation_img/no_image.png'; 
+                            }		
+                        }
+                        
+            ?>						
+						<li><a href="<?php echo $this->_view->url(array('module' => 'Vacationrentals','controller' =>'frontend', 'action' => 'details','vacationrentals_title' => $this->_view->escape($entry['vacationrentals_title']) ),'Vacationrentals-details/:vacationrentals_title',true); ?>" class="preview" link="<?php echo $thumb_image; ?>" title="<?php echo $this->_view->escape($entry['vacationrentals_name']); ?>" width="300"><?php echo $this->truncate($this->_view->escape($entry['vacationrentals_name']), 0, 6); ?></a></li>
+
+			<?php
+						$total_box = ceil(count($vacationrentals_info) / $this->_d_num);
+						if($total_box > $box)
+						{
+							if($l % $this->_d_num == 0)
+							{
+								
+								$devider =  '</ul></div><div class="col"><ul>';
+								echo $devider;
+								$box++;
+							}
+						}
+                        $l++;
+                    }
+                }
+            ?>
+            </ul>			
+		</div>       
+	</div>
+</div>
+
+<?php
+	}
+}
+try
+{
+	$popular_getaways_class = new popular_getaways($this);
+	$popular_getaways_class->class_body();
+}
+catch(Exception $e)
+{
+	echo $e->getMessage();
+}
+?>
